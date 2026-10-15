@@ -101,17 +101,22 @@ graph TD
 
 ## 5. Technical Specifications & Performance Benchmarks
 
-| Engineering Metric | Monocular Mobile Scan (`room_v2.splat`) | Ultra-HD Photorealistic Studio (`studio_room.splat`) |
-| :--- | :--- | :--- |
-| **Capture & Format** | Monocular Smartphone Video $\rightarrow$ 3DGS (`.splat`) | Ultra-HD High-Density 3DGS (`.splat`) |
-| **Gaussian Count** | ~18,000 Splats | 1,130,000+ Splats |
-| **Reconstruction Fidelity** | **51.72 dB PSNR** (Convergence: 0.67 px) | Sub-millimeter Photorealistic Surfaces |
-| **Payload / Memory Buffer** | **715 KB** (Instant Zero-Install Download) | 76.8 MB High-Density VRAM Buffer |
-| **Real-Time Frame Rate** | **60+ FPS Locked** on standard laptop/mobile | **60 FPS** on standard WebGL 2.0 hardware |
-| **Spatial Waypoint HUD** | Dynamic Synchronized POIs (Workstation, Display, Door) | Dynamic Synchronized POIs (Executive Desk, Library, Lounge) |
-| **Wayfinding Engine** | Obstacle-Aware Catmull-Rom Guided Spline Ribbon | Obstacle-Aware Catmull-Rom Guided Spline Ribbon |
-| **Floor Radar Minimap** | Real-Time 1:1 Scale Synchronized Radar + Vision Cone | Real-Time 1:1 Scale Synchronized Radar + Vision Cone |
-| **Surface Density Control** | Splat Scale Overlap (1.0x, 1.5x, 2.0x solidifying) | Pre-densified Photorealistic Splats |
+### 📱 Monocular Mobile Scan Model (`room_v2.splat`)
+- **Capture & Training:** Monocular smartphone video $\rightarrow$ Dense 3D Gaussian Splatting
+- **Gaussian Count:** ~18,000 Splats
+- **Reconstruction Fidelity:** **51.72 dB PSNR** (Convergence: 0.67 px)
+- **Payload & Network Load:** **715 KB** (Instant Zero-Install WebGL Download)
+- **Real-Time Frame Rate:** **60+ FPS Locked** on standard laptop and mobile hardware
+- **Spatial Waypoint HUD:** Dynamic Synchronized POIs (Workstation Alpha, Main Display, Room Door)
+- **Wayfinding & Minimap:** Obstacle-Aware Catmull-Rom Guided Spline Ribbon with 1:1 Scale Floor Radar
+
+### 🏛️ Ultra-HD Photorealistic Studio Model (`studio_room.splat`)
+- **Environment:** High-Fidelity Architectural Studio & Command Twin
+- **Gaussian Count:** **1,130,000+ Photorealistic Splats**
+- **Reconstruction Fidelity:** Sub-millimeter Photorealistic Surfaces & Complex Lighting
+- **VRAM Allocation:** 76.8 MB High-Density WebGL Buffer
+- **Real-Time Frame Rate:** **60 FPS** with hardware-accelerated tile rasterization
+- **Spatial Waypoint HUD:** Synchronized Studio Waypoints (Executive Desk, Library Hub, Lounge Corridor)
 
 ---
 

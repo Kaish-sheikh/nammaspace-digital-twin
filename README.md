@@ -98,19 +98,23 @@ Open your browser and navigate to `http://localhost:5173`.
 
 ---
 
-## 📊 Technical Specifications & System Benchmarks
+## 📊 Technical Specifications & System Performance
 
-| Engineering Metric | Monocular Mobile Scan (`room_v2.splat`) | Ultra-HD Photorealistic Studio (`studio_room.splat`) |
-| :--- | :--- | :--- |
-| **Capture & Format** | Monocular Smartphone Video $\rightarrow$ 3DGS (`.splat`) | Ultra-HD High-Density 3DGS (`.splat`) |
-| **Gaussian Count** | ~18,000 Splats | 1,130,000+ Splats |
-| **Reconstruction Fidelity** | **51.72 dB PSNR** (Convergence: 0.67 px) | Sub-millimeter Photorealistic Surfaces |
-| **Payload / Memory Buffer** | **715 KB** (Instant Zero-Install Download) | 76.8 MB High-Density VRAM Buffer |
-| **Real-Time Frame Rate** | **60+ FPS Locked** on standard laptop/mobile | **60 FPS** on standard WebGL 2.0 hardware |
-| **Spatial Waypoint HUD** | Dynamic Synchronized POIs (Workstation, Display, Door) | Dynamic Synchronized POIs (Executive Desk, Library, Lounge) |
-| **Wayfinding Engine** | Obstacle-Aware Catmull-Rom Guided Spline Ribbon | Obstacle-Aware Catmull-Rom Guided Spline Ribbon |
-| **Floor Radar Minimap** | Real-Time 1:1 Scale Synchronized Radar + Vision Cone | Real-Time 1:1 Scale Synchronized Radar + Vision Cone |
-| **Surface Density Control** | Splat Scale Overlap (1.0x, 1.5x, 2.0x solidifying) | Pre-densified Photorealistic Splats |
+### 📱 Monocular Mobile Scan (`room_v2.splat`)
+- **Capture Method:** Standard handheld smartphone video $\rightarrow$ Dense 3D Gaussian Splatting
+- **Gaussian Primitives:** ~18,000 Splats
+- **Reconstruction Fidelity:** **51.72 dB PSNR** (Convergence: 0.67 px)
+- **File Size / Network Load:** **715 KB** (Instant Zero-Install WebGL Download)
+- **Frame Rate:** **60+ FPS Locked** on standard laptop and mobile browsers
+- **Spatial Features:** Dynamic 3D Waypoint Beacons, Obstacle-Aware Catmull-Rom Pathfinding, Real-Time 1:1 Scale Floor Radar
+
+### 🏛️ Ultra-HD Photorealistic Studio (`studio_room.splat`)
+- **Environment:** High-Fidelity Architectural Studio & Command Hub
+- **Gaussian Primitives:** **1,130,000+ Photorealistic Splats**
+- **Reconstruction Fidelity:** Sub-millimeter Photorealistic Surfaces & Reflections
+- **VRAM Allocation:** 76.8 MB High-Density WebGL Memory Buffer
+- **Frame Rate:** **60 FPS Locked** with hardware-accelerated tile rasterization
+- **Spatial Features:** Synchronized Studio Waypoints (Executive Desk, Library Hub, Lounge Corridor)
 
 ---
 
