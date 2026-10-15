@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix viewer run dev",
+    "build": "npm --prefix viewer run build",
+    "preview": "npm --prefix viewer run preview"
+  },
+  "dependencies": {
+    "three": "^0.186.1"
+  }
+}

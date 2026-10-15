@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NammaSpace 3D Spatial Engine</title>
+  </head>
+  <body>
+    <!-- Top-Left Telemetry HUD -->
+    <div id="hud-top-left">
+      <div id="brand-badge">⚡ NAMMASPACE ENGINE</div>
+      <div id="telemetry">
+        <span>MODE: <strong id="mode-label">WALK (1ST PERSON)</strong></span>
+        <span>POS: <strong id="coords-label">X: 0.0, Z: 5.0</strong></span>
+        <span>HEADING: <strong id="heading-label">0° N</strong></span>
+      </div>
+
+      <!-- POI Search & Wayfinding -->
+      <div id="poi-search-box">
+        <select id="poi-select">
+          <option value="">🔍 Search Landmark / POI...</option>
+          <option value="workstation">🖥️ Workstation Alpha</option>
+          <option value="display">📺 Main Display Hub</option>
+          <option value="door">🚪 Room Access Door</option>
+        </select>
+        <button id="btn-clear-nav" style="display: none;">✕ Cancel Path</button>
+      </div>
+    </div>
+
+    <!-- Top-Right 2D Minimap Radar -->
+    <div id="minimap-container">
+      <div id="minimap-title">FLOOR RADAR</div>
+      <canvas id="minimap" width="180" height="180"></canvas>
+      <div id="minimap-legend">
+        <span class="dot player"></span> You
+        <span class="dot landmark"></span> Objects
+      </div>
+    </div>
+
+    <!-- Bottom Mode Switcher -->
+    <div id="mode-bar">
+      <button id="btn-walk" class="active">🚶 Walk Mode [V]</button>
+      <button id="btn-dollhouse">🏠 Dollhouse View [V]</button>
+    </div>
+
+    <!-- Click to Enter Overlay -->
+    <div id="blocker">
+      <div id="instructions">
+        <p style="font-size: 32px; font-weight: bold; margin-bottom: 12px;">CLICK TO ENTER</p>
+        <p>Walk: <span class="key">W</span> <span class="key">A</span> <span class="key">S</span> <span class="key">D</span></p>
+        <p style="margin-top: 8px;">Look: <span class="key">Mouse</span></p>
+        <p style="margin-top: 8px;">Switch View: <span class="key">V</span></p>
+        <p style="margin-top: 14px; font-size: 13px; opacity: 0.7;">(Press ESC to release your mouse)</p>
+      </div>
+    </div>
+
+    <!-- Center Aim Reticle -->
+    <div id="crosshair">+</div>
+
+    <!-- Glassmorphic POI Detail Modal -->
+    <div id="poi-modal" style="display: none;">
+      <div class="poi-card">
+        <div class="poi-header">
+          <span class="poi-badge" id="poi-badge">LANDMARK</span>
+          <button id="poi-close-btn">&times;</button>
+        </div>
+        <h2 id="poi-title">Workstation Alpha</h2>
+        <p id="poi-desc">Primary workspace desk with dual monitors and computing unit.</p>
+        <div class="poi-grid">
+          <div class="poi-stat">
+            <span class="stat-label">COORDINATES</span>
+            <span class="stat-val" id="poi-coords">X: 1.8, Z: -1.2</span>
+          </div>
+          <div class="poi-stat">
+            <span class="stat-label">DISTANCE</span>
+            <span class="stat-val" id="poi-dist">3.4m</span>
+          </div>
+        </div>
+        <button id="btn-poi-navigate" class="poi-nav-btn">🧭 Navigate Route (A* Path)</button>
+      </div>
+    </div>
+
+    <!-- Navigation Arrival Toast -->
+    <div id="nav-toast" style="display: none;">
+      🎯 Destination Reached!
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

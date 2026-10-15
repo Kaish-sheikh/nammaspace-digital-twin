@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NammaSpace 3D Spatial Engine</title>
+  </head>
+  <body>
+    <!-- Top-Left Telemetry HUD -->
+    <div id="hud-top-left">
+      <div id="brand-badge">⚡ NAMMASPACE ENGINE</div>
+      <div id="telemetry">
+        <span>MODE: <strong id="mode-label">WALK (1ST PERSON)</strong></span>
+        <span>POS: <strong id="coords-label">X: 0.0, Z: 5.0</strong></span>
+        <span>HEADING: <strong id="heading-label">0° N</strong></span>
+      </div>
+    </div>
+
+    <!-- Top-Right Minimap Radar -->
+    <div id="minimap-container">
+      <div id="minimap-title">FLOOR RADAR</div>
+      <canvas id="minimap" width="180" height="180"></canvas>
+      <div id="minimap-legend">
+        <span class="dot player"></span> You
+        <span class="dot landmark"></span> Objects
+      </div>
+    </div>
+
+    <!-- Mode Switcher Buttons (Line 110 needs these!) -->
+    <div id="mode-bar">
+      <button id="btn-walk" class="active">🚶 Walk Mode [V]</button>
+      <button id="btn-dollhouse">🏠 Dollhouse View [V]</button>
+    </div>
+
+    <!-- Overlay Blocker -->
+    <div id="blocker">
+      <div id="instructions">
+        <p style="font-size: 32px; font-weight: bold; margin-bottom: 12px;">CLICK TO ENTER</p>
+        <p>Walk: <span class="key">W</span> <span class="key">A</span> <span class="key">S</span> <span class="key">D</span></p>
+        <p style="margin-top: 8px;">Look: <span class="key">Mouse</span></p>
+        <p style="margin-top: 8px;">Switch View: <span class="key">V</span></p>
+        <p style="margin-top: 14px; font-size: 13px; opacity: 0.7;">(Press ESC to release your mouse)</p>
+      </div>
+    </div>
+
+    <!-- Center Crosshair -->
+    <div id="crosshair">+</div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
