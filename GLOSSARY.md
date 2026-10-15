@@ -104,4 +104,9 @@
 - **Glassmorphism**: A modern UI design style that gives menus and windows a frosted, translucent glass look with glowing borders.
   - *Analogy:* Looking at text written on frosted bathroom glass with warm room lights glowing gently behind it.
 - **2D Floor Radar / Minimap**: A top-down circular radar in the corner of the screen that tracks your real-time position and landmarks.
-  - *Analogy:* The GPS navigation screen on a car dashboard showing a bird's-eye view of your vehicle on the road.
+  - *Analogy:* The GPS navigation screen on a car dashboard showing a bird's-eye view of your vehicle on the road.
+- **HUD (Heads-Up Display)**: Transparent interface indicators and controls floating directly on top of the 3D canvas so you never have to look away from the action.
+  - *Analogy:* The holographic speedometer and altitude numbers projected directly onto the glass cockpit of a modern aircraft.
+- **Design System**: A cohesive library of colors, typography, spacing, and frosted glass components that work together harmoniously.
+  - *Analogy:* An interior designer’s luxury swatch book ensuring all furniture, paint, and lighting in an apartment match perfectly.
+
