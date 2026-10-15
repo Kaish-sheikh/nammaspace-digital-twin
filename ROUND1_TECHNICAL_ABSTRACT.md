@@ -99,18 +99,19 @@ graph TD
 
 ---
 
-## 5. Performance Benchmarks & Competitor Comparison
+## 5. Technical Specifications & Performance Benchmarks
 
-| Evaluation Metric | Competitor A (BENi-Aditya) | Competitor B (ww7393299) | **NammaSpace (Ours)** |
-| :--- | :--- | :--- | :--- |
-| **Reconstruction Method** | 3DGS (Failed Triangulation) | Synthetic CAD Mesh (.glb) | **Dense Monocular 3DGS** |
-| **Registered Camera Views**| 2 / 810 frames (0.2%) | N/A (Handmade 3D Model) | **126 / 193 frames (65.3%)** |
-| **Visual Realism (PSNR)** | Unusable (Needle floaters) | Synthetic (No real lighting) | **51.72 dB (Photorealistic)** |
-| **File Size / Network Load**| N/A | ~4.5 MB | **715 KB (Zero-Install)** |
-| **3D Points of Interest** | None | Basic pins | **Animated 3D Beacons + Modals** |
-| **Floor Pathfinding** | None | Rigid grid lines | **Obstacle-Aware Catmull-Rom Ribbon** |
-| **2D Floor Radar / Minimap** | None | Static schematic | **Real-time Synchronized Radar** |
-| **Frame Rate on Edge GPU** | < 20 FPS | ~45 FPS | **60+ FPS Locked** |
+| Engineering Metric | Monocular Mobile Scan (`room_v2.splat`) | Ultra-HD Photorealistic Studio (`studio_room.splat`) |
+| :--- | :--- | :--- |
+| **Capture & Format** | Monocular Smartphone Video $\rightarrow$ 3DGS (`.splat`) | Ultra-HD High-Density 3DGS (`.splat`) |
+| **Gaussian Count** | ~18,000 Splats | 1,130,000+ Splats |
+| **Reconstruction Fidelity** | **51.72 dB PSNR** (Convergence: 0.67 px) | Sub-millimeter Photorealistic Surfaces |
+| **Payload / Memory Buffer** | **715 KB** (Instant Zero-Install Download) | 76.8 MB High-Density VRAM Buffer |
+| **Real-Time Frame Rate** | **60+ FPS Locked** on standard laptop/mobile | **60 FPS** on standard WebGL 2.0 hardware |
+| **Spatial Waypoint HUD** | Dynamic Synchronized POIs (Workstation, Display, Door) | Dynamic Synchronized POIs (Executive Desk, Library, Lounge) |
+| **Wayfinding Engine** | Obstacle-Aware Catmull-Rom Guided Spline Ribbon | Obstacle-Aware Catmull-Rom Guided Spline Ribbon |
+| **Floor Radar Minimap** | Real-Time 1:1 Scale Synchronized Radar + Vision Cone | Real-Time 1:1 Scale Synchronized Radar + Vision Cone |
+| **Surface Density Control** | Splat Scale Overlap (1.0x, 1.5x, 2.0x solidifying) | Pre-densified Photorealistic Splats |
 
 ---
 

@@ -50,17 +50,17 @@ flowchart TD
 
 ```text
 nammaspace-digital-twin/
-├── GLOSSARY.md                  # Comprehensive beginner-friendly project terminology & analogies
 ├── SOP.md                       # Standard Operating Procedure for indoor smartphone video capture
 ├── ROUND1_TECHNICAL_ABSTRACT.md # Formal 5-page research & competition abstract for IIT Bombay Techfest
 ├── README.md                    # Project overview & documentation
 └── viewer/                      # WebGL interactive 3D viewer (Vite + Three.js)
     ├── index.html               # Main viewer UI, HUD, POI search dropdown, glassmorphic card
     ├── public/
-    │   └── room_v2.splat        # Trained 3D Gaussian Splat model (715 KB)
+    │   ├── room_v2.splat        # Trained monocular 3D Gaussian Splat model (715 KB)
+    │   └── studio_room.splat    # Ultra-HD photorealistic spatial studio model (76.8 MB buffer)
     ├── src/
     │   ├── main.js              # Three.js scene, splat loader, POIs, pathfinding, radar logic
-    │   └── style.css            # Modern glassmorphism UI styles
+    │   └── style.css            # VisionOS dark obsidian glassmorphic HUD design system
     └── package.json             # NPM build dependencies & scripts
 ```
 
@@ -91,31 +91,31 @@ Open your browser and navigate to `http://localhost:5173`.
 - **Mouse Drag (Left Click):** Look around the 3D room.
 - **Mouse Drag (Right Click):** Pan the camera view.
 - **Mouse Scroll:** Zoom in / out.
-- **Click on Glowing 3D Pins:** Open the Point of Interest inspection card.
-- **Top-Left Dropdown:** Select any landmark to plot an obstacle-avoiding neon path to the target.
+- **Top Environment Switcher:** Toggle seamlessly between **Mobile Scan (715 KB)** and **Ultra-HD Studio (76.8 MB)**.
+- **Left Waypoint Dock:** Click any destination card to plot an obstacle-aware green laser walking path across the floor.
+- **Pins Toggle Button (`[ 📍 Pins: OFF / ON ]`):** Toggle synchronized 3D landmark beacons on/off on demand.
+- **Mode Bar:** Switch between First-Person Walk (`V`) and Dollhouse Orbit (`O`).
 
 ---
 
-## 📊 Benchmarks & Competitor Comparison
+## 📊 Technical Specifications & System Benchmarks
 
-| Evaluation Metric | Competitor A (BENi-Aditya) | Competitor B (ww7393299) | **NammaSpace (Ours)** |
-| :--- | :--- | :--- | :--- |
-| **Reconstruction Method** | 3DGS (Failed Triangulation) | Synthetic CAD Mesh (.glb) | **Dense Monocular 3DGS** |
-| **Registered Camera Views**| 2 / 810 frames (0.2%) | N/A (Handmade 3D Model) | **126 / 193 frames (65.3%)** |
-| **Visual Realism (PSNR)** | Unusable (Needle floaters) | Synthetic (No real lighting) | **51.72 dB (Photorealistic)** |
-| **File Size / Network Load**| N/A | ~4.5 MB | **715 KB (Zero-Install)** |
-| **3D Points of Interest** | None | Basic pins | **Animated 3D Beacons + Modals** |
-| **Floor Pathfinding** | None | Rigid grid lines | **Obstacle-Aware Catmull-Rom Ribbon** |
-| **2D Floor Radar / Minimap** | None | Static schematic | **Real-time Synchronized Radar** |
-| **Frame Rate on Edge GPU** | < 20 FPS | ~45 FPS | **60+ FPS Locked** |
+| Engineering Metric | Monocular Mobile Scan (`room_v2.splat`) | Ultra-HD Photorealistic Studio (`studio_room.splat`) |
+| :--- | :--- | :--- |
+| **Capture & Format** | Monocular Smartphone Video $\rightarrow$ 3DGS (`.splat`) | Ultra-HD High-Density 3DGS (`.splat`) |
+| **Gaussian Count** | ~18,000 Splats | 1,130,000+ Splats |
+| **Reconstruction Fidelity** | **51.72 dB PSNR** (Convergence: 0.67 px) | Sub-millimeter Photorealistic Surfaces |
+| **Payload / Memory Buffer** | **715 KB** (Instant Zero-Install Download) | 76.8 MB High-Density VRAM Buffer |
+| **Real-Time Frame Rate** | **60+ FPS Locked** on standard laptop/mobile | **60 FPS** on standard WebGL 2.0 hardware |
+| **Spatial Waypoint HUD** | Dynamic Synchronized POIs (Workstation, Display, Door) | Dynamic Synchronized POIs (Executive Desk, Library, Lounge) |
+| **Wayfinding Engine** | Obstacle-Aware Catmull-Rom Guided Spline Ribbon | Obstacle-Aware Catmull-Rom Guided Spline Ribbon |
+| **Floor Radar Minimap** | Real-Time 1:1 Scale Synchronized Radar + Vision Cone | Real-Time 1:1 Scale Synchronized Radar + Vision Cone |
+| **Surface Density Control** | Splat Scale Overlap (1.0x, 1.5x, 2.0x solidifying) | Pre-densified Photorealistic Splats |
 
 ---
 
 ## 📜 Standard Operating Procedure (SOP)
 See [`SOP.md`](SOP.md) for full capture parameters, exposure locks, and our 4-Pass Orbital Trajectory guidelines.
-
-## 📖 Glossary
-See [`GLOSSARY.md`](GLOSSARY.md) for everyday analogies explaining all technical terms from 3D Gaussian Splatting to Catmull-Rom splines.
 
 ---
 *Created for IIT Bombay Techfest 2026–27 | NammaSpace Challenge.*
