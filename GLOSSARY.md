@@ -115,6 +115,10 @@
   - *Analogy:* A luxury electric car with two drive modes: a battery-saving "Eco Mode" for short city trips and an "Ultra-Sport Mode" for high-performance track driving.
 - **Spatial Transition Loading State**: An animated, frosted-glass HUD screen displayed while the browser unpacks millions of 3D Gaussians and compiles WebGL graphics shaders.
   - *Analogy:* A theatrical velvet curtain gracefully drawing shut for a few seconds while the stage crew rolls out an elaborate, full-scale palace backdrop behind it.
+- **Dynamic POI Synchronization**: Automatically swapping the coordinates, icons, and titles of 3D landmark pins to match whichever room geometry is currently loaded, rather than leaving old coordinates floating out-of-sync.
+  - *Analogy:* Changing the map in your GPS app from Mumbai to Delhi as soon as your plane lands, so your restaurant and landmark pins point to real physical buildings rather than floating in mid-air.
+- **On-Demand Pin Visibility**: Hiding 3D landmark markers by default to preserve a pristine, photo-clean view of the room, while allowing users to toggle pins on with a single click whenever they want navigation guidance.
+  - *Analogy:* Turning off the push-pins on a framed architectural painting so you can admire the artwork unobstructed, then turning the layer back on when you need to find an exit door.
 
 
 

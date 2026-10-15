@@ -231,6 +231,191 @@ const ENV_CONFIGS = {
   }
 };
 
+// ==========================================
+// 📍 ENVIRONMENT-SPECIFIC 3D WAYPOINTS (POIS)
+// ==========================================
+const ENV_POIS = {
+  mobile: [
+    {
+      id: 'workstation',
+      title: 'Workstation Alpha',
+      badge: 'HARDWARE LAB',
+      desc: 'Primary dual-monitor engineering workspace with high-performance computing unit.',
+      pos: new THREE.Vector3(1.0, 0.45, -0.8),
+      color: 0x00d2ff,
+      icon: '🖥️'
+    },
+    {
+      id: 'display',
+      title: 'Main Display Hub',
+      badge: 'MEDIA CENTER',
+      desc: 'Visual panel for real-time telemetry streaming and presentations.',
+      pos: new THREE.Vector3(-1.1, 0.7, 0.2),
+      color: 0xf43f5e,
+      icon: '📺'
+    },
+    {
+      id: 'door',
+      title: 'Room Access Door',
+      badge: 'EGRESS / EXIT',
+      desc: 'Primary entry and egress corridor threshold with magnetic access controls.',
+      pos: new THREE.Vector3(0.0, 0.5, 2.8),
+      color: 0x10b981,
+      icon: '🚪'
+    }
+  ],
+  studio: [
+    {
+      id: 'workstation',
+      title: 'Executive Desk',
+      badge: 'STUDIO DESK',
+      desc: 'Central command mahogany workstation with curved visual monitor array.',
+      pos: new THREE.Vector3(0.05, 0.45, -0.2),
+      color: 0x00d2ff,
+      icon: '🖥️'
+    },
+    {
+      id: 'display',
+      title: 'Bookshelf & Art Hub',
+      badge: 'LIBRARY ZONE',
+      desc: 'Curated architectural library and spatial acoustic dampening shelving.',
+      pos: new THREE.Vector3(-1.3, 0.8, -1.4),
+      color: 0xf43f5e,
+      icon: '📚'
+    },
+    {
+      id: 'door',
+      title: 'Lounge Corridor',
+      badge: 'MAIN EGRESS',
+      desc: 'Access doorway leading to spatial atrium and executive lounge.',
+      pos: new THREE.Vector3(1.1, 0.4, 1.2),
+      color: 0x10b981,
+      icon: '🚪'
+    }
+  ]
+};
+
+// Master pin visibility flag (default: OFF for clean, unencumbered photorealism)
+let pinsVisible = false;
+const poiGroups = [];
+const poiClickableMeshes = [];
+
+// 2D Text Billboard Sprite
+function createTextSprite(text, colorHex) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 64;
+  const c = canvas.getContext('2d');
+
+  c.fillStyle = 'rgba(13, 17, 28, 0.88)';
+  c.strokeStyle = colorHex;
+  c.lineWidth = 3;
+  c.beginPath();
+  c.roundRect(4, 4, 248, 56, 12);
+  c.fill();
+  c.stroke();
+
+  c.fillStyle = '#ffffff';
+  c.font = 'bold 22px -apple-system, sans-serif';
+  c.textAlign = 'center';
+  c.textBaseline = 'middle';
+  c.fillText(text, 128, 32);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  const spriteMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true });
+  const sprite = new THREE.Sprite(spriteMaterial);
+  sprite.scale.set(1.2, 0.3, 1);
+  return sprite;
+}
+
+// Dynamically rebuild 3D POI markers for the active room geometry
+function rebuildPois(envKey) {
+  // Clear any existing POI groups from scene
+  poiGroups.forEach((group) => {
+    scene.remove(group);
+    group.traverse((child) => {
+      if (child.geometry) child.geometry.dispose();
+      if (child.material) {
+        if (child.material.map) child.material.map.dispose();
+        child.material.dispose();
+      }
+    });
+  });
+  poiGroups.length = 0;
+  poiClickableMeshes.length = 0;
+
+  const activePois = ENV_POIS[envKey] || ENV_POIS.mobile;
+
+  activePois.forEach((poi) => {
+    const group = new THREE.Group();
+    group.position.copy(poi.pos);
+
+    // Glowing Core Sphere
+    const sphereGeo = new THREE.SphereGeometry(0.12, 16, 16);
+    const sphereMat = new THREE.MeshStandardMaterial({
+      color: poi.color,
+      emissive: poi.color,
+      emissiveIntensity: 0.9,
+      roughness: 0.2
+    });
+    const sphere = new THREE.Mesh(sphereGeo, sphereMat);
+    sphere.userData = { poiId: poi.id };
+    group.add(sphere);
+    poiClickableMeshes.push(sphere);
+
+    // Vertical Light Beacon to Floor
+    const beamGeo = new THREE.CylinderGeometry(0.015, 0.015, poi.pos.y, 8);
+    const beamMat = new THREE.MeshBasicMaterial({
+      color: poi.color,
+      transparent: true,
+      opacity: 0.6
+    });
+    const beam = new THREE.Mesh(beamGeo, beamMat);
+    beam.position.y = -poi.pos.y / 2;
+    group.add(beam);
+
+    // Pulsing Floor Target Ring
+    const ringGeo = new THREE.RingGeometry(0.2, 0.35, 32);
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: poi.color,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.8
+    });
+    const ring = new THREE.Mesh(ringGeo, ringMat);
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.y = -poi.pos.y + 0.02;
+    group.add(ring);
+
+    // Floating Text Badge
+    const labelSprite = createTextSprite(`${poi.icon} ${poi.title}`, `#${poi.color.toString(16).padStart(6, '0')}`);
+    labelSprite.position.y = 0.32;
+    group.add(labelSprite);
+
+    group.userData = { poi, ring };
+    // Pins hidden by default unless toggled on by user
+    group.visible = pinsVisible;
+    scene.add(group);
+    poiGroups.push(group);
+  });
+}
+
+// Dynamically synchronize the left Waypoint Dock titles and icons
+function updateDockWaypoints(envKey) {
+  const activePois = ENV_POIS[envKey] || ENV_POIS.mobile;
+  activePois.forEach((poi) => {
+    const card = document.querySelector(`.waypoint-card[data-poi="${poi.id}"]`);
+    if (card) {
+      const iconEl = card.querySelector('.wp-icon');
+      const titleEl = card.querySelector('.wp-title');
+      const tagEl = card.querySelector('.wp-tag');
+      if (iconEl) iconEl.textContent = poi.icon;
+      if (titleEl) titleEl.textContent = poi.title;
+      if (tagEl) tagEl.textContent = poi.badge.split(' ')[0];
+    }
+  });
+}
+
 // Scene Transition Loading Screen Controller
 const sceneLoader = document.getElementById('scene-loader');
 const loaderTitle = document.getElementById('loader-title');
@@ -358,7 +543,16 @@ function loadEnvironment(envKey, isInitial = false) {
 
   // Reposition camera
   camera.position.set(config.cameraPos.x, config.cameraPos.y, config.cameraPos.z);
+
+  // Synchronize POIs to active environment
+  if (typeof rebuildPois === 'function') {
+    rebuildPois(envKey);
+  }
+  if (typeof updateDockWaypoints === 'function') {
+    updateDockWaypoints(envKey);
+  }
 }
+
 
 // Environment Switcher Buttons
 const btnEnvMobile = document.getElementById('btn-env-mobile');
@@ -444,119 +638,26 @@ if (btnCalibReset) {
 }
 
 // ==========================================
-// 6. 📍 3D POINTS OF INTEREST (POIS)
+// 6. 📍 WAYPOINT DOCK & 3D PIN CONTROLS
 // ==========================================
-const POI_DATA = [
-  {
-    id: 'workstation',
-    title: 'Workstation Alpha',
-    badge: 'HARDWARE LAB',
-    desc: 'Primary dual-monitor engineering workspace with high-performance computing unit.',
-    pos: new THREE.Vector3(1.8, 0.9, -1.2),
-    color: 0x00d2ff,
-    icon: '🖥️'
-  },
-  {
-    id: 'display',
-    title: 'Main Display Hub',
-    badge: 'MEDIA CENTER',
-    desc: 'Wall-mounted 4K visual panel for real-time telemetry streaming and presentations.',
-    pos: new THREE.Vector3(-2.2, 1.2, 0.2),
-    color: 0xf43f5e,
-    icon: '📺'
-  },
-  {
-    id: 'door',
-    title: 'Room Access Door',
-    badge: 'EGRESS / EXIT',
-    desc: 'Primary entry and egress corridor threshold with magnetic access controls.',
-    pos: new THREE.Vector3(0.0, 1.0, 4.0),
-    color: 0x10b981,
-    icon: '🚪'
-  }
-];
+const btnTogglePins = document.getElementById('btn-toggle-pins');
+if (btnTogglePins) {
+  btnTogglePins.addEventListener('click', (e) => {
+    e.stopPropagation();
+    pinsVisible = !pinsVisible;
+    btnTogglePins.textContent = pinsVisible ? '📍 Pins: ON' : '📍 Pins: OFF';
+    btnTogglePins.classList.toggle('active', pinsVisible);
 
-// 2D Text Billboard Sprite
-function createTextSprite(text, colorHex) {
-  const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 64;
-  const c = canvas.getContext('2d');
-
-  c.fillStyle = 'rgba(13, 17, 28, 0.88)';
-  c.strokeStyle = colorHex;
-  c.lineWidth = 3;
-  c.beginPath();
-  c.roundRect(4, 4, 248, 56, 12);
-  c.fill();
-  c.stroke();
-
-  c.fillStyle = '#ffffff';
-  c.font = 'bold 22px -apple-system, sans-serif';
-  c.textAlign = 'center';
-  c.textBaseline = 'middle';
-  c.fillText(text, 128, 32);
-
-  const texture = new THREE.CanvasTexture(canvas);
-  const spriteMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true });
-  const sprite = new THREE.Sprite(spriteMaterial);
-  sprite.scale.set(1.2, 0.3, 1);
-  return sprite;
+    poiGroups.forEach((g) => {
+      // Keep target pin visible if actively navigating, otherwise follow pinsVisible
+      if (activeTargetPoi && g.userData?.poi?.id === activeTargetPoi.id) {
+        g.visible = true;
+      } else {
+        g.visible = pinsVisible;
+      }
+    });
+  });
 }
-
-const poiGroups = [];
-const poiClickableMeshes = [];
-
-POI_DATA.forEach((poi) => {
-  const group = new THREE.Group();
-  group.position.copy(poi.pos);
-
-  // Glowing Core Sphere
-  const sphereGeo = new THREE.SphereGeometry(0.12, 16, 16);
-  const sphereMat = new THREE.MeshStandardMaterial({
-    color: poi.color,
-    emissive: poi.color,
-    emissiveIntensity: 0.9,
-    roughness: 0.2
-  });
-  const sphere = new THREE.Mesh(sphereGeo, sphereMat);
-  sphere.userData = { poiId: poi.id };
-  group.add(sphere);
-  poiClickableMeshes.push(sphere);
-
-  // Vertical Light Beacon to Floor
-  const beamGeo = new THREE.CylinderGeometry(0.015, 0.015, poi.pos.y, 8);
-  const beamMat = new THREE.MeshBasicMaterial({
-    color: poi.color,
-    transparent: true,
-    opacity: 0.6
-  });
-  const beam = new THREE.Mesh(beamGeo, beamMat);
-  beam.position.y = -poi.pos.y / 2;
-  group.add(beam);
-
-  // Pulsing Floor Target Ring
-  const ringGeo = new THREE.RingGeometry(0.2, 0.35, 32);
-  const ringMat = new THREE.MeshBasicMaterial({
-    color: poi.color,
-    side: THREE.DoubleSide,
-    transparent: true,
-    opacity: 0.8
-  });
-  const ring = new THREE.Mesh(ringGeo, ringMat);
-  ring.rotation.x = -Math.PI / 2;
-  ring.position.y = -poi.pos.y + 0.02;
-  group.add(ring);
-
-  // Floating Text Badge
-  const labelSprite = createTextSprite(`${poi.icon} ${poi.title}`, `#${poi.color.toString(16).padStart(6, '0')}`);
-  labelSprite.position.y = 0.32;
-  group.add(labelSprite);
-
-  group.userData = { poi, ring };
-  scene.add(group);
-  poiGroups.push(group);
-});
 
 // ==========================================
 // 7. 🧭 INDOOR WAYFINDING & PATHFINDING
@@ -625,7 +726,8 @@ const navToast = document.getElementById('nav-toast');
 const waypointCards = document.querySelectorAll('.waypoint-card');
 
 function selectPoi(poiId) {
-  const poi = POI_DATA.find((p) => p.id === poiId);
+  const activePois = ENV_POIS[currentEnv] || ENV_POIS.mobile;
+  const poi = activePois.find((p) => p.id === poiId);
   if (!poi) return;
 
   activeTargetPoi = poi;
@@ -638,6 +740,15 @@ function selectPoi(poiId) {
   if (poiDist) poiDist.textContent = `${dist.toFixed(1)}m`;
 
   if (poiModal) poiModal.style.display = 'block';
+
+  // Highlight active pin: ensure target pin is illuminated while navigating
+  poiGroups.forEach((g) => {
+    if (g.userData && g.userData.poi && g.userData.poi.id === poiId) {
+      g.visible = true;
+    } else if (!pinsVisible) {
+      g.visible = false;
+    }
+  });
 
   // Update Left Dock Active Card
   waypointCards.forEach((card) => {
@@ -660,6 +771,8 @@ function clearNavigation() {
   activeTargetPoi = null;
   if (navPathLine) {
     scene.remove(navPathLine);
+    if (navPathLine.geometry) navPathLine.geometry.dispose();
+    if (navPathLine.material) navPathLine.material.dispose();
     navPathLine = null;
   }
   if (poiModal) poiModal.style.display = 'none';
@@ -667,6 +780,11 @@ function clearNavigation() {
   if (navToast) navToast.style.display = 'none';
 
   waypointCards.forEach((card) => card.classList.remove('active-target'));
+
+  // Reset pin visibility to match master toggle state
+  poiGroups.forEach((g) => {
+    g.visible = pinsVisible;
+  });
 }
 
 // Left Dock Click Listeners
@@ -702,7 +820,7 @@ if (btnPoiNav) {
   });
 }
 
-// Raycaster for Clicking 3D Pins in World
+// Raycaster for Clicking 3D Pins in World (Active when pins are visible)
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
@@ -713,7 +831,8 @@ window.addEventListener('click', (event) => {
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
   raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(poiClickableMeshes);
+  const visibleClickables = poiClickableMeshes.filter((m) => m.parent && m.parent.visible);
+  const intersects = raycaster.intersectObjects(visibleClickables);
 
   if (intersects.length > 0) {
     const poiId = intersects[0].object.userData.poiId;
@@ -754,7 +873,8 @@ function updateMinimap() {
   ctx.stroke();
 
   // POI Blips
-  POI_DATA.forEach((poi) => {
+  const activePois = ENV_POIS[currentEnv] || ENV_POIS.mobile;
+  activePois.forEach((poi) => {
     const lx = (poi.pos.x + ROOM_SIZE / 2) * MM_SCALE;
     const lz = (poi.pos.z + ROOM_SIZE / 2) * MM_SCALE;
 
@@ -836,14 +956,15 @@ function animate() {
 
   // Pulse POI Target Rings
   poiGroups.forEach((g) => {
-    if (g.userData.ring) {
+    if (g.userData.ring && g.visible) {
       const scale = 1 + Math.sin(pulseTimer) * 0.15;
       g.userData.ring.scale.set(scale, scale, 1);
     }
   });
 
   // Update Dynamic Distances in Waypoint Dock
-  POI_DATA.forEach((poi) => {
+  const currentPois = ENV_POIS[currentEnv] || ENV_POIS.mobile;
+  currentPois.forEach((poi) => {
     const distEl = document.querySelector(`[data-dist="${poi.id}"]`);
     if (distEl) {
       const d = camera.position.distanceTo(poi.pos);
