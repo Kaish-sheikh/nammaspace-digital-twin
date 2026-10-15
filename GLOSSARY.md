@@ -113,5 +113,8 @@
   - *Analogy:* Switching from a fine pencil to a broader watercolor brush so each stroke connects with the next and leaves no empty white gaps on the paper.
 - **Dual-Model Showcase Architecture**: Engineering a 3D system capable of switching between a lightweight edge scan and an ultra-high-definition photorealistic studio twin inside the exact same viewer.
   - *Analogy:* A luxury electric car with two drive modes: a battery-saving "Eco Mode" for short city trips and an "Ultra-Sport Mode" for high-performance track driving.
+- **Spatial Transition Loading State**: An animated, frosted-glass HUD screen displayed while the browser unpacks millions of 3D Gaussians and compiles WebGL graphics shaders.
+  - *Analogy:* A theatrical velvet curtain gracefully drawing shut for a few seconds while the stage crew rolls out an elaborate, full-scale palace backdrop behind it.
+
 
 
