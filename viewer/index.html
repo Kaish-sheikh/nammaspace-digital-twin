@@ -38,11 +38,12 @@
           <button id="btn-env-mobile" class="env-btn active" title="Your Monocular Smartphone Scan">
             <span class="env-icon">📱</span> Mobile Scan (715 KB)
           </button>
-          <button id="btn-env-studio" class="env-btn" title="Ultra-HD Studio Digital Twin">
-            <span class="env-icon">🏛️</span> Ultra-HD Studio (36 MB)
+          <button id="btn-env-studio" class="env-btn" title="Ultra-HD High-Density Studio Twin">
+            <span class="env-icon">🏛️</span> Ultra-HD Studio (76.8 MB)
           </button>
         </div>
       </div>
+
 
 
       <!-- Center Spatial Telemetry -->
@@ -334,6 +335,45 @@
             <li><strong>Waypoints:</strong> Click any landmark pin in the 3D room or select from the left dock to generate an obstacle-avoiding floor path.</li>
             <li><strong>Floor Radar:</strong> Top-right minimap tracks your real-time heading and target vectors.</li>
           </ul>
+        </div>
+      </div>
+    <!-- High-Tech Scene Transition Loading Overlay -->
+    <div id="scene-loader" style="display: none;">
+      <div class="loader-modal">
+        <div class="loader-orbit">
+          <div class="orbit-ring outer"></div>
+          <div class="orbit-ring inner"></div>
+          <div class="orbit-core"></div>
+        </div>
+        <div class="loader-meta">
+          <div class="loader-badge" id="loader-badge">OPTIMIZING 3D GAUSSIANS</div>
+          <h2 class="loader-title" id="loader-title">STREAMING DIGITAL TWIN</h2>
+          <p class="loader-sub" id="loader-sub">Decompressing spatial radiance field & compiling WebGL tile buffers...</p>
+        </div>
+
+        <div class="loader-progress-wrap">
+          <div class="loader-progress-bar">
+            <div class="loader-progress-fill" id="loader-progress-fill" style="width: 0%;"></div>
+          </div>
+          <div class="loader-progress-labels">
+            <span id="loader-status-text">Allocating GPU memory buffers...</span>
+            <span id="loader-percentage" class="loader-percent">0%</span>
+          </div>
+        </div>
+
+        <div class="loader-telemetry-row">
+          <div class="loader-telem-chip">
+            <span class="lt-label">SCENE PAYLOAD</span>
+            <span class="lt-val" id="loader-chip-size">76.8 MB</span>
+          </div>
+          <div class="loader-telem-chip">
+            <span class="lt-label">GAUSSIAN DENSITY</span>
+            <span class="lt-val" id="loader-chip-splats">1,130,000+</span>
+          </div>
+          <div class="loader-telem-chip">
+            <span class="lt-label">TARGET FPS</span>
+            <span class="lt-val">60 FPS LOCKED</span>
+          </div>
         </div>
       </div>
     </div>

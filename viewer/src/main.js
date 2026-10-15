@@ -209,6 +209,7 @@ const ENV_CONFIGS = {
     name: 'Mobile Scan',
     path: '/room_v2.splat',
     size: '715 KB',
+    splatCount: '~18,000 Splats',
     fidelity: '51.72 dB PSNR',
     rotation: { x: Math.PI, y: 0, z: Math.PI / 2 },
     position: { x: 0, y: 1.0, z: 0 },
@@ -219,7 +220,8 @@ const ENV_CONFIGS = {
   studio: {
     name: 'Ultra-HD Studio',
     path: '/studio_room.splat',
-    size: '36.1 MB',
+    size: '76.8 MB',
+    splatCount: '1,130,000+ Splats',
     fidelity: 'Ultra-HD Photorealism',
     rotation: { x: Math.PI, y: 0, z: 0 },
     position: { x: 0, y: 0.5, z: 0 },
@@ -229,6 +231,71 @@ const ENV_CONFIGS = {
   }
 };
 
+// Scene Transition Loading Screen Controller
+const sceneLoader = document.getElementById('scene-loader');
+const loaderTitle = document.getElementById('loader-title');
+const loaderSub = document.getElementById('loader-sub');
+const loaderBadge = document.getElementById('loader-badge');
+const loaderProgressFill = document.getElementById('loader-progress-fill');
+const loaderStatusText = document.getElementById('loader-status-text');
+const loaderPercentage = document.getElementById('loader-percentage');
+const loaderChipSize = document.getElementById('loader-chip-size');
+const loaderChipSplats = document.getElementById('loader-chip-splats');
+
+let loaderTimer = null;
+
+function showSceneLoader(envKey) {
+  const config = ENV_CONFIGS[envKey];
+  if (!sceneLoader || !config) return;
+
+  if (loaderTimer) clearInterval(loaderTimer);
+
+  sceneLoader.classList.remove('fade-out');
+  sceneLoader.style.display = 'flex';
+
+  if (loaderTitle) loaderTitle.textContent = envKey === 'studio' ? 'STREAMING ULTRA-HD SPATIAL TWIN' : 'LOADING MONOCULAR MOBILE SCAN';
+  if (loaderSub) loaderSub.textContent = envKey === 'studio' ? 'Decompressing 1,130,000+ photorealistic Gaussians & allocating WebGL VRAM...' : 'Loading edge monocular 3D Gaussian Splatting scene...';
+  if (loaderBadge) loaderBadge.textContent = envKey === 'studio' ? '76.8 MB VRAM BUFFER' : 'MOBILE RECONSTRUCTION';
+  if (loaderChipSize) loaderChipSize.textContent = config.size;
+  if (loaderChipSplats) loaderChipSplats.textContent = config.splatCount;
+
+  let progress = 6;
+  if (loaderProgressFill) loaderProgressFill.style.width = '6%';
+  if (loaderPercentage) loaderPercentage.textContent = '6%';
+  if (loaderStatusText) loaderStatusText.textContent = 'Allocating WebGL memory buffers...';
+
+  loaderTimer = setInterval(() => {
+    if (progress < 92) {
+      progress += Math.floor(Math.random() * 8) + 5;
+      if (progress > 92) progress = 92;
+      if (loaderProgressFill) loaderProgressFill.style.width = `${progress}%`;
+      if (loaderPercentage) loaderPercentage.textContent = `${progress}%`;
+
+      if (progress > 30 && progress < 65) {
+        if (loaderStatusText) loaderStatusText.textContent = 'Decompressing 3D covariance & spherical harmonics...';
+      } else if (progress >= 65) {
+        if (loaderStatusText) loaderStatusText.textContent = 'Binding tile rasterizer & spatial waypoints...';
+      }
+    }
+  }, 100);
+}
+
+function hideSceneLoader() {
+  if (loaderTimer) clearInterval(loaderTimer);
+  if (loaderProgressFill) loaderProgressFill.style.width = '100%';
+  if (loaderPercentage) loaderPercentage.textContent = '100%';
+  if (loaderStatusText) loaderStatusText.textContent = 'Spatial Twin Ready!';
+
+  setTimeout(() => {
+    if (sceneLoader) {
+      sceneLoader.classList.add('fade-out');
+      setTimeout(() => {
+        sceneLoader.style.display = 'none';
+      }, 350);
+    }
+  }, 350);
+}
+
 function applySplatScale(scale) {
   currentSplatScale = scale;
   if (splatViewer && splatViewer.viewer && splatViewer.viewer.splatMesh) {
@@ -236,10 +303,15 @@ function applySplatScale(scale) {
   }
 }
 
-function loadEnvironment(envKey) {
+function loadEnvironment(envKey, isInitial = false) {
   const config = ENV_CONFIGS[envKey];
   if (!config) return;
   currentEnv = envKey;
+
+  // Trigger high-tech loading screen
+  if (!isInitial) {
+    showSceneLoader(envKey);
+  }
 
   // Remove previous splat viewer if present
   if (splatViewer) {
@@ -260,10 +332,14 @@ function loadEnvironment(envKey) {
 
   splatViewer.addSplatScene(config.path, {
     splatAlphaRemovalThreshold: 1,
-    showLoadingUI: true
+    showLoadingUI: false
   }).then(() => {
     applySplatScale(config.splatScale);
     updateDensityButtons(config.splatScale);
+    if (!isInitial) hideSceneLoader();
+  }).catch((err) => {
+    console.error('Error loading splat scene:', err);
+    if (!isInitial) hideSceneLoader();
   });
 
   scene.add(splatViewer);
@@ -291,19 +367,20 @@ const btnEnvStudio = document.getElementById('btn-env-studio');
 if (btnEnvMobile) {
   btnEnvMobile.addEventListener('click', (e) => {
     e.stopPropagation();
-    loadEnvironment('mobile');
+    if (currentEnv !== 'mobile') loadEnvironment('mobile');
   });
 }
 
 if (btnEnvStudio) {
   btnEnvStudio.addEventListener('click', (e) => {
     e.stopPropagation();
-    loadEnvironment('studio');
+    if (currentEnv !== 'studio') loadEnvironment('studio');
   });
 }
 
-// Initial Environment Load (Starts with your mobile scan tuned to 1.85x density)
-loadEnvironment('mobile');
+// Initial Environment Load (Starts with mobile scan)
+loadEnvironment('mobile', true);
+
 
 // ==========================================
 // 5. 🛠️ COLLAPSIBLE ROOM CALIBRATION DRAWER
