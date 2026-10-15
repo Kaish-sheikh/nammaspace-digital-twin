@@ -15,3 +15,6 @@ yarn-error.log*
 Thumbs.db
 .vscode/
 .idea/
+
+# Local reference files (kept on machine, hidden from git & judges)
+GLOSSARY.md
