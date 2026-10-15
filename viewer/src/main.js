@@ -428,15 +428,19 @@ const loaderChipSize = document.getElementById('loader-chip-size');
 const loaderChipSplats = document.getElementById('loader-chip-splats');
 
 let loaderTimer = null;
+let loaderStartTime = 0;
+const MIN_LOADER_DURATION_MS = 1500; // Guaranteed minimum display for cinematic clarity
 
 function showSceneLoader(envKey) {
   const config = ENV_CONFIGS[envKey];
   if (!sceneLoader || !config) return;
 
+  loaderStartTime = Date.now();
   if (loaderTimer) clearInterval(loaderTimer);
 
   sceneLoader.classList.remove('fade-out');
   sceneLoader.style.display = 'flex';
+  sceneLoader.style.opacity = '1';
 
   if (loaderTitle) loaderTitle.textContent = envKey === 'studio' ? 'STREAMING ULTRA-HD SPATIAL TWIN' : 'LOADING MONOCULAR MOBILE SCAN';
   if (loaderSub) loaderSub.textContent = envKey === 'studio' ? 'Decompressing 1,130,000+ photorealistic Gaussians & allocating WebGL VRAM...' : 'Loading edge monocular 3D Gaussian Splatting scene...';
@@ -444,41 +448,46 @@ function showSceneLoader(envKey) {
   if (loaderChipSize) loaderChipSize.textContent = config.size;
   if (loaderChipSplats) loaderChipSplats.textContent = config.splatCount;
 
-  let progress = 6;
-  if (loaderProgressFill) loaderProgressFill.style.width = '6%';
-  if (loaderPercentage) loaderPercentage.textContent = '6%';
+  let progress = 10;
+  if (loaderProgressFill) loaderProgressFill.style.width = '10%';
+  if (loaderPercentage) loaderPercentage.textContent = '10%';
   if (loaderStatusText) loaderStatusText.textContent = 'Allocating WebGL memory buffers...';
 
   loaderTimer = setInterval(() => {
-    if (progress < 92) {
-      progress += Math.floor(Math.random() * 8) + 5;
-      if (progress > 92) progress = 92;
+    if (progress < 90) {
+      progress += Math.floor(Math.random() * 8) + 6;
+      if (progress > 90) progress = 90;
       if (loaderProgressFill) loaderProgressFill.style.width = `${progress}%`;
       if (loaderPercentage) loaderPercentage.textContent = `${progress}%`;
 
-      if (progress > 30 && progress < 65) {
+      if (progress > 25 && progress < 60) {
         if (loaderStatusText) loaderStatusText.textContent = 'Decompressing 3D covariance & spherical harmonics...';
-      } else if (progress >= 65) {
+      } else if (progress >= 60) {
         if (loaderStatusText) loaderStatusText.textContent = 'Binding tile rasterizer & spatial waypoints...';
       }
     }
-  }, 100);
+  }, 80);
 }
 
 function hideSceneLoader() {
-  if (loaderTimer) clearInterval(loaderTimer);
-  if (loaderProgressFill) loaderProgressFill.style.width = '100%';
-  if (loaderPercentage) loaderPercentage.textContent = '100%';
-  if (loaderStatusText) loaderStatusText.textContent = 'Spatial Twin Ready!';
+  const elapsed = Date.now() - loaderStartTime;
+  const remainingDelay = Math.max(0, MIN_LOADER_DURATION_MS - elapsed);
 
   setTimeout(() => {
-    if (sceneLoader) {
-      sceneLoader.classList.add('fade-out');
-      setTimeout(() => {
-        sceneLoader.style.display = 'none';
-      }, 350);
-    }
-  }, 350);
+    if (loaderTimer) clearInterval(loaderTimer);
+    if (loaderProgressFill) loaderProgressFill.style.width = '100%';
+    if (loaderPercentage) loaderPercentage.textContent = '100%';
+    if (loaderStatusText) loaderStatusText.textContent = 'Spatial Twin Ready!';
+
+    setTimeout(() => {
+      if (sceneLoader) {
+        sceneLoader.classList.add('fade-out');
+        setTimeout(() => {
+          sceneLoader.style.display = 'none';
+        }, 400);
+      }
+    }, 350);
+  }, remainingDelay);
 }
 
 function applySplatScale(scale) {
@@ -845,93 +854,280 @@ window.addEventListener('click', (event) => {
 // ==========================================
 const minimapCanvas = document.getElementById('minimap');
 const ctx = minimapCanvas ? minimapCanvas.getContext('2d') : null;
+const radarStatusEl = document.querySelector('.radar-scale');
 const MM_SIZE = 180;
 const MM_SCALE = MM_SIZE / ROOM_SIZE;
+let radarPulsePhase = 0;
 
 function updateMinimap() {
   if (!ctx) return;
   ctx.clearRect(0, 0, MM_SIZE, MM_SIZE);
 
-  // Dark obsidian grid
-  ctx.fillStyle = '#090a10';
+  radarPulsePhase += 0.035;
+
+  // 1. Deep Obsidian Tactical Radar Background
+  const bgGrad = ctx.createRadialGradient(MM_SIZE / 2, MM_SIZE / 2, 8, MM_SIZE / 2, MM_SIZE / 2, MM_SIZE / 2);
+  bgGrad.addColorStop(0, '#0c101d');
+  bgGrad.addColorStop(0.7, '#070912');
+  bgGrad.addColorStop(1, '#030408');
+  ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, MM_SIZE, MM_SIZE);
 
-  // Concentric Range Rings
-  ctx.strokeStyle = 'rgba(0, 210, 255, 0.12)';
+  // 2. Subtle Tactical Grid Crosshatch
+  ctx.strokeStyle = 'rgba(0, 210, 255, 0.05)';
   ctx.lineWidth = 1;
-  [30, 60, 85].forEach((radius) => {
+  const gridStep = 30;
+  for (let x = gridStep; x < MM_SIZE; x += gridStep) {
     ctx.beginPath();
-    ctx.arc(MM_SIZE / 2, MM_SIZE / 2, radius, 0, Math.PI * 2);
+    ctx.moveTo(x, 0); ctx.lineTo(x, MM_SIZE);
     ctx.stroke();
+  }
+  for (let y = gridStep; y < MM_SIZE; y += gridStep) {
+    ctx.beginPath();
+    ctx.moveTo(0, y); ctx.lineTo(MM_SIZE, y);
+    ctx.stroke();
+  }
+
+  // 3. Concentric Metric Range Rings (1.5m, 3.0m, 4.5m)
+  const ringDistances = [
+    { r: 27, label: '1.5M' },
+    { r: 54, label: '3.0M' },
+    { r: 81, label: '4.5M' }
+  ];
+
+  ringDistances.forEach((ring) => {
+    ctx.strokeStyle = 'rgba(0, 210, 255, 0.12)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(MM_SIZE / 2, MM_SIZE / 2, ring.r, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Metric Distance Callout
+    ctx.fillStyle = 'rgba(0, 210, 255, 0.35)';
+    ctx.font = '600 7px "JetBrains Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(ring.label, MM_SIZE / 2, (MM_SIZE / 2) - ring.r + 5);
   });
 
-  // Crosshair Lines
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+  // 4. Center Crosshair Lines
+  ctx.strokeStyle = 'rgba(0, 210, 255, 0.1)';
   ctx.beginPath();
   ctx.moveTo(MM_SIZE / 2, 0); ctx.lineTo(MM_SIZE / 2, MM_SIZE);
   ctx.moveTo(0, MM_SIZE / 2); ctx.lineTo(MM_SIZE, MM_SIZE / 2);
   ctx.stroke();
 
-  // POI Blips
+  // 5. Compass Cardinal Ticks (N, S, E, W)
+  ctx.font = '700 8px "JetBrains Mono", monospace';
+  ctx.fillStyle = '#00d2ff';
+  ctx.textAlign = 'center';
+  ctx.fillText('N', MM_SIZE / 2, 9);
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+  ctx.fillText('S', MM_SIZE / 2, MM_SIZE - 4);
+  ctx.fillText('W', 7, MM_SIZE / 2 + 3);
+  ctx.fillText('E', MM_SIZE - 7, MM_SIZE / 2 + 3);
+
+  // 6. Tactical Room Perimeter Boundary Box & Corner Brackets
+  ctx.strokeStyle = 'rgba(0, 210, 255, 0.18)';
+  ctx.lineWidth = 1;
+  const pad = 10;
+  ctx.strokeRect(pad, pad, MM_SIZE - pad * 2, MM_SIZE - pad * 2);
+
+  ctx.strokeStyle = '#00d2ff';
+  ctx.lineWidth = 1.5;
+  const clen = 8;
+  // Top-left
+  ctx.beginPath(); ctx.moveTo(pad, pad + clen); ctx.lineTo(pad, pad); ctx.lineTo(pad + clen, pad); ctx.stroke();
+  // Top-right
+  ctx.beginPath(); ctx.moveTo(MM_SIZE - pad - clen, pad); ctx.lineTo(MM_SIZE - pad, pad); ctx.lineTo(MM_SIZE - pad, pad + clen); ctx.stroke();
+  // Bottom-left
+  ctx.beginPath(); ctx.moveTo(pad, MM_SIZE - pad - clen); ctx.lineTo(pad, MM_SIZE - pad); ctx.lineTo(pad + clen, MM_SIZE - pad); ctx.stroke();
+  // Bottom-right
+  ctx.beginPath(); ctx.moveTo(MM_SIZE - pad - clen, MM_SIZE - pad); ctx.lineTo(MM_SIZE - pad, MM_SIZE - pad); ctx.lineTo(MM_SIZE - pad, MM_SIZE - pad - clen); ctx.stroke();
+
+  // 7. POI BLIPS (RULE: HIDDEN WHEN PINS ARE OFF, UNLESS IT IS THE ACTIVE TARGET)
   const activePois = ENV_POIS[currentEnv] || ENV_POIS.mobile;
   activePois.forEach((poi) => {
+    const isTarget = activeTargetPoi && activeTargetPoi.id === poi.id;
+    // Strict requirement: If pins are OFF and this is NOT active target, do NOT draw it!
+    if (!pinsVisible && !isTarget) return;
+
     const lx = (poi.pos.x + ROOM_SIZE / 2) * MM_SCALE;
     const lz = (poi.pos.z + ROOM_SIZE / 2) * MM_SCALE;
+    const colorHex = `#${poi.color.toString(16).padStart(6, '0')}`;
 
-    ctx.fillStyle = `#${poi.color.toString(16).padStart(6, '0')}`;
-    ctx.beginPath();
-    ctx.arc(lx, lz, 4, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Pulse ring around target
-    if (activeTargetPoi && activeTargetPoi.id === poi.id) {
-      ctx.strokeStyle = `#${poi.color.toString(16).padStart(6, '0')}`;
+    if (isTarget) {
+      // Pulsing animated Target Lock reticle
+      const targetPulse = Math.sin(radarPulsePhase * 3) * 2;
+      ctx.strokeStyle = '#10b981';
       ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.arc(lx, lz, 7, 0, Math.PI * 2);
+      ctx.arc(lx, lz, 8 + targetPulse, 0, Math.PI * 2);
       ctx.stroke();
+
+      // Outer targeting brackets
+      ctx.strokeStyle = 'rgba(16, 185, 129, 0.6)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(lx, lz, 13 + targetPulse, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Core Target Dot
+      ctx.fillStyle = '#10b981';
+      ctx.beginPath();
+      ctx.arc(lx, lz, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Micro Distance Callout Tag
+      const dist = camera.position.distanceTo(poi.pos);
+      ctx.fillStyle = 'rgba(7, 10, 18, 0.9)';
+      ctx.fillRect(lx - 20, lz - 17, 40, 11);
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(lx - 20, lz - 17, 40, 11);
+
+      ctx.fillStyle = '#10b981';
+      ctx.font = '700 7px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(`${dist.toFixed(1)}m`, lx, lz - 12);
+    } else {
+      // Standard POI Diamond (Rendered ONLY when pins are toggled ON)
+      ctx.save();
+      ctx.translate(lx, lz);
+      ctx.rotate(Math.PI / 4);
+
+      ctx.fillStyle = colorHex;
+      ctx.shadowColor = colorHex;
+      ctx.shadowBlur = 6;
+      ctx.fillRect(-3, -3, 6, 6);
+      ctx.restore();
+
+      // Micro Tag above blip
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      ctx.font = '700 6.5px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(poi.id.toUpperCase(), lx, lz - 7);
     }
   });
 
   const px = (camera.position.x + ROOM_SIZE / 2) * MM_SCALE;
   const pz = (camera.position.z + ROOM_SIZE / 2) * MM_SCALE;
 
-  // Active Navigation Route Line on Radar
+  // 8. Animated Active Navigation Route on Minimap
   if (activeTargetPoi) {
     const tx = (activeTargetPoi.pos.x + ROOM_SIZE / 2) * MM_SCALE;
     const tz = (activeTargetPoi.pos.z + ROOM_SIZE / 2) * MM_SCALE;
 
+    // Glowing Neon Dashed Route
     ctx.strokeStyle = '#10b981';
     ctx.lineWidth = 2;
-    ctx.setLineDash([4, 4]);
+    ctx.setLineDash([5, 4]);
+    ctx.lineDashOffset = -radarPulsePhase * 15;
     ctx.beginPath();
     ctx.moveTo(px, pz);
     ctx.lineTo(tx, tz);
     ctx.stroke();
     ctx.setLineDash([]);
+
+    // Traveling Energy Pulse Particle along line
+    const travelT = (radarPulsePhase * 0.8) % 1;
+    const pulseX = px + (tx - px) * travelT;
+    const pulseY = pz + (tz - pz) * travelT;
+
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = '#10b981';
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.arc(pulseX, pulseY, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
   }
 
-  // Player Vision Cone (FOV)
+  // 9. Player Realistic FOV Vision Cone
   const dir = new THREE.Vector3();
   camera.getWorldDirection(dir);
   const angle = Math.atan2(dir.x, dir.z);
 
-  ctx.fillStyle = 'rgba(0, 210, 255, 0.22)';
+  const fovRadius = 32;
+  const fovSpread = 0.52; // ~60 degree viewing cone
+  const coneGrad = ctx.createRadialGradient(px, pz, 2, px, pz, fovRadius);
+  coneGrad.addColorStop(0, 'rgba(0, 210, 255, 0.45)');
+  coneGrad.addColorStop(0.5, 'rgba(0, 210, 255, 0.15)');
+  coneGrad.addColorStop(1, 'rgba(0, 210, 255, 0.0)');
+
+  ctx.fillStyle = coneGrad;
   ctx.beginPath();
   ctx.moveTo(px, pz);
-  ctx.arc(px, pz, 22, angle - Math.PI / 2 - 0.45, angle - Math.PI / 2 + 0.45);
+  ctx.arc(px, pz, fovRadius, angle - Math.PI / 2 - fovSpread, angle - Math.PI / 2 + fovSpread);
   ctx.closePath();
   ctx.fill();
 
-  // Player Dot
-  ctx.fillStyle = '#00d2ff';
+  // Fine Peripheral Sightline Rays
+  ctx.strokeStyle = 'rgba(0, 210, 255, 0.35)';
+  ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.arc(px, pz, 4.5, 0, Math.PI * 2);
+  ctx.moveTo(px, pz);
+  ctx.lineTo(px + Math.cos(angle - Math.PI / 2 - fovSpread) * fovRadius, pz + Math.sin(angle - Math.PI / 2 - fovSpread) * fovRadius);
+  ctx.moveTo(px, pz);
+  ctx.lineTo(px + Math.cos(angle - Math.PI / 2 + fovSpread) * fovRadius, pz + Math.sin(angle - Math.PI / 2 + fovSpread) * fovRadius);
+  ctx.stroke();
+
+  // 10. Player Delta Fighter Chevron (Rotates with Player Heading)
+  ctx.save();
+  ctx.translate(px, pz);
+  ctx.rotate(angle);
+
+  // Outer Delta Chevron
+  ctx.fillStyle = '#00d2ff';
+  ctx.shadowColor = '#00d2ff';
+  ctx.shadowBlur = 8;
+  ctx.beginPath();
+  ctx.moveTo(0, 7); // nose pointing in forward local orientation
+  ctx.lineTo(-4.5, -5);
+  ctx.lineTo(0, -2.5);
+  ctx.lineTo(4.5, -5);
+  ctx.closePath();
   ctx.fill();
 
-  ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = 1;
-  ctx.stroke();
+  // Inner White Core
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(0, 0, 1.8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // 11. Dynamic Radar Header Status Text
+  if (radarStatusEl) {
+    if (activeTargetPoi) {
+      radarStatusEl.innerHTML = `<span style="color:#10b981;font-weight:800;">LOCK: ${activeTargetPoi.title.substring(0, 9).toUpperCase()}</span>`;
+    } else if (pinsVisible) {
+      radarStatusEl.innerHTML = `<span style="color:#00d2ff;font-weight:700;">PINS: ACTIVE</span>`;
+    } else {
+      radarStatusEl.innerHTML = `<span style="color:var(--text-dim);">STEALTH 1:1</span>`;
+    }
+  }
+}
+
+// Interactive Clickable Minimap: Click on Radar to Select Waypoints
+if (minimapCanvas) {
+  minimapCanvas.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const rect = minimapCanvas.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const clickY = e.clientY - rect.top;
+
+    const activePois = ENV_POIS[currentEnv] || ENV_POIS.mobile;
+    for (const poi of activePois) {
+      const lx = (poi.pos.x + ROOM_SIZE / 2) * MM_SCALE;
+      const lz = (poi.pos.z + ROOM_SIZE / 2) * MM_SCALE;
+      const dist = Math.hypot(clickX - lx, clickY - lz);
+      if (dist < 18) {
+        selectPoi(poi.id);
+        return;
+      }
+    }
+  });
 }
 
 // ==========================================
