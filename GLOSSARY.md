@@ -109,4 +109,9 @@
   - *Analogy:* The holographic speedometer and altitude numbers projected directly onto the glass cockpit of a modern aircraft.
 - **Design System**: A cohesive library of colors, typography, spacing, and frosted glass components that work together harmoniously.
   - *Analogy:* An interior designer’s luxury swatch book ensuring all furniture, paint, and lighting in an apartment match perfectly.
+- **Splat Density Overlap (Splat Scale)**: A rendering adjustment that slightly widens each 3D droplet in screen space so they overlap and form solid, opaque surfaces instead of a fuzzy mist.
+  - *Analogy:* Switching from a fine pencil to a broader watercolor brush so each stroke connects with the next and leaves no empty white gaps on the paper.
+- **Dual-Model Showcase Architecture**: Engineering a 3D system capable of switching between a lightweight edge scan and an ultra-high-definition photorealistic studio twin inside the exact same viewer.
+  - *Analogy:* A luxury electric car with two drive modes: a battery-saving "Eco Mode" for short city trips and an "Ultra-Sport Mode" for high-performance track driving.
+
 
