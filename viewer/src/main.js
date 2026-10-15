@@ -177,33 +177,133 @@ document.addEventListener('keyup', (event) => {
 });
 
 // ==========================================
-// 4. 🔥 3D ROOM GAUSSIAN SPLAT SCENE
+// 4. 🔥 DUAL-ENVIRONMENT SPATIAL ENGINE
 // ==========================================
-const splatViewer = new GaussianSplats3D.DropInViewer({
-  gpuAcceleratedSort: false,
-  sharedMemoryForWorkers: false
+const ROOM_SIZE = 20;
+
+// Grounding dark obsidian floor plane
+const floorGeo = new THREE.PlaneGeometry(ROOM_SIZE, ROOM_SIZE);
+const floorMat = new THREE.MeshStandardMaterial({
+  color: 0x07080c,
+  roughness: 0.35,
+  metalness: 0.6
 });
-
-// Default calibrated orientation
-splatViewer.rotation.x = Math.PI;
-splatViewer.rotation.z = Math.PI / 2;
-splatViewer.position.set(0, 1.0, 0);
-splatViewer.scale.set(1.5, 1.5, 1.5);
-
-splatViewer.addSplatScene('/room_v2.splat', {
-  splatAlphaRemovalThreshold: 1,
-  showLoadingUI: true
-});
-
-scene.add(splatViewer);
+const floorMesh = new THREE.Mesh(floorGeo, floorMat);
+floorMesh.rotation.x = -Math.PI / 2;
+floorMesh.position.y = -0.01;
+scene.add(floorMesh);
 
 // Floor Grid & Lighting
-const ROOM_SIZE = 20;
 const gridHelper = new THREE.GridHelper(ROOM_SIZE, 20, 0x00d2ff, 0x1e293b);
 gridHelper.position.y = 0;
 scene.add(gridHelper);
 
-scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+scene.add(new THREE.AmbientLight(0xffffff, 1.0));
+
+let splatViewer = null;
+let currentEnv = 'mobile';
+let currentSplatScale = 1.85;
+
+const ENV_CONFIGS = {
+  mobile: {
+    name: 'Mobile Scan',
+    path: '/room_v2.splat',
+    size: '715 KB',
+    fidelity: '51.72 dB PSNR',
+    rotation: { x: Math.PI, y: 0, z: Math.PI / 2 },
+    position: { x: 0, y: 1.0, z: 0 },
+    scale: { x: 1.5, y: 1.5, z: 1.5 },
+    splatScale: 1.85,
+    cameraPos: { x: 0, y: EYE_HEIGHT, z: 5 }
+  },
+  studio: {
+    name: 'Ultra-HD Studio',
+    path: '/studio_room.splat',
+    size: '36.1 MB',
+    fidelity: 'Ultra-HD Photorealism',
+    rotation: { x: Math.PI, y: 0, z: 0 },
+    position: { x: 0, y: 0.5, z: 0 },
+    scale: { x: 1.2, y: 1.2, z: 1.2 },
+    splatScale: 1.0,
+    cameraPos: { x: 0, y: EYE_HEIGHT, z: 3.5 }
+  }
+};
+
+function applySplatScale(scale) {
+  currentSplatScale = scale;
+  if (splatViewer && splatViewer.viewer && splatViewer.viewer.splatMesh) {
+    splatViewer.viewer.splatMesh.setSplatScale(scale);
+  }
+}
+
+function loadEnvironment(envKey) {
+  const config = ENV_CONFIGS[envKey];
+  if (!config) return;
+  currentEnv = envKey;
+
+  // Remove previous splat viewer if present
+  if (splatViewer) {
+    scene.remove(splatViewer);
+    if (splatViewer.dispose) splatViewer.dispose();
+    splatViewer = null;
+  }
+
+  // Create fresh DropInViewer
+  splatViewer = new GaussianSplats3D.DropInViewer({
+    gpuAcceleratedSort: false,
+    sharedMemoryForWorkers: false
+  });
+
+  splatViewer.rotation.set(config.rotation.x, config.rotation.y, config.rotation.z);
+  splatViewer.position.set(config.position.x, config.position.y, config.position.z);
+  splatViewer.scale.set(config.scale.x, config.scale.y, config.scale.z);
+
+  splatViewer.addSplatScene(config.path, {
+    splatAlphaRemovalThreshold: 1,
+    showLoadingUI: true
+  }).then(() => {
+    applySplatScale(config.splatScale);
+    updateDensityButtons(config.splatScale);
+  });
+
+  scene.add(splatViewer);
+
+  // Update UI Telemetry
+  const statusFidelity = document.getElementById('status-fidelity');
+  if (statusFidelity) {
+    statusFidelity.textContent = `${config.size} • ${config.fidelity}`;
+  }
+
+  // Update Environment Button States
+  const btnMobile = document.getElementById('btn-env-mobile');
+  const btnStudio = document.getElementById('btn-env-studio');
+  if (btnMobile) btnMobile.classList.toggle('active', envKey === 'mobile');
+  if (btnStudio) btnStudio.classList.toggle('active', envKey === 'studio');
+
+  // Reposition camera
+  camera.position.set(config.cameraPos.x, config.cameraPos.y, config.cameraPos.z);
+}
+
+// Environment Switcher Buttons
+const btnEnvMobile = document.getElementById('btn-env-mobile');
+const btnEnvStudio = document.getElementById('btn-env-studio');
+
+if (btnEnvMobile) {
+  btnEnvMobile.addEventListener('click', (e) => {
+    e.stopPropagation();
+    loadEnvironment('mobile');
+  });
+}
+
+if (btnEnvStudio) {
+  btnEnvStudio.addEventListener('click', (e) => {
+    e.stopPropagation();
+    loadEnvironment('studio');
+  });
+}
+
+// Initial Environment Load (Starts with your mobile scan tuned to 1.85x density)
+loadEnvironment('mobile');
 
 // ==========================================
 // 5. 🛠️ COLLAPSIBLE ROOM CALIBRATION DRAWER
@@ -219,6 +319,23 @@ if (btnCalibToggle && calibDrawer) {
   });
 }
 
+// Density Overlap Buttons
+const btnDensity1 = document.getElementById('btn-density-1');
+const btnDensity15 = document.getElementById('btn-density-15');
+const btnDensity2 = document.getElementById('btn-density-2');
+
+function updateDensityButtons(scale) {
+  [btnDensity1, btnDensity15, btnDensity2].forEach(b => b && b.classList.remove('active-density'));
+  if (scale <= 1.1 && btnDensity1) btnDensity1.classList.add('active-density');
+  else if (scale <= 1.6 && btnDensity15) btnDensity15.classList.add('active-density');
+  else if (btnDensity2) btnDensity2.classList.add('active-density');
+}
+
+if (btnDensity1) btnDensity1.addEventListener('click', (e) => { e.stopPropagation(); applySplatScale(1.0); updateDensityButtons(1.0); });
+if (btnDensity15) btnDensity15.addEventListener('click', (e) => { e.stopPropagation(); applySplatScale(1.5); updateDensityButtons(1.5); });
+if (btnDensity2) btnDensity2.addEventListener('click', (e) => { e.stopPropagation(); applySplatScale(2.0); updateDensityButtons(2.0); });
+
+// Calibration Rotation, Height & Scale Buttons
 const btnRotX = document.getElementById('btn-rot-x');
 const btnRotY = document.getElementById('btn-rot-y');
 const btnRotZ = document.getElementById('btn-rot-z');
@@ -227,20 +344,25 @@ const btnDown = document.getElementById('btn-down');
 const btnBigger = document.getElementById('btn-bigger');
 const btnSmaller = document.getElementById('btn-smaller');
 
-if (btnRotX) btnRotX.addEventListener('click', (e) => { e.stopPropagation(); splatViewer.rotation.x += Math.PI / 2; });
-if (btnRotY) btnRotY.addEventListener('click', (e) => { e.stopPropagation(); splatViewer.rotation.y += Math.PI / 2; });
-if (btnRotZ) btnRotZ.addEventListener('click', (e) => { e.stopPropagation(); splatViewer.rotation.z += Math.PI / 2; });
-if (btnUp) btnUp.addEventListener('click', (e) => { e.stopPropagation(); splatViewer.position.y += 0.3; });
-if (btnDown) btnDown.addEventListener('click', (e) => { e.stopPropagation(); splatViewer.position.y -= 0.3; });
-if (btnBigger) btnBigger.addEventListener('click', (e) => { e.stopPropagation(); splatViewer.scale.multiplyScalar(1.2); });
-if (btnSmaller) btnSmaller.addEventListener('click', (e) => { e.stopPropagation(); splatViewer.scale.multiplyScalar(0.8); });
+if (btnRotX) btnRotX.addEventListener('click', (e) => { e.stopPropagation(); if (splatViewer) splatViewer.rotation.x += Math.PI / 2; });
+if (btnRotY) btnRotY.addEventListener('click', (e) => { e.stopPropagation(); if (splatViewer) splatViewer.rotation.y += Math.PI / 2; });
+if (btnRotZ) btnRotZ.addEventListener('click', (e) => { e.stopPropagation(); if (splatViewer) splatViewer.rotation.z += Math.PI / 2; });
+if (btnUp) btnUp.addEventListener('click', (e) => { e.stopPropagation(); if (splatViewer) splatViewer.position.y += 0.3; });
+if (btnDown) btnDown.addEventListener('click', (e) => { e.stopPropagation(); if (splatViewer) splatViewer.position.y -= 0.3; });
+if (btnBigger) btnBigger.addEventListener('click', (e) => { e.stopPropagation(); if (splatViewer) splatViewer.scale.multiplyScalar(1.2); });
+if (btnSmaller) btnSmaller.addEventListener('click', (e) => { e.stopPropagation(); if (splatViewer) splatViewer.scale.multiplyScalar(0.8); });
 
 if (btnCalibReset) {
   btnCalibReset.addEventListener('click', (e) => {
     e.stopPropagation();
-    splatViewer.rotation.set(Math.PI, 0, Math.PI / 2);
-    splatViewer.position.set(0, 1.0, 0);
-    splatViewer.scale.set(1.5, 1.5, 1.5);
+    const config = ENV_CONFIGS[currentEnv];
+    if (splatViewer && config) {
+      splatViewer.rotation.set(config.rotation.x, config.rotation.y, config.rotation.z);
+      splatViewer.position.set(config.position.x, config.position.y, config.position.z);
+      splatViewer.scale.set(config.scale.x, config.scale.y, config.scale.z);
+      applySplatScale(config.splatScale);
+      updateDensityButtons(config.splatScale);
+    }
   });
 }
 

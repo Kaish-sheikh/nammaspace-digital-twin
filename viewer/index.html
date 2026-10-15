@@ -28,11 +28,22 @@
 
         <div class="status-pill">
           <span class="status-dot"></span>
-          <span class="status-text">60 FPS</span>
+          <span class="status-text" id="status-fps">60 FPS</span>
           <span class="status-divider">•</span>
-          <span class="status-fidelity">51.72 dB PSNR</span>
+          <span class="status-fidelity" id="status-fidelity">51.72 dB PSNR</span>
+        </div>
+
+        <!-- Dual Environment Showcase Switcher -->
+        <div class="env-switcher">
+          <button id="btn-env-mobile" class="env-btn active" title="Your Monocular Smartphone Scan">
+            <span class="env-icon">📱</span> Mobile Scan (715 KB)
+          </button>
+          <button id="btn-env-studio" class="env-btn" title="Ultra-HD Studio Digital Twin">
+            <span class="env-icon">🏛️</span> Ultra-HD Studio (36 MB)
+          </button>
         </div>
       </div>
+
 
       <!-- Center Spatial Telemetry -->
       <div class="header-center">
@@ -178,6 +189,15 @@
         <div class="drawer-title-row">
           <span>SPATIAL ALIGNMENT</span>
           <button id="btn-calib-reset" class="btn-mini-reset">Reset</button>
+        </div>
+
+        <div class="control-row">
+          <span class="ctrl-label">SPLAT DENSITY (SURFACE OVERLAP)</span>
+          <div class="btn-group">
+            <button id="btn-density-1">1.0x (Raw)</button>
+            <button id="btn-density-15">1.5x (Medium)</button>
+            <button id="btn-density-2" class="active-density">2.0x (Solid)</button>
+          </div>
         </div>
 
         <div class="control-row">
