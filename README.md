@@ -2,11 +2,15 @@
 > **IIT Bombay Techfest 2026–27 | Digital Twin Challenge (Round 1 Submission)**  
 > *Transforming monocular smartphone video captures into zero-install, 60+ FPS interactive 3D Gaussian Splats with real-time waypoint pathfinding and spatial intelligence.*
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-nammaspace--digital--twin.vercel.app-00d2ff?style=for-the-badge&logo=vercel)](https://nammaspace-digital-twin.vercel.app/)
+
 [![Three.js](https://img.shields.io/badge/Three.js-r186-black?logo=three.js)](https://threejs.org/)
 [![Gaussian Splatting](https://img.shields.io/badge/Gaussian_Splatting-3DGS-brightgreen)](https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/)
 [![Vite](https://img.shields.io/badge/Vite-8.3-646CFF?logo=vite)](https://vitejs.dev/)
 [![WebGL](https://img.shields.io/badge/WebGL-2.0-990000?logo=webgl)](https://www.khronos.org/webgl/)
 [![PSNR](https://img.shields.io/badge/Model_Fidelity-51.72_dB_PSNR-blue)](#benchmarks)
+
+🔗 **Official Live WebGL Client:** [https://nammaspace-digital-twin.vercel.app/](https://nammaspace-digital-twin.vercel.app/)
 
 ---
 

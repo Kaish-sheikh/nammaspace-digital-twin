@@ -1,5 +1,7 @@
 # High-Fidelity Monocular 3D Gaussian Splatting with Real-Time Spatial Navigation for Web-Based Digital Twins
-**IIT Bombay Techfest 2026–27 | NammaSpace Competition — Round 1 Technical Abstract**
+**IIT Bombay Techfest 2026–27 | NammaSpace Competition — Round 1 Technical Abstract**  
+**Live Web Application:** [https://nammaspace-digital-twin.vercel.app/](https://nammaspace-digital-twin.vercel.app/)  
+**Source Code Repository:** [https://github.com/Kaish-sheikh/nammaspace-digital-twin](https://github.com/Kaish-sheikh/nammaspace-digital-twin)
 
 ---
 
