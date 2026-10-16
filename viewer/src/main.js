@@ -201,26 +201,14 @@ scene.add(gridHelper);
 scene.add(new THREE.AmbientLight(0xffffff, 1.0));
 
 let splatViewer = null;
-let currentEnv = 'mobile';
-let currentSplatScale = 1.85;
+let currentEnv = 'studio';
+let currentSplatScale = 1.0;
 
 const ENV_CONFIGS = {
-  mobile: {
-    name: 'Mobile Scan',
-    path: '/room_v2.splat',
-    size: '715 KB',
-    splatCount: '~18,000 Splats',
-    fidelity: '51.72 dB PSNR',
-    rotation: { x: Math.PI, y: 0, z: Math.PI / 2 },
-    position: { x: 0, y: 1.0, z: 0 },
-    scale: { x: 1.5, y: 1.5, z: 1.5 },
-    splatScale: 1.85,
-    cameraPos: { x: 0, y: EYE_HEIGHT, z: 5 }
-  },
   studio: {
     name: 'Ultra-HD Studio',
     path: '/studio_room.splat',
-    size: '76.8 MB',
+    size: '1.13M Splats',
     splatCount: '1,130,000+ Splats',
     fidelity: 'Ultra-HD Photorealism',
     rotation: { x: Math.PI, y: 0, z: 0 },
@@ -228,6 +216,18 @@ const ENV_CONFIGS = {
     scale: { x: 1.2, y: 1.2, z: 1.2 },
     splatScale: 1.0,
     cameraPos: { x: 0, y: EYE_HEIGHT, z: 3.5 }
+  },
+  mobile: {
+    name: 'High-Density Scan',
+    path: '/new_room.splat',
+    size: '8.09 MB',
+    splatCount: '252,000+ Splats',
+    fidelity: 'High-Density Scan',
+    rotation: { x: Math.PI, y: 0, z: Math.PI / 2 },
+    position: { x: 0, y: 1.0, z: 0 },
+    scale: { x: 1.2, y: 1.2, z: 1.2 },
+    splatScale: 1.1,
+    cameraPos: { x: 0, y: EYE_HEIGHT, z: 4.5 }
   }
 };
 
@@ -442,9 +442,9 @@ function showSceneLoader(envKey) {
   sceneLoader.style.display = 'flex';
   sceneLoader.style.opacity = '1';
 
-  if (loaderTitle) loaderTitle.textContent = envKey === 'studio' ? 'STREAMING ULTRA-HD SPATIAL TWIN' : 'LOADING MONOCULAR MOBILE SCAN';
-  if (loaderSub) loaderSub.textContent = envKey === 'studio' ? 'Decompressing 1,130,000+ photorealistic Gaussians & allocating WebGL VRAM...' : 'Loading edge monocular 3D Gaussian Splatting scene...';
-  if (loaderBadge) loaderBadge.textContent = envKey === 'studio' ? '76.8 MB VRAM BUFFER' : 'MOBILE RECONSTRUCTION';
+  if (loaderTitle) loaderTitle.textContent = envKey === 'studio' ? 'STREAMING ULTRA-HD SPATIAL TWIN' : 'LOADING HIGH-DENSITY SPATIAL SCAN';
+  if (loaderSub) loaderSub.textContent = envKey === 'studio' ? 'Decompressing 1,130,000+ photorealistic Gaussians & allocating WebGL VRAM...' : 'Decompressing 252,000+ high-density Gaussian splats...';
+  if (loaderBadge) loaderBadge.textContent = envKey === 'studio' ? '1.13M SPLATS BUFFER' : '252K SPLATS BUFFER';
   if (loaderChipSize) loaderChipSize.textContent = config.size;
   if (loaderChipSplats) loaderChipSplats.textContent = config.splatCount;
 
@@ -581,8 +581,8 @@ if (btnEnvStudio) {
   });
 }
 
-// Initial Environment Load (Starts with mobile scan)
-loadEnvironment('mobile', true);
+// Initial Environment Load (Starts with Ultra-HD Studio by default)
+loadEnvironment('studio', true);
 
 
 // ==========================================

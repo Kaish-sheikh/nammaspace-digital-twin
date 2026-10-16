@@ -58,7 +58,7 @@
     <li><strong>Frame Extraction:</strong> Extract frames at <strong>7 to 10 FPS</strong> via FFmpeg (<code>ffmpeg -i input.mp4 -vf &quot;fps=7,scale=1920:-1&quot; frames/%05d.png</code>), yielding 180&ndash;220 dense frames per 30-second capture.</li>
     <li><strong>Reconstruction Parameters:</strong> Headless COLMAP using the <code>SIMPLE_RADIAL</code> camera model.</li>
     <li><strong>Training Iterations:</strong> 7,000 steps minimum on NVIDIA GPU, achieving &gt;50 dB PSNR.</li>
-    <li><strong>Deployment Packaging:</strong> Export as compressed <code>.splat</code> binary (715 KB) for instant zero-install WebGL streaming at 60+ FPS.</li>
+    <li><strong>Deployment Packaging:</strong> Export as optimized <code>.splat</code> binary for instant zero-install WebGL streaming at 60+ FPS (supporting both flagship 1.13M splat studio twins and compact edge mobile scans).</li>
   </ul>
 </body>
 </html>

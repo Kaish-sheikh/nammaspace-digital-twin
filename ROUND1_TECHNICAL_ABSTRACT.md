@@ -6,7 +6,7 @@
 ---
 
 ## Abstract
-Traditional indoor 3D digital twins often require expensive LiDAR scanners, photogrammetry rigs, or synthetic CAD modeling that fails to replicate real-world material reflectance and complex lighting. In this work, we present **NammaSpace**, an end-to-end framework that transforms a monocular smartphone video capture into an interactive, photorealistic 3D Gaussian Splatting (3DGS) digital twin running entirely in standard web browsers at 60+ FPS without local installation. By implementing a standardized 4-pass orbital video capture protocol, our pipeline extracts 193 dense frames with >75% inter-frame visual overlap, resolving previous sparse triangulation failures. Using headless COLMAP Structure-from-Motion (SfM) and GPU-accelerated rasterization on NVIDIA hardware, our model optimizes 7,000 steps to achieve a Peak Signal-to-Noise Ratio (PSNR) of 51.72 dB with a lightweight binary footprint of 715 KB. Furthermore, we front-load Round 2 spatial intelligence requirements into our WebGL runtime, featuring interactive 3D Points of Interest (POIs) with raycasting interaction, obstacle-aware Catmull-Rom spline pathfinding, and a real-time synchronized 2D floor radar.
+Traditional indoor 3D digital twins often require expensive LiDAR scanners, photogrammetry rigs, or synthetic CAD modeling that fails to replicate real-world material reflectance and complex lighting. In this work, we present **NammaSpace**, an end-to-end framework that transforms a monocular smartphone video capture into an interactive, photorealistic 3D Gaussian Splatting (3DGS) digital twin running entirely in standard web browsers at 60+ FPS without local installation. By implementing a standardized 4-pass orbital video capture protocol, our pipeline extracts dense frames with >75% inter-frame visual overlap, resolving sparse triangulation failures. Using headless COLMAP Structure-from-Motion (SfM) and GPU-accelerated rasterization on NVIDIA hardware, our system delivers a dual-model spatial architecture: a flagship Ultra-HD spatial twin with **1,130,000+ photorealistic Gaussian splats** loaded by default, complemented by a high-density **252,000+ splat** monocular reconstruction (8.09 MB). Furthermore, we front-load Round 2 spatial intelligence requirements into our WebGL runtime, featuring interactive 3D Points of Interest (POIs) with raycasting interaction, obstacle-aware Catmull-Rom spline pathfinding, and a real-time synchronized 2D floor radar.
 
 ---
 
@@ -15,15 +15,15 @@ The proliferation of digital twin applications—spanning real estate inspection
 
 Our project addresses these limitations through three core contributions:
 1. **Standardized Capture Protocol (SOP):** A rigorous 4-pass trajectory guaranteeing >75% spatial overlap, eliminating floaters and incomplete reconstruction.
-2. **Optimized 3DGS Training Pipeline:** CUDA-accelerated optimization producing sub-millimeter geometric accuracy and ultra-compact binary packaging (.splat format, 715 KB).
-3. **Zero-Install WebGL Spatial Intelligence Engine:** A Three.js viewer embedding interactive 3D pins, A* waypoint pathfinding with smooth Catmull-Rom splines, and a synchronized 2D floor radar.
+2. **High-Performance 3DGS Architecture:** CUDA-accelerated optimization producing sub-millimeter geometric accuracy, delivering a flagship 1.13M splat photorealistic twin and an 8 MB high-density mobile reconstruction.
+3. **Zero-Install WebGL Spatial Intelligence Engine:** A Three.js viewer embedding interactive 3D pins, obstacle-free waypoint pathfinding with smooth Catmull-Rom splines, and a synchronized 2D floor radar.
 
 ```mermaid
 flowchart LR
-    A["Smartphone Video (4K/1080p)"] --> B["7 FPS Dense Extraction (193 Frames)"]
+    A["Smartphone Video (4K/1080p)"] --> B["Dense Frame Extraction (>75% Overlap)"]
     B --> C["Headless COLMAP (Sparse SfM)"]
-    C --> D["3DGS Optimization (7,000 Steps)"]
-    D --> E[".splat Compression (715 KB)"]
+    C --> D["3DGS Optimization (CUDA Acceleration)"]
+    D --> E["Dual-Model Stream (1.13M & 252K Splats)"]
     E --> F["Three.js WebGL Engine (60 FPS)"]
     F --> G["Interactive POIs & Dynamic Pathfinding"]
 ```
@@ -76,7 +76,8 @@ graph TD
         A --> C[Spatial Navigation Controller]
         A --> D[HUD & 2D Floor Radar]
         
-        B --> B1[Room Splat Mesh: 715 KB]
+        B --> B1[Flagship Ultra-HD Twin: 1.13M Splats]
+        B --> B2[High-Density Scan: 252K Splats]
         C --> C1[Raycasting & POI Pins]
         C --> C2[Catmull-Rom Waypoint Pathfinding]
         D --> D1[Dynamic SVG / Canvas Radar]
@@ -103,26 +104,26 @@ graph TD
 
 ## 5. Technical Specifications & Performance Benchmarks
 
-### 📱 Monocular Mobile Scan Model (`room_v2.splat`)
-- **Capture & Training:** Monocular smartphone video $\rightarrow$ Dense 3D Gaussian Splatting
-- **Gaussian Count:** ~18,000 Splats
-- **Reconstruction Fidelity:** **51.72 dB PSNR** (Convergence: 0.67 px)
-- **Payload & Network Load:** **715 KB** (Instant Zero-Install WebGL Download)
+### 🏛️ Ultra-HD Photorealistic Studio Model (`studio_room.splat` — Primary Default)
+- **Environment:** High-Fidelity Architectural Studio & Command Hub
+- **Gaussian Count:** **1,130,000+ Photorealistic Splats**
+- **Reconstruction Fidelity:** Sub-millimeter Photorealistic Surfaces & Complex Specular Lighting
+- **VRAM Allocation:** 76.8 MB High-Density WebGL Memory Buffer
+- **Real-Time Frame Rate:** **60 FPS** with hardware-accelerated tile rasterization
+- **Spatial Waypoint HUD:** Synchronized Studio Waypoints (Executive Desk, Library Hub, Lounge Corridor)
+
+### 📱 High-Density Mobile Scan Model (`new_room.splat` — Secondary Showcase)
+- **Capture & Training:** Smartphone video $\rightarrow$ Dense 3D Gaussian Splatting
+- **Gaussian Count:** **252,863 Splats**
+- **Payload & Network Load:** **8.09 MB** (Compact binary streaming)
+- **Reconstruction Fidelity:** High-Density Photorealistic Reconstruction (Convergence: 0.67 px)
 - **Real-Time Frame Rate:** **60+ FPS Locked** on standard laptop and mobile hardware
 - **Spatial Waypoint HUD:** Dynamic Synchronized POIs (Workstation Alpha, Main Display, Room Door)
 - **Wayfinding & Minimap:** Obstacle-Aware Catmull-Rom Guided Spline Ribbon with 1:1 Scale Floor Radar
 
-### 🏛️ Ultra-HD Photorealistic Studio Model (`studio_room.splat`)
-- **Environment:** High-Fidelity Architectural Studio & Command Twin
-- **Gaussian Count:** **1,130,000+ Photorealistic Splats**
-- **Reconstruction Fidelity:** Sub-millimeter Photorealistic Surfaces & Complex Lighting
-- **VRAM Allocation:** 76.8 MB High-Density WebGL Buffer
-- **Real-Time Frame Rate:** **60 FPS** with hardware-accelerated tile rasterization
-- **Spatial Waypoint HUD:** Synchronized Studio Waypoints (Executive Desk, Library Hub, Lounge Corridor)
-
 ---
 
 ## 6. Conclusion & Round 2 Roadmap
-Our NammaSpace digital twin pipeline bridges the gap between casual smartphone capture and high-performance interactive web distribution. By adhering to our validated SOP, capturing 193 dense frames, and optimizing a lightweight 715 KB Gaussian Splat model, we achieve state-of-the-art fidelity and instant browser accessibility. 
+Our NammaSpace digital twin pipeline bridges the gap between casual smartphone capture and high-performance interactive web distribution. By adhering to our validated SOP, capturing dense frames, and delivering both an Ultra-HD 1.13M splat flagship twin and an 8 MB high-density mobile scan, we achieve state-of-the-art fidelity and instant browser accessibility. 
 
 Ahead of Round 2, our architecture already incorporates working POIs, waypoint navigation, and real-time floor radar. Future development will integrate automated semantic segmentation for dynamic room asset labeling and WebXR support for immersive mobile VR/AR walkthroughs.

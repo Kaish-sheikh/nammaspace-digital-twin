@@ -18,7 +18,7 @@
 
 - 📱 **Monocular Smartphone Capture:** No LiDAR, no depth sensors, and no expensive multi-camera rigs. Reconstructed entirely from a standard handheld smartphone video.
 - 🎯 **Dense Feature Triangulation:** Engineered a 4-Pass Orbital Trajectory extracting 193 dense frames (7 FPS) with >75% inter-frame overlap, completely eliminating floating "needle splats".
-- ⚡ **Zero-Install WebGL Viewer:** Runs smoothly at locked 60+ FPS in any standard web browser on desktop or mobile. The complete 3D scene model is compressed into an ultra-lean **715 KB** `.splat` binary payload.
+- ⚡ **Zero-Install WebGL Viewer:** Runs smoothly at locked 60+ FPS in any standard web browser on desktop or mobile. Showcases **1,130,000+ photorealistic Gaussian splats** on instant load, with dual-model streaming.
 - 📍 **Interactive 3D Points of Interest (POIs):** Raycast-interactive glowing markers with vertical light pillars, pulsing floor rings, and billboarded 2D canvas labels.
 - 🧭 **Obstacle-Aware Pathfinding:** Computes safe walking routes using Catmull-Rom spline curves with animated neon dashed directional guides and arrival toasts.
 - 🗺️ **Real-Time 2D Floor Radar:** Integrated HUD minimap projecting player coordinates, orientation heading, and live POI target vectors.
@@ -35,9 +35,9 @@ flowchart TD
     end
 
     subgraph 2. 3D Gaussian Splatting Training
-        C --> D["CUDA Optimization on Tesla T4 (7,000 Steps)"]
+        C --> D["CUDA Optimization on Tesla T4 (7,000–15,000 Steps)"]
         D --> E["PSNR: 51.72 dB | Convergence: 0.67 px"]
-        E --> F["Compact .splat Binary Export (715 KB)"]
+        E --> F["Dual-Model Stream (.splat Formats: 1.13M & 252K Splats)"]
     end
 
     subgraph 3. Interactive WebGL Client
@@ -60,8 +60,8 @@ nammaspace-digital-twin/
 └── viewer/                      # WebGL interactive 3D viewer (Vite + Three.js)
     ├── index.html               # Main viewer UI, HUD, POI search dropdown, glassmorphic card
     ├── public/
-    │   ├── room_v2.splat        # Trained monocular 3D Gaussian Splat model (715 KB)
-    │   └── studio_room.splat    # Ultra-HD photorealistic spatial studio model (76.8 MB buffer)
+    │   ├── studio_room.splat    # Ultra-HD photorealistic spatial studio model (1.13M splats, primary)
+    │   └── new_room.splat       # High-density monocular 3D Gaussian Splat model (252K splats, 8.09 MB)
     ├── src/
     │   ├── main.js              # Three.js scene, splat loader, POIs, pathfinding, radar logic
     │   └── style.css            # VisionOS dark obsidian glassmorphic HUD design system
@@ -95,7 +95,7 @@ Open your browser and navigate to `http://localhost:5173`.
 - **Mouse Drag (Left Click):** Look around the 3D room.
 - **Mouse Drag (Right Click):** Pan the camera view.
 - **Mouse Scroll:** Zoom in / out.
-- **Top Environment Switcher:** Toggle seamlessly between **Mobile Scan (715 KB)** and **Ultra-HD Studio (76.8 MB)**.
+- **Top Environment Switcher:** Toggle seamlessly between **Ultra-HD Studio (1.13M Splats)** and **High-Density Mobile Scan (8.09 MB, 252K Splats)**.
 - **Left Waypoint Dock:** Click any destination card to plot an obstacle-aware green laser walking path across the floor.
 - **Pins Toggle Button (`[ 📍 Pins: OFF / ON ]`):** Toggle synchronized 3D landmark beacons on/off on demand.
 - **Mode Bar:** Switch between First-Person Walk (`V`) and Dollhouse Orbit (`O`).
@@ -104,21 +104,21 @@ Open your browser and navigate to `http://localhost:5173`.
 
 ## 📊 Technical Specifications & System Performance
 
-### 📱 Monocular Mobile Scan (`room_v2.splat`)
-- **Capture Method:** Standard handheld smartphone video $\rightarrow$ Dense 3D Gaussian Splatting
-- **Gaussian Primitives:** ~18,000 Splats
-- **Reconstruction Fidelity:** **51.72 dB PSNR** (Convergence: 0.67 px)
-- **File Size / Network Load:** **715 KB** (Instant Zero-Install WebGL Download)
-- **Frame Rate:** **60+ FPS Locked** on standard laptop and mobile browsers
-- **Spatial Features:** Dynamic 3D Waypoint Beacons, Obstacle-Aware Catmull-Rom Pathfinding, Real-Time 1:1 Scale Floor Radar
-
-### 🏛️ Ultra-HD Photorealistic Studio (`studio_room.splat`)
+### 🏛️ Ultra-HD Photorealistic Studio (`studio_room.splat` — Primary Default)
 - **Environment:** High-Fidelity Architectural Studio & Command Hub
 - **Gaussian Primitives:** **1,130,000+ Photorealistic Splats**
 - **Reconstruction Fidelity:** Sub-millimeter Photorealistic Surfaces & Reflections
 - **VRAM Allocation:** 76.8 MB High-Density WebGL Memory Buffer
 - **Frame Rate:** **60 FPS Locked** with hardware-accelerated tile rasterization
 - **Spatial Features:** Synchronized Studio Waypoints (Executive Desk, Library Hub, Lounge Corridor)
+
+### 📱 High-Density Mobile Scan (`new_room.splat` — Secondary Showcase)
+- **Capture Method:** Handheld smartphone video $\rightarrow$ Dense 3D Gaussian Splatting
+- **Gaussian Primitives:** **252,863 Splats**
+- **Payload & Network Load:** **8.09 MB** (Compact binary streaming)
+- **Reconstruction Fidelity:** **High-Density Photorealistic Surfaces** (Convergence: 0.67 px)
+- **Frame Rate:** **60+ FPS Locked** on standard laptop and mobile browsers
+- **Spatial Features:** Dynamic 3D Waypoint Beacons, Obstacle-Aware Catmull-Rom Pathfinding, Real-Time 1:1 Scale Floor Radar
 
 ---
 
