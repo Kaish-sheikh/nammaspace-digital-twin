@@ -233,6 +233,8 @@ scene.add(hologramGroup);
 let splatViewer = null;
 let currentEnv = 'studio';
 let currentSplatScale = 1.0;
+let streamInterval = null;
+let currentProgress = 15;
 
 const ENV_CONFIGS = {
   studio: {
@@ -559,37 +561,60 @@ function loadEnvironment(envKey, isInitial = false) {
   splatViewer.position.set(config.position.x, config.position.y, config.position.z);
   splatViewer.scale.set(config.scale.x, config.scale.y, config.scale.z);
 
+  // Reset stream progress UI
+  const heroFill = document.getElementById('hero-stream-fill');
+  const heroPct = document.getElementById('hero-stream-pct');
+  const heroStatus = document.getElementById('hero-stream-status');
+  if (heroFill) heroFill.style.width = '15%';
+  if (heroPct) heroPct.textContent = '15%';
+  if (heroStatus) {
+    heroStatus.classList.remove('ready');
+    heroStatus.innerHTML = '<span class="status-dot"></span> STREAMING ULTRA-HD SPATIAL TWIN';
+  }
+
+  // Smooth simulated progress increment to guarantee responsive visual feedback
+  if (streamInterval) clearInterval(streamInterval);
+  currentProgress = 15;
+  streamInterval = setInterval(() => {
+    if (currentProgress < 90) {
+      currentProgress += (90 - currentProgress) * 0.12 + 0.8;
+      const p = Math.min(90, Math.round(currentProgress));
+      if (heroFill) heroFill.style.width = `${p}%`;
+      if (heroPct) heroPct.textContent = `${p}%`;
+    }
+  }, 250);
+
   splatViewer.addSplatScene(config.path, {
     splatAlphaRemovalThreshold: 1,
     showLoadingUI: false,
-    progressiveLoad: true,
     onProgress: (percent, percentText) => {
-      const heroFill = document.getElementById('hero-stream-fill');
-      const heroPct = document.getElementById('hero-stream-pct');
-      const heroStatus = document.getElementById('hero-stream-status');
-      const p = Math.max(15, Math.min(100, Math.round(percent)));
-      if (heroFill) heroFill.style.width = `${p}%`;
-      if (heroPct) heroPct.textContent = `${p}%`;
-      if (heroStatus && p >= 95) {
-        heroStatus.innerHTML = '<span class="status-dot" style="background:#10b981;box-shadow:0 0 10px #10b981;"></span> SPATIAL ENGINE READY • 60 FPS';
-        heroStatus.classList.add('ready');
+      if (typeof percent === 'number' && !isNaN(percent) && percent > currentProgress) {
+        currentProgress = percent;
+        const p = Math.min(95, Math.round(percent));
+        if (heroFill) heroFill.style.width = `${p}%`;
+        if (heroPct) heroPct.textContent = `${p}%`;
       }
     }
   }).then(() => {
+    if (streamInterval) {
+      clearInterval(streamInterval);
+      streamInterval = null;
+    }
     applySplatScale(config.splatScale);
     updateDensityButtons(config.splatScale);
     if (!isInitial) hideSceneLoader();
     if (hologramGroup) hologramGroup.visible = false;
-    const heroFill = document.getElementById('hero-stream-fill');
     if (heroFill) heroFill.style.width = '100%';
-    const heroPct = document.getElementById('hero-stream-pct');
     if (heroPct) heroPct.textContent = '100%';
-    const heroStatus = document.getElementById('hero-stream-status');
     if (heroStatus) {
       heroStatus.innerHTML = '<span class="status-dot" style="background:#10b981;box-shadow:0 0 10px #10b981;"></span> SPATIAL ENGINE READY • 60 FPS';
       heroStatus.classList.add('ready');
     }
   }).catch((err) => {
+    if (streamInterval) {
+      clearInterval(streamInterval);
+      streamInterval = null;
+    }
     console.error('Error loading splat scene:', err);
     if (!isInitial) hideSceneLoader();
   });
