@@ -223,11 +223,11 @@ const ENV_CONFIGS = {
     size: '3.14M Splats',
     splatCount: '3,135,000+ Splats',
     fidelity: 'Outdoor Photorealism',
-    rotation: { x: Math.PI, y: 0, z: 0 },
-    position: { x: 0, y: 1.0, z: 0 },
+    rotation: { x: Math.PI - 0.5092, y: 0, z: 0 },
+    position: { x: 0.45, y: 3.2, z: -0.3 },
     scale: { x: 1.0, y: 1.0, z: 1.0 },
     splatScale: 1.0,
-    cameraPos: { x: 0, y: EYE_HEIGHT, z: 3.0 }
+    cameraPos: { x: 0.2, y: EYE_HEIGHT, z: 3.5 }
   }
 };
 
@@ -241,7 +241,7 @@ const ENV_POIS = {
       title: 'Pavilion Terrace',
       badge: 'COURTYARD',
       desc: 'Central open-air stone terrace with sunlit table and architectural garden benches.',
-      pos: new THREE.Vector3(0.0, 0.45, -0.5),
+      pos: new THREE.Vector3(0.2, 0.8, -0.1),
       color: 0x10b981,
       icon: '🪴'
     },
@@ -250,7 +250,7 @@ const ENV_POIS = {
       title: 'Botanical Trellis',
       badge: 'GARDEN ARBOR',
       desc: 'Climbing floral arbor with diffuse sunlight and photorealistic spatial foliage.',
-      pos: new THREE.Vector3(-1.5, 0.8, -1.8),
+      pos: new THREE.Vector3(-2.2, 0.8, -1.5),
       color: 0x00d2ff,
       icon: '🌿'
     },
@@ -259,7 +259,7 @@ const ENV_POIS = {
       title: 'Courtyard Archway',
       badge: 'CAMPUS GATE',
       desc: 'Stone perimeter archway connecting the courtyard grounds to the main quad.',
-      pos: new THREE.Vector3(1.2, 0.4, 1.5),
+      pos: new THREE.Vector3(1.8, 0.8, 2.0),
       color: 0xf43f5e,
       icon: '🏛️'
     }
