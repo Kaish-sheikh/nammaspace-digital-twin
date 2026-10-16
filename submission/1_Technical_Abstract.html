@@ -164,7 +164,7 @@
 
   <h2>Abstract</h2>
   <p>
-    Traditional indoor 3D digital twins often require expensive LiDAR scanners, photogrammetry rigs, or synthetic CAD modeling that fails to replicate real-world material reflectance and complex lighting. In this work, we present <strong>NammaSpace</strong>, an end-to-end framework that transforms a monocular smartphone video capture into an interactive, photorealistic 3D Gaussian Splatting (3DGS) digital twin running entirely in standard web browsers at 60+ FPS without local installation. By implementing a standardized 4-pass orbital video capture protocol, our pipeline extracts dense frames with &gt;75% inter-frame visual overlap, resolving previous sparse triangulation failures. Using headless COLMAP Structure-from-Motion (SfM) and GPU-accelerated rasterization on NVIDIA hardware, our system delivers a dual-model spatial architecture: a flagship Ultra-HD spatial twin with <strong>1,130,000+ photorealistic Gaussian splats</strong> loaded by default, complemented by a high-density <strong>252,000+ splat</strong> monocular reconstruction (8.09 MB). Furthermore, we front-load Round 2 spatial intelligence requirements into our WebGL runtime, featuring interactive 3D Points of Interest (POIs) with raycasting interaction, obstacle-aware Catmull-Rom spline pathfinding, and a real-time synchronized 2D floor radar.
+    Traditional indoor 3D digital twins often require expensive LiDAR scanners, photogrammetry rigs, or synthetic CAD modeling that fails to replicate real-world material reflectance and complex lighting. In this work, we present <strong>NammaSpace</strong>, an end-to-end framework that transforms video capture into an interactive, photorealistic 3D Gaussian Splatting (3DGS) digital twin running entirely in standard web browsers at 60+ FPS without local installation. By implementing a standardized 4-pass orbital video capture protocol, our pipeline extracts dense frames with &gt;75% inter-frame visual overlap, resolving previous sparse triangulation failures. Using headless COLMAP Structure-from-Motion (SfM) and GPU-accelerated rasterization on NVIDIA hardware, our system delivers a dual-twin spatial architecture: a flagship Ultra-HD spatial studio twin with <strong>1,130,000+ photorealistic Gaussian splats</strong> loaded by default, complemented by an expansive outdoor campus courtyard twin with <strong>3,135,000+ photorealistic splats</strong>. Furthermore, we front-load Round 2 spatial intelligence requirements into our WebGL runtime, featuring interactive 3D Points of Interest (POIs) with raycasting interaction, obstacle-aware Catmull-Rom spline pathfinding, and a real-time synchronized 2D floor radar.
   </p>
 
   <h2>1. Introduction &amp; Problem Statement</h2>
@@ -174,14 +174,14 @@
   <p>Our project addresses these limitations through three core contributions:</p>
   <ol>
     <li><strong>Standardized Capture Protocol (SOP):</strong> A rigorous 4-pass trajectory guaranteeing &gt;75% spatial overlap, eliminating floaters and incomplete reconstruction.</li>
-    <li><strong>High-Performance 3DGS Architecture:</strong> CUDA-accelerated optimization producing sub-millimeter geometric accuracy, delivering a flagship 1.13M splat photorealistic twin and an 8 MB high-density mobile reconstruction.</li>
+    <li><strong>High-Performance Dual-Twin Architecture:</strong> CUDA-accelerated optimization delivering both an indoor architectural studio twin (1.13M splats) and an expansive outdoor botanical courtyard twin (3.14M splats), running at locked 60+ FPS.</li>
     <li><strong>Zero-Install WebGL Spatial Intelligence Engine:</strong> A Three.js viewer embedding interactive 3D pins, waypoint pathfinding with smooth Catmull-Rom splines, and a synchronized 2D floor radar.</li>
   </ol>
 
   <div class="diagram-box">
-[Smartphone Video (4K/1080p)] ──> [Dense Frame Extraction (>75% Overlap)] ──> [Headless COLMAP (Sparse SfM)]
+[Video Capture (4K/1080p)] ──> [Dense Frame Extraction (>75% Overlap)] ──> [Headless COLMAP (Sparse SfM)]
                                                                                       │
-[Interactive POIs & Pathfinding] <── [Three.js WebGL Engine (60 FPS)] <── [Dual-Model Stream (1.13M & 252K Splats)]
+[Interactive POIs & Pathfinding] <── [Three.js WebGL Engine (60 FPS)] <── [Dual-Twin Stream (1.13M & 3.14M Splats)]
   </div>
 
   <h2>2. Capture Protocol &amp; Standard Operating Procedure (SOP)</h2>
@@ -249,31 +249,31 @@
   <div class="spec-card">
     <h3>🏛️ Ultra-HD Photorealistic Studio Model (studio_room.splat — Primary Default)</h3>
     <ul>
-      <li><strong>Environment:</strong> High-Fidelity Architectural Studio &amp; Command Hub</li>
+      <li><strong>Environment:</strong> High-Fidelity Architectural Studio &amp; Command Hub (Indoor)</li>
       <li><strong>Gaussian Count:</strong> <strong>1,130,000+ Photorealistic Splats</strong></li>
-      <li><strong>Reconstruction Fidelity:</strong> Sub-millimeter Photorealistic Surfaces &amp; Complex Lighting</li>
+      <li><strong>Reconstruction Fidelity:</strong> Sub-millimeter Photorealistic Surfaces &amp; Complex Specular Lighting</li>
       <li><strong>VRAM Allocation:</strong> 76.8 MB High-Density WebGL Buffer</li>
-      <li><strong>Real-Time Frame Rate:</strong> <strong>60 FPS</strong> with hardware-accelerated tile rasterization</li>
+      <li><strong>Real-Time Frame Rate:</strong> <strong>60 FPS Locked</strong> with hardware-accelerated tile rasterization</li>
       <li><strong>Spatial Waypoint HUD:</strong> Synchronized Studio Waypoints (Executive Desk, Library Hub, Lounge Corridor)</li>
     </ul>
   </div>
 
   <div class="spec-card">
-    <h3>📱 High-Density Mobile Scan Model (new_room.splat — Secondary Showcase)</h3>
+    <h3>🌳 Spatial Courtyard Twin (garden.ksplat — Outdoor Showcase)</h3>
     <ul>
-      <li><strong>Capture &amp; Training:</strong> Monocular smartphone video &rarr; Dense 3D Gaussian Splatting</li>
-      <li><strong>Gaussian Count:</strong> <strong>252,863 Splats</strong></li>
-      <li><strong>Reconstruction Fidelity:</strong> High-Density Photorealistic Reconstruction</li>
-      <li><strong>Payload &amp; Network Load:</strong> <strong>8.09 MB</strong> (Compact binary streaming)</li>
-      <li><strong>Real-Time Frame Rate:</strong> <strong>60+ FPS Locked</strong> on standard laptop and mobile hardware</li>
-      <li><strong>Spatial Waypoint HUD:</strong> Dynamic Synchronized POIs (Workstation Alpha, Main Display, Room Door)</li>
+      <li><strong>Environment:</strong> Open-Air Botanical Courtyard &amp; Pavilion Grounds (Outdoor)</li>
+      <li><strong>Gaussian Count:</strong> <strong>3,135,539 Photorealistic Splats</strong></li>
+      <li><strong>Payload &amp; Format:</strong> High-Efficiency Binary Splat Buffer (.ksplat, 75.4 MB)</li>
+      <li><strong>Visual Fidelity:</strong> Volumetric Foliage, Realistic Sunlit Illumination &amp; Cobblestones</li>
+      <li><strong>Real-Time Frame Rate:</strong> <strong>60 FPS Locked</strong> on standard laptop and mobile hardware</li>
+      <li><strong>Spatial Waypoint HUD:</strong> Synchronized Courtyard Waypoints (Pavilion Terrace, Botanical Trellis, Courtyard Archway)</li>
       <li><strong>Wayfinding &amp; Minimap:</strong> Obstacle-Aware Catmull-Rom Guided Spline Ribbon with 1:1 Scale Floor Radar</li>
     </ul>
   </div>
 
   <h2>6. Conclusion &amp; Round 2 Roadmap</h2>
   <p>
-    Our NammaSpace digital twin pipeline bridges the gap between casual smartphone capture and high-performance interactive web distribution. By adhering to our validated SOP, capturing dense frames, and delivering both an Ultra-HD 1.13M splat flagship twin and an 8 MB high-density mobile scan, we achieve state-of-the-art fidelity and instant browser accessibility. Ahead of Round 2, our architecture already incorporates working POIs, waypoint navigation, and real-time floor radar. Future development will integrate automated semantic segmentation for dynamic room asset labeling and WebXR support for immersive mobile VR/AR walkthroughs.
+    Our NammaSpace digital twin pipeline bridges the gap between raw video capture and high-performance interactive web distribution. By adhering to our validated SOP, dense frame extraction, and delivering both an indoor architectural studio twin (1.13M splats) and an expansive outdoor courtyard twin (3.14M splats), we achieve state-of-the-art fidelity and instant browser accessibility. Ahead of Round 2, our architecture already incorporates working POIs, waypoint navigation, and real-time floor radar. Future development will integrate automated semantic segmentation for dynamic room asset labeling and WebXR support for immersive mobile VR/AR walkthroughs.
   </p>
 
 </body>

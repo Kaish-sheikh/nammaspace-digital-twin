@@ -217,17 +217,17 @@ const ENV_CONFIGS = {
     splatScale: 1.0,
     cameraPos: { x: 0, y: EYE_HEIGHT, z: 3.5 }
   },
-  mobile: {
-    name: 'High-Density Scan',
-    path: '/new_room.splat',
-    size: '8.09 MB',
-    splatCount: '252,000+ Splats',
-    fidelity: 'High-Density Scan',
-    rotation: { x: Math.PI, y: 0, z: Math.PI / 2 },
+  garden: {
+    name: 'Spatial Courtyard',
+    path: '/garden.ksplat',
+    size: '3.14M Splats',
+    splatCount: '3,135,000+ Splats',
+    fidelity: 'Outdoor Photorealism',
+    rotation: { x: Math.PI, y: 0, z: 0 },
     position: { x: 0, y: 1.0, z: 0 },
-    scale: { x: 1.2, y: 1.2, z: 1.2 },
-    splatScale: 1.1,
-    cameraPos: { x: 0, y: EYE_HEIGHT, z: 4.5 }
+    scale: { x: 1.0, y: 1.0, z: 1.0 },
+    splatScale: 1.0,
+    cameraPos: { x: 0, y: EYE_HEIGHT, z: 3.0 }
   }
 };
 
@@ -235,33 +235,33 @@ const ENV_CONFIGS = {
 // 📍 ENVIRONMENT-SPECIFIC 3D WAYPOINTS (POIS)
 // ==========================================
 const ENV_POIS = {
-  mobile: [
+  garden: [
     {
       id: 'workstation',
-      title: 'Workstation Alpha',
-      badge: 'HARDWARE LAB',
-      desc: 'Primary dual-monitor engineering workspace with high-performance computing unit.',
-      pos: new THREE.Vector3(1.0, 0.45, -0.8),
-      color: 0x00d2ff,
-      icon: '🖥️'
+      title: 'Pavilion Terrace',
+      badge: 'COURTYARD',
+      desc: 'Central open-air stone terrace with sunlit table and architectural garden benches.',
+      pos: new THREE.Vector3(0.0, 0.45, -0.5),
+      color: 0x10b981,
+      icon: '🪴'
     },
     {
       id: 'display',
-      title: 'Main Display Hub',
-      badge: 'MEDIA CENTER',
-      desc: 'Visual panel for real-time telemetry streaming and presentations.',
-      pos: new THREE.Vector3(-1.1, 0.7, 0.2),
-      color: 0xf43f5e,
-      icon: '📺'
+      title: 'Botanical Trellis',
+      badge: 'GARDEN ARBOR',
+      desc: 'Climbing floral arbor with diffuse sunlight and photorealistic spatial foliage.',
+      pos: new THREE.Vector3(-1.5, 0.8, -1.8),
+      color: 0x00d2ff,
+      icon: '🌿'
     },
     {
       id: 'door',
-      title: 'Room Access Door',
-      badge: 'EGRESS / EXIT',
-      desc: 'Primary entry and egress corridor threshold with magnetic access controls.',
-      pos: new THREE.Vector3(0.0, 0.5, 2.8),
-      color: 0x10b981,
-      icon: '🚪'
+      title: 'Courtyard Archway',
+      badge: 'CAMPUS GATE',
+      desc: 'Stone perimeter archway connecting the courtyard grounds to the main quad.',
+      pos: new THREE.Vector3(1.2, 0.4, 1.5),
+      color: 0xf43f5e,
+      icon: '🏛️'
     }
   ],
   studio: [
@@ -442,9 +442,9 @@ function showSceneLoader(envKey) {
   sceneLoader.style.display = 'flex';
   sceneLoader.style.opacity = '1';
 
-  if (loaderTitle) loaderTitle.textContent = envKey === 'studio' ? 'STREAMING ULTRA-HD SPATIAL TWIN' : 'LOADING HIGH-DENSITY SPATIAL SCAN';
-  if (loaderSub) loaderSub.textContent = envKey === 'studio' ? 'Decompressing 1,130,000+ photorealistic Gaussians & allocating WebGL VRAM...' : 'Decompressing 252,000+ high-density Gaussian splats...';
-  if (loaderBadge) loaderBadge.textContent = envKey === 'studio' ? '1.13M SPLATS BUFFER' : '252K SPLATS BUFFER';
+  if (loaderTitle) loaderTitle.textContent = envKey === 'studio' ? 'STREAMING ULTRA-HD SPATIAL TWIN' : 'STREAMING SPATIAL COURTYARD TWIN';
+  if (loaderSub) loaderSub.textContent = envKey === 'studio' ? 'Decompressing 1,130,000+ photorealistic Gaussians & allocating WebGL VRAM...' : 'Decompressing 3,135,000+ outdoor Gaussian splats & volumetric foliage...';
+  if (loaderBadge) loaderBadge.textContent = envKey === 'studio' ? '1.13M SPLATS BUFFER' : '3.14M SPLATS BUFFER';
   if (loaderChipSize) loaderChipSize.textContent = config.size;
   if (loaderChipSplats) loaderChipSplats.textContent = config.splatCount;
 
@@ -545,9 +545,9 @@ function loadEnvironment(envKey, isInitial = false) {
   }
 
   // Update Environment Button States
-  const btnMobile = document.getElementById('btn-env-mobile');
+  const btnGarden = document.getElementById('btn-env-garden') || document.getElementById('btn-env-mobile');
   const btnStudio = document.getElementById('btn-env-studio');
-  if (btnMobile) btnMobile.classList.toggle('active', envKey === 'mobile');
+  if (btnGarden) btnGarden.classList.toggle('active', envKey === 'garden');
   if (btnStudio) btnStudio.classList.toggle('active', envKey === 'studio');
 
   // Reposition camera
@@ -564,13 +564,13 @@ function loadEnvironment(envKey, isInitial = false) {
 
 
 // Environment Switcher Buttons
-const btnEnvMobile = document.getElementById('btn-env-mobile');
+const btnEnvGarden = document.getElementById('btn-env-garden') || document.getElementById('btn-env-mobile');
 const btnEnvStudio = document.getElementById('btn-env-studio');
 
-if (btnEnvMobile) {
-  btnEnvMobile.addEventListener('click', (e) => {
+if (btnEnvGarden) {
+  btnEnvGarden.addEventListener('click', (e) => {
     e.stopPropagation();
-    if (currentEnv !== 'mobile') loadEnvironment('mobile');
+    if (currentEnv !== 'garden') loadEnvironment('garden');
   });
 }
 

@@ -60,8 +60,8 @@ nammaspace-digital-twin/
 └── viewer/                      # WebGL interactive 3D viewer (Vite + Three.js)
     ├── index.html               # Main viewer UI, HUD, POI search dropdown, glassmorphic card
     ├── public/
-    │   ├── studio_room.splat    # Ultra-HD photorealistic spatial studio model (1.13M splats, primary)
-    │   └── new_room.splat       # High-density monocular 3D Gaussian Splat model (252K splats, 8.09 MB)
+    │   ├── studio_room.splat    # Ultra-HD photorealistic spatial studio model (1.13M splats, indoor)
+    │   └── garden.ksplat        # Spatial Courtyard photorealistic model (3.14M splats, outdoor)
     ├── src/
     │   ├── main.js              # Three.js scene, splat loader, POIs, pathfinding, radar logic
     │   └── style.css            # VisionOS dark obsidian glassmorphic HUD design system
@@ -95,7 +95,7 @@ Open your browser and navigate to `http://localhost:5173`.
 - **Mouse Drag (Left Click):** Look around the 3D room.
 - **Mouse Drag (Right Click):** Pan the camera view.
 - **Mouse Scroll:** Zoom in / out.
-- **Top Environment Switcher:** Toggle seamlessly between **Ultra-HD Studio (1.13M Splats)** and **High-Density Mobile Scan (8.09 MB, 252K Splats)**.
+- **Top Environment Switcher:** Toggle seamlessly between **Ultra-HD Studio (1.13M Splats)** and **Spatial Courtyard (3.14M Splats, Outdoor Pavilion)**.
 - **Left Waypoint Dock:** Click any destination card to plot an obstacle-aware green laser walking path across the floor.
 - **Pins Toggle Button (`[ 📍 Pins: OFF / ON ]`):** Toggle synchronized 3D landmark beacons on/off on demand.
 - **Mode Bar:** Switch between First-Person Walk (`V`) and Dollhouse Orbit (`O`).
@@ -105,20 +105,20 @@ Open your browser and navigate to `http://localhost:5173`.
 ## 📊 Technical Specifications & System Performance
 
 ### 🏛️ Ultra-HD Photorealistic Studio (`studio_room.splat` — Primary Default)
-- **Environment:** High-Fidelity Architectural Studio & Command Hub
+- **Environment:** High-Fidelity Architectural Studio & Command Hub (Indoor)
 - **Gaussian Primitives:** **1,130,000+ Photorealistic Splats**
 - **Reconstruction Fidelity:** Sub-millimeter Photorealistic Surfaces & Reflections
 - **VRAM Allocation:** 76.8 MB High-Density WebGL Memory Buffer
 - **Frame Rate:** **60 FPS Locked** with hardware-accelerated tile rasterization
 - **Spatial Features:** Synchronized Studio Waypoints (Executive Desk, Library Hub, Lounge Corridor)
 
-### 📱 High-Density Mobile Scan (`new_room.splat` — Secondary Showcase)
-- **Capture Method:** Handheld smartphone video $\rightarrow$ Dense 3D Gaussian Splatting
-- **Gaussian Primitives:** **252,863 Splats**
-- **Payload & Network Load:** **8.09 MB** (Compact binary streaming)
-- **Reconstruction Fidelity:** **High-Density Photorealistic Surfaces** (Convergence: 0.67 px)
-- **Frame Rate:** **60+ FPS Locked** on standard laptop and mobile browsers
-- **Spatial Features:** Dynamic 3D Waypoint Beacons, Obstacle-Aware Catmull-Rom Pathfinding, Real-Time 1:1 Scale Floor Radar
+### 🌳 Spatial Courtyard Twin (`garden.ksplat` — Outdoor Campus Showcase)
+- **Environment:** Open-Air Botanical Courtyard, Stone Terrace & Pavilion Grounds (Outdoor)
+- **Gaussian Primitives:** **3,135,539 Photorealistic Splats**
+- **Visual Fidelity:** Complex Volumetric Foliage, Realistic Sunlit Illumination & Cobblestones
+- **Format & Streaming:** High-Efficiency Binary Splat Buffer (.ksplat, 75.4 MB)
+- **Frame Rate:** **60 FPS Locked** on standard laptop and mobile browsers
+- **Spatial Features:** Synchronized Courtyard Waypoints (Pavilion Terrace, Botanical Trellis, Courtyard Archway)
 
 ---
 
