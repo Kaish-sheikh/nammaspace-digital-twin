@@ -194,7 +194,7 @@ floorMesh.position.y = -0.01;
 scene.add(floorMesh);
 
 // Floor Grid & Lighting
-const gridHelper = new THREE.GridHelper(ROOM_SIZE, 20, 0x00d2ff, 0x1e293b);
+const gridHelper = new THREE.GridHelper(ROOM_SIZE, 20, 0x3b82f6, 0x1e293b);
 gridHelper.position.y = 0;
 scene.add(gridHelper);
 
@@ -208,9 +208,9 @@ const hologramGroup = new THREE.Group();
 const holoGeo = new THREE.BoxGeometry(7, 3.2, 7);
 const holoEdges = new THREE.EdgesGeometry(holoGeo);
 const holoMat = new THREE.LineBasicMaterial({
-  color: 0x00d2ff,
+  color: 0x3b82f6,
   transparent: true,
-  opacity: 0.4
+  opacity: 0.35
 });
 const holoWireframe = new THREE.LineSegments(holoEdges, holoMat);
 holoWireframe.position.set(0, 1.6, 0);
@@ -218,9 +218,9 @@ hologramGroup.add(holoWireframe);
 
 const scanPlaneGeo = new THREE.PlaneGeometry(6.8, 6.8);
 const scanPlaneMat = new THREE.MeshBasicMaterial({
-  color: 0x00f5ff,
+  color: 0x60a5fa,
   transparent: true,
-  opacity: 0.15,
+  opacity: 0.12,
   side: THREE.DoubleSide
 });
 const scanPlane = new THREE.Mesh(scanPlaneGeo, scanPlaneMat);
@@ -270,56 +270,56 @@ const ENV_POIS = {
   garden: [
     {
       id: 'workstation',
-      title: 'Pavilion Terrace',
-      badge: 'COURTYARD',
-      desc: 'Central open-air stone terrace with sunlit table and architectural garden benches.',
+      title: 'Central Courtyard Plaza',
+      badge: 'STONE TERRACE',
+      desc: 'Sunlit stone dining terrace with architectural garden seating and open-air plaza.',
       pos: new THREE.Vector3(0.2, 0.8, -0.1),
-      color: 0x10b981,
-      icon: '🪴'
+      color: 0x3b82f6,
+      icon: '🏛️'
     },
     {
       id: 'display',
-      title: 'Botanical Trellis',
-      badge: 'GARDEN ARBOR',
-      desc: 'Climbing floral arbor with diffuse sunlight and photorealistic spatial foliage.',
+      title: 'Botanical Pergola',
+      badge: 'FLORAL ARBOR',
+      desc: 'Climbing botanical arbor with living floral vines and diffuse sunlight canopy.',
       pos: new THREE.Vector3(-2.2, 0.8, -1.5),
-      color: 0x00d2ff,
+      color: 0x10b981,
       icon: '🌿'
     },
     {
       id: 'door',
-      title: 'Courtyard Archway',
+      title: 'Heritage Stone Archway',
       badge: 'CAMPUS GATE',
-      desc: 'Stone perimeter archway connecting the courtyard grounds to the main quad.',
+      desc: 'Historic masonry portal connecting the botanical grounds to the main campus quad.',
       pos: new THREE.Vector3(1.8, 0.8, 2.0),
-      color: 0xf43f5e,
-      icon: '🏛️'
+      color: 0xf59e0b,
+      icon: '⛩️'
     }
   ],
   studio: [
     {
       id: 'workstation',
-      title: 'Executive Desk',
-      badge: 'STUDIO DESK',
-      desc: 'Central command mahogany workstation with curved visual monitor array.',
+      title: 'Command Desk & Telemetry Station',
+      badge: 'EXECUTIVE',
+      desc: 'Primary command workstation featuring dual curved displays, mechanical interface, and spatial telemetry.',
       pos: new THREE.Vector3(0.05, 0.45, -0.2),
-      color: 0x00d2ff,
+      color: 0x3b82f6,
       icon: '🖥️'
     },
     {
       id: 'display',
-      title: 'Bookshelf & Art Hub',
-      badge: 'LIBRARY ZONE',
-      desc: 'Curated architectural library and spatial acoustic dampening shelving.',
+      title: 'Knowledge Hub & Bookshelves',
+      badge: 'ARCHIVE',
+      desc: 'Floor-to-ceiling architectural reference archive and spatial acoustic shelving.',
       pos: new THREE.Vector3(-1.3, 0.8, -1.4),
-      color: 0xf43f5e,
+      color: 0x818cf8,
       icon: '📚'
     },
     {
       id: 'door',
-      title: 'Lounge Corridor',
-      badge: 'MAIN EGRESS',
-      desc: 'Access doorway leading to spatial atrium and executive lounge.',
+      title: 'Executive Lounge Transition Corridor',
+      badge: 'EGRESS',
+      desc: 'Main egress connecting the studio workstation to the executive atrium and lounge.',
       pos: new THREE.Vector3(1.1, 0.4, 1.2),
       color: 0x10b981,
       icon: '🚪'
@@ -332,31 +332,42 @@ let pinsVisible = false;
 const poiGroups = [];
 const poiClickableMeshes = [];
 
-// 2D Text Billboard Sprite
-function createTextSprite(text, colorHex) {
+// VisionOS Floating Glass Capsule Billboard Sprite
+function createTextSprite(title, badge, colorHex) {
   const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 64;
+  canvas.width = 384;
+  canvas.height = 96;
   const c = canvas.getContext('2d');
 
-  c.fillStyle = 'rgba(13, 17, 28, 0.88)';
-  c.strokeStyle = colorHex;
-  c.lineWidth = 3;
+  // Outer Frosted Glass Capsule Fill
+  c.fillStyle = 'rgba(15, 20, 32, 0.90)';
   c.beginPath();
-  c.roundRect(4, 4, 248, 56, 12);
+  c.roundRect(4, 4, 376, 88, 22);
   c.fill();
+
+  // Subtle Brushed Titanium Border
+  c.strokeStyle = 'rgba(255, 255, 255, 0.22)';
+  c.lineWidth = 2;
+  c.beginPath();
+  c.roundRect(4, 4, 376, 88, 22);
   c.stroke();
 
-  c.fillStyle = '#ffffff';
-  c.font = 'bold 22px -apple-system, sans-serif';
+  // Accent Category Badge
+  c.fillStyle = colorHex;
+  c.font = 'bold 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
   c.textAlign = 'center';
   c.textBaseline = 'middle';
-  c.fillText(text, 128, 32);
+  c.fillText(badge.toUpperCase(), 192, 30);
+
+  // Landmark Title Text
+  c.fillStyle = '#ffffff';
+  c.font = '700 21px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+  c.fillText(title, 192, 64);
 
   const texture = new THREE.CanvasTexture(canvas);
-  const spriteMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true });
+  const spriteMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false });
   const sprite = new THREE.Sprite(spriteMaterial);
-  sprite.scale.set(1.2, 0.3, 1);
+  sprite.scale.set(1.4, 0.35, 1);
   return sprite;
 }
 
@@ -376,7 +387,7 @@ function rebuildPois(envKey) {
   poiGroups.length = 0;
   poiClickableMeshes.length = 0;
 
-  const activePois = ENV_POIS[envKey] || ENV_POIS.mobile;
+  const activePois = ENV_POIS[envKey] || ENV_POIS.studio;
 
   activePois.forEach((poi) => {
     const group = new THREE.Group();
@@ -388,6 +399,7 @@ function rebuildPois(envKey) {
       color: poi.color,
       emissive: poi.color,
       emissiveIntensity: 0.9,
+      metalness: 0.8,
       roughness: 0.2
     });
     const sphere = new THREE.Mesh(sphereGeo, sphereMat);
@@ -419,9 +431,9 @@ function rebuildPois(envKey) {
     ring.position.y = -poi.pos.y + 0.02;
     group.add(ring);
 
-    // Floating Text Badge
-    const labelSprite = createTextSprite(`${poi.icon} ${poi.title}`, `#${poi.color.toString(16).padStart(6, '0')}`);
-    labelSprite.position.y = 0.32;
+    // VisionOS Floating Glass Capsule Badge
+    const labelSprite = createTextSprite(poi.title, poi.badge, `#${poi.color.toString(16).padStart(6, '0')}`);
+    labelSprite.position.y = 0.35;
     group.add(labelSprite);
 
     group.userData = { poi, ring };
@@ -432,9 +444,9 @@ function rebuildPois(envKey) {
   });
 }
 
-// Dynamically synchronize the left Waypoint Dock titles and icons
+// Dynamically synchronize the left Waypoint Dock titles, tags and icons
 function updateDockWaypoints(envKey) {
-  const activePois = ENV_POIS[envKey] || ENV_POIS.mobile;
+  const activePois = ENV_POIS[envKey] || ENV_POIS.studio;
   activePois.forEach((poi) => {
     const card = document.querySelector(`.waypoint-card[data-poi="${poi.id}"]`);
     if (card) {
@@ -957,7 +969,7 @@ function updateMinimap() {
   ctx.fillRect(0, 0, MM_SIZE, MM_SIZE);
 
   // 2. Subtle Tactical Grid Crosshatch
-  ctx.strokeStyle = 'rgba(0, 210, 255, 0.05)';
+  ctx.strokeStyle = 'rgba(59, 130, 246, 0.06)';
   ctx.lineWidth = 1;
   const gridStep = 30;
   for (let x = gridStep; x < MM_SIZE; x += gridStep) {
@@ -979,14 +991,14 @@ function updateMinimap() {
   ];
 
   ringDistances.forEach((ring) => {
-    ctx.strokeStyle = 'rgba(0, 210, 255, 0.12)';
+    ctx.strokeStyle = 'rgba(59, 130, 246, 0.14)';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.arc(MM_SIZE / 2, MM_SIZE / 2, ring.r, 0, Math.PI * 2);
     ctx.stroke();
 
     // Metric Distance Callout
-    ctx.fillStyle = 'rgba(0, 210, 255, 0.35)';
+    ctx.fillStyle = 'rgba(59, 130, 246, 0.4)';
     ctx.font = '600 7px "JetBrains Mono", monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -994,7 +1006,7 @@ function updateMinimap() {
   });
 
   // 4. Center Crosshair Lines
-  ctx.strokeStyle = 'rgba(0, 210, 255, 0.1)';
+  ctx.strokeStyle = 'rgba(59, 130, 246, 0.15)';
   ctx.beginPath();
   ctx.moveTo(MM_SIZE / 2, 0); ctx.lineTo(MM_SIZE / 2, MM_SIZE);
   ctx.moveTo(0, MM_SIZE / 2); ctx.lineTo(MM_SIZE, MM_SIZE / 2);
@@ -1002,7 +1014,7 @@ function updateMinimap() {
 
   // 5. Compass Cardinal Ticks (N, S, E, W)
   ctx.font = '700 8px "JetBrains Mono", monospace';
-  ctx.fillStyle = '#00d2ff';
+  ctx.fillStyle = '#60a5fa';
   ctx.textAlign = 'center';
   ctx.fillText('N', MM_SIZE / 2, 9);
   ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
@@ -1011,12 +1023,12 @@ function updateMinimap() {
   ctx.fillText('E', MM_SIZE - 7, MM_SIZE / 2 + 3);
 
   // 6. Tactical Room Perimeter Boundary Box & Corner Brackets
-  ctx.strokeStyle = 'rgba(0, 210, 255, 0.18)';
+  ctx.strokeStyle = 'rgba(59, 130, 246, 0.2)';
   ctx.lineWidth = 1;
   const pad = 10;
   ctx.strokeRect(pad, pad, MM_SIZE - pad * 2, MM_SIZE - pad * 2);
 
-  ctx.strokeStyle = '#00d2ff';
+  ctx.strokeStyle = '#3b82f6';
   ctx.lineWidth = 1.5;
   const clen = 8;
   // Top-left
@@ -1029,7 +1041,7 @@ function updateMinimap() {
   ctx.beginPath(); ctx.moveTo(MM_SIZE - pad - clen, MM_SIZE - pad); ctx.lineTo(MM_SIZE - pad, MM_SIZE - pad); ctx.lineTo(MM_SIZE - pad, MM_SIZE - pad - clen); ctx.stroke();
 
   // 7. POI BLIPS (RULE: HIDDEN WHEN PINS ARE OFF, UNLESS IT IS THE ACTIVE TARGET)
-  const activePois = ENV_POIS[currentEnv] || ENV_POIS.mobile;
+  const activePois = ENV_POIS[currentEnv] || ENV_POIS.studio;
   activePois.forEach((poi) => {
     const isTarget = activeTargetPoi && activeTargetPoi.id === poi.id;
     // Strict requirement: If pins are OFF and this is NOT active target, do NOT draw it!
@@ -1135,9 +1147,9 @@ function updateMinimap() {
   const fovRadius = 32;
   const fovSpread = 0.52; // ~60 degree viewing cone
   const coneGrad = ctx.createRadialGradient(px, pz, 2, px, pz, fovRadius);
-  coneGrad.addColorStop(0, 'rgba(0, 210, 255, 0.45)');
-  coneGrad.addColorStop(0.5, 'rgba(0, 210, 255, 0.15)');
-  coneGrad.addColorStop(1, 'rgba(0, 210, 255, 0.0)');
+  coneGrad.addColorStop(0, 'rgba(59, 130, 246, 0.45)');
+  coneGrad.addColorStop(0.5, 'rgba(59, 130, 246, 0.15)');
+  coneGrad.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
 
   ctx.fillStyle = coneGrad;
   ctx.beginPath();
@@ -1147,7 +1159,7 @@ function updateMinimap() {
   ctx.fill();
 
   // Fine Peripheral Sightline Rays
-  ctx.strokeStyle = 'rgba(0, 210, 255, 0.35)';
+  ctx.strokeStyle = 'rgba(59, 130, 246, 0.35)';
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(px, pz);
@@ -1162,8 +1174,8 @@ function updateMinimap() {
   ctx.rotate(angle);
 
   // Outer Delta Chevron
-  ctx.fillStyle = '#00d2ff';
-  ctx.shadowColor = '#00d2ff';
+  ctx.fillStyle = '#3b82f6';
+  ctx.shadowColor = '#3b82f6';
   ctx.shadowBlur = 8;
   ctx.beginPath();
   ctx.moveTo(0, 7); // nose pointing in forward local orientation
@@ -1185,7 +1197,7 @@ function updateMinimap() {
     if (activeTargetPoi) {
       radarStatusEl.innerHTML = `<span style="color:#10b981;font-weight:800;">LOCK: ${activeTargetPoi.title.substring(0, 9).toUpperCase()}</span>`;
     } else if (pinsVisible) {
-      radarStatusEl.innerHTML = `<span style="color:#00d2ff;font-weight:700;">PINS: ACTIVE</span>`;
+      radarStatusEl.innerHTML = `<span style="color:#60a5fa;font-weight:700;">PINS: ACTIVE</span>`;
     } else {
       radarStatusEl.innerHTML = `<span style="color:var(--text-dim);">STEALTH 1:1</span>`;
     }
