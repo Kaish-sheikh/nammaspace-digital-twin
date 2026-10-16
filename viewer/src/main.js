@@ -200,6 +200,36 @@ scene.add(gridHelper);
 
 scene.add(new THREE.AmbientLight(0xffffff, 1.0));
 
+// ==========================================
+// 🌌 INSTANT HOLOGRAPHIC SCANNER (0ms Fast Boot)
+// ==========================================
+const hologramGroup = new THREE.Group();
+
+const holoGeo = new THREE.BoxGeometry(7, 3.2, 7);
+const holoEdges = new THREE.EdgesGeometry(holoGeo);
+const holoMat = new THREE.LineBasicMaterial({
+  color: 0x00d2ff,
+  transparent: true,
+  opacity: 0.4
+});
+const holoWireframe = new THREE.LineSegments(holoEdges, holoMat);
+holoWireframe.position.set(0, 1.6, 0);
+hologramGroup.add(holoWireframe);
+
+const scanPlaneGeo = new THREE.PlaneGeometry(6.8, 6.8);
+const scanPlaneMat = new THREE.MeshBasicMaterial({
+  color: 0x00f5ff,
+  transparent: true,
+  opacity: 0.15,
+  side: THREE.DoubleSide
+});
+const scanPlane = new THREE.Mesh(scanPlaneGeo, scanPlaneMat);
+scanPlane.rotation.x = -Math.PI / 2;
+scanPlane.position.y = 0.05;
+hologramGroup.add(scanPlane);
+
+scene.add(hologramGroup);
+
 let splatViewer = null;
 let currentEnv = 'studio';
 let currentSplatScale = 1.0;
@@ -514,6 +544,11 @@ function loadEnvironment(envKey, isInitial = false) {
     splatViewer = null;
   }
 
+  // Reactivate hologram while loading new environment
+  if (hologramGroup) {
+    hologramGroup.visible = true;
+  }
+
   // Create fresh DropInViewer
   splatViewer = new GaussianSplats3D.DropInViewer({
     gpuAcceleratedSort: false,
@@ -526,11 +561,34 @@ function loadEnvironment(envKey, isInitial = false) {
 
   splatViewer.addSplatScene(config.path, {
     splatAlphaRemovalThreshold: 1,
-    showLoadingUI: false
+    showLoadingUI: false,
+    progressiveLoad: true,
+    onProgress: (percent, percentText) => {
+      const heroFill = document.getElementById('hero-stream-fill');
+      const heroPct = document.getElementById('hero-stream-pct');
+      const heroStatus = document.getElementById('hero-stream-status');
+      const p = Math.max(15, Math.min(100, Math.round(percent)));
+      if (heroFill) heroFill.style.width = `${p}%`;
+      if (heroPct) heroPct.textContent = `${p}%`;
+      if (heroStatus && p >= 95) {
+        heroStatus.innerHTML = '<span class="status-dot" style="background:#10b981;box-shadow:0 0 10px #10b981;"></span> SPATIAL ENGINE READY • 60 FPS';
+        heroStatus.classList.add('ready');
+      }
+    }
   }).then(() => {
     applySplatScale(config.splatScale);
     updateDensityButtons(config.splatScale);
     if (!isInitial) hideSceneLoader();
+    if (hologramGroup) hologramGroup.visible = false;
+    const heroFill = document.getElementById('hero-stream-fill');
+    if (heroFill) heroFill.style.width = '100%';
+    const heroPct = document.getElementById('hero-stream-pct');
+    if (heroPct) heroPct.textContent = '100%';
+    const heroStatus = document.getElementById('hero-stream-status');
+    if (heroStatus) {
+      heroStatus.innerHTML = '<span class="status-dot" style="background:#10b981;box-shadow:0 0 10px #10b981;"></span> SPATIAL ENGINE READY • 60 FPS';
+      heroStatus.classList.add('ready');
+    }
   }).catch((err) => {
     console.error('Error loading splat scene:', err);
     if (!isInitial) hideSceneLoader();
@@ -1149,6 +1207,11 @@ function animate() {
 
   const delta = clock.getDelta();
   pulseTimer += delta * 2.5;
+
+  // Animate Holographic Laser Scan Plane if active
+  if (hologramGroup && hologramGroup.visible && scanPlane) {
+    scanPlane.position.y = 0.2 + (Math.sin(pulseTimer * 1.2) + 1) * 1.3;
+  }
 
   // Pulse POI Target Rings
   poiGroups.forEach((g) => {
