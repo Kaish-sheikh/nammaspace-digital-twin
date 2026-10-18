@@ -158,21 +158,23 @@ const moveState = {
   backward: false,
   left: false,
   right: false,
-  sprint: false,
-  crouch: false
+  sprint: false
 };
 
 document.addEventListener('keydown', (event) => {
-  if (event.code === 'KeyV') {
+  const key = event.key ? event.key.toLowerCase() : '';
+  const code = event.code || '';
+
+  if (code === 'KeyV' || key === 'v') {
     if (typeof stopCinematicTour === 'function' && isTourActive) stopCinematicTour();
     setMode(currentMode === 'walk' ? 'dollhouse' : 'walk');
     return;
   }
-  if (event.code === 'KeyT') {
+  if (code === 'KeyT' || key === 't') {
     if (typeof toggleCinematicTour === 'function') toggleCinematicTour();
     return;
   }
-  if (event.code === 'KeyH') {
+  if (code === 'KeyH' || key === 'h') {
     if (helpModal) {
       helpModal.style.display = helpModal.style.display === 'none' ? 'flex' : 'none';
     }
@@ -180,31 +182,54 @@ document.addEventListener('keydown', (event) => {
   }
 
   // If tour is playing and player touches movement keys, smoothly hand control back to game
-  if (typeof isTourActive !== 'undefined' && isTourActive) {
-    if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.code)) {
-      if (typeof stopCinematicTour === 'function') stopCinematicTour();
-    }
+  const isMoveKey = code === 'KeyW' || key === 'w' || code === 'ArrowUp' || key === 'arrowup' ||
+                    code === 'KeyS' || key === 's' || code === 'ArrowDown' || key === 'arrowdown' ||
+                    code === 'KeyA' || key === 'a' || code === 'ArrowLeft' || key === 'arrowleft' ||
+                    code === 'KeyD' || key === 'd' || code === 'ArrowRight' || key === 'arrowright';
+
+  if (typeof isTourActive !== 'undefined' && isTourActive && isMoveKey) {
+    if (typeof stopCinematicTour === 'function') stopCinematicTour();
   }
 
   if (currentMode !== 'walk') return;
 
-  switch (event.code) {
-    case 'KeyW': case 'ArrowUp': moveState.forward = true; break;
-    case 'KeyS': case 'ArrowDown': moveState.backward = true; break;
-    case 'KeyA': case 'ArrowLeft': moveState.left = true; break;
-    case 'KeyD': case 'ArrowRight': moveState.right = true; break;
-    case 'ShiftLeft': case 'ShiftRight': moveState.sprint = true; break;
-    case 'KeyC': moveState.crouch = !moveState.crouch; break;
-  }
+  if (code === 'KeyW' || key === 'w' || code === 'ArrowUp' || key === 'arrowup') moveState.forward = true;
+  if (code === 'KeyS' || key === 's' || code === 'ArrowDown' || key === 'arrowdown') moveState.backward = true;
+  if (code === 'KeyA' || key === 'a' || code === 'ArrowLeft' || key === 'arrowleft') moveState.left = true;
+  if (code === 'KeyD' || key === 'd' || code === 'ArrowRight' || key === 'arrowright') moveState.right = true;
+  if (event.shiftKey || code === 'ShiftLeft' || code === 'ShiftRight') moveState.sprint = true;
 });
 
 document.addEventListener('keyup', (event) => {
-  switch (event.code) {
-    case 'KeyW': case 'ArrowUp': moveState.forward = false; break;
-    case 'KeyS': case 'ArrowDown': moveState.backward = false; break;
-    case 'KeyA': case 'ArrowLeft': moveState.left = false; break;
-    case 'KeyD': case 'ArrowRight': moveState.right = false; break;
-    case 'ShiftLeft': case 'ShiftRight': moveState.sprint = false; break;
+  const key = event.key ? event.key.toLowerCase() : '';
+  const code = event.code || '';
+
+  if (code === 'KeyW' || key === 'w' || code === 'ArrowUp' || key === 'arrowup') moveState.forward = false;
+  if (code === 'KeyS' || key === 's' || code === 'ArrowDown' || key === 'arrowdown') moveState.backward = false;
+  if (code === 'KeyA' || key === 'a' || code === 'ArrowLeft' || key === 'arrowleft') moveState.left = false;
+  if (code === 'KeyD' || key === 'd' || code === 'ArrowRight' || key === 'arrowright') moveState.right = false;
+  if (!event.shiftKey && (code === 'ShiftLeft' || code === 'ShiftRight')) moveState.sprint = false;
+});
+
+// ==========================================
+// 3.5 🖱️ MOUSE SCROLL WHEEL CLICK (RELEASE / LOCK CURSOR)
+// ==========================================
+window.addEventListener('mousedown', (event) => {
+  // Middle click (mouse scroll wheel button is button 1)
+  if (event.button === 1) {
+    event.preventDefault();
+    if (pointerControls.isLocked) {
+      pointerControls.unlock();
+    } else if (currentMode === 'walk') {
+      pointerControls.lock();
+    }
+  }
+});
+
+window.addEventListener('auxclick', (event) => {
+  // Prevent browser autoscroll icon when clicking mouse wheel
+  if (event.button === 1) {
+    event.preventDefault();
   }
 });
 
@@ -1411,7 +1436,6 @@ if (btnStopTour) {
 const clock = new THREE.Clock();
 const walkSpeed = 3.5;
 const smoothVelocity = new THREE.Vector2(0, 0);
-let currentEyeHeight = EYE_HEIGHT;
 let bobTimer = 0;
 let pulseTimer = 0;
 
@@ -1482,50 +1506,51 @@ function animate() {
     camera.updateProjectionMatrix();
   } else if (currentMode === 'walk' && pointerControls.isLocked) {
     const isMoving = moveState.forward || moveState.backward || moveState.left || moveState.right;
+    const currentSpeed = moveState.sprint ? 6.8 : walkSpeed;
 
-    // Speeds: Walk 3.5 m/s, Sprint 6.8 m/s (2x speed), Crouch 1.9 m/s
-    let currentSpeed = walkSpeed;
-    if (moveState.sprint && !moveState.crouch) currentSpeed = 6.8;
-    else if (moveState.crouch) currentSpeed = 1.9;
+    // Direct, responsive character displacement
+    let forwardInput = 0;
+    if (moveState.forward) forwardInput += 1;
+    if (moveState.backward) forwardInput -= 1;
 
-    let targetZ = 0;
-    let targetX = 0;
-    if (moveState.forward) targetZ += 1;
-    if (moveState.backward) targetZ -= 1;
-    if (moveState.right) targetX += 1;
-    if (moveState.left) targetX -= 1;
+    let strafeInput = 0;
+    if (moveState.right) strafeInput += 1;
+    if (moveState.left) strafeInput -= 1;
 
-    const moveLen = Math.hypot(targetX, targetZ);
-    if (moveLen > 0) {
-      targetX = (targetX / moveLen) * currentSpeed;
-      targetZ = (targetZ / moveLen) * currentSpeed;
+    const inputLen = Math.hypot(forwardInput, strafeInput);
+    let targetForward = 0;
+    let targetStrafe = 0;
+    if (inputLen > 0) {
+      targetForward = (forwardInput / inputLen) * currentSpeed;
+      targetStrafe = (strafeInput / inputLen) * currentSpeed;
     }
 
-    // Smooth exponential acceleration / deceleration momentum
-    const accelFactor = 1 - Math.exp(-12 * delta);
-    smoothVelocity.x += (targetX - smoothVelocity.x) * accelFactor;
-    smoothVelocity.z += (targetZ - smoothVelocity.z) * accelFactor;
+    // Smooth momentum velocity (x: strafe, y: forward)
+    const accelFactor = 1 - Math.exp(-15 * delta);
+    smoothVelocity.x += (targetStrafe - smoothVelocity.x) * accelFactor;
+    smoothVelocity.y += (targetForward - smoothVelocity.y) * accelFactor;
 
-    if (Math.abs(smoothVelocity.z) > 0.001) pointerControls.moveForward(smoothVelocity.z * delta);
-    if (Math.abs(smoothVelocity.x) > 0.001) pointerControls.moveRight(smoothVelocity.x * delta);
+    // Apply movement to Three.js PointerLockControls
+    if (Math.abs(smoothVelocity.y) > 0.001) {
+      pointerControls.moveForward(smoothVelocity.y * delta);
+    }
+    if (Math.abs(smoothVelocity.x) > 0.001) {
+      pointerControls.moveRight(smoothVelocity.x * delta);
+    }
 
-    // Smooth eye height transition (Crouch 0.95m vs Standing 1.6m)
-    const targetBaseHeight = moveState.crouch ? 0.95 : EYE_HEIGHT;
-    currentEyeHeight += (targetBaseHeight - currentEyeHeight) * (1 - Math.exp(-10 * delta));
-
-    // Dynamic head-bobbing & lateral sway
-    const activeSpeed = Math.hypot(smoothVelocity.x, smoothVelocity.z);
+    // Natural head-bobbing when moving
+    const activeSpeed = Math.hypot(smoothVelocity.x, smoothVelocity.y);
     if (activeSpeed > 0.2) {
-      const bobFreq = moveState.sprint ? 14 : (moveState.crouch ? 7 : 10);
+      const bobFreq = moveState.sprint ? 13 : 9;
       bobTimer += delta * bobFreq;
-      const bobAmp = moveState.sprint ? 0.045 : (moveState.crouch ? 0.015 : 0.025);
-      camera.position.y = currentEyeHeight + Math.sin(bobTimer) * bobAmp;
+      const bobAmp = moveState.sprint ? 0.04 : 0.022;
+      camera.position.y = EYE_HEIGHT + Math.sin(bobTimer) * bobAmp;
     } else {
-      camera.position.y += (currentEyeHeight - camera.position.y) * 0.15;
+      camera.position.y += (EYE_HEIGHT - camera.position.y) * 0.15;
     }
 
-    // Dynamic FOV Warp (75° base, 83° sprint warp speed, 72° crouch)
-    const targetFOV = (moveState.sprint && isMoving) ? 83 : (moveState.crouch ? 72 : 75);
+    // Dynamic FOV Warp (75° base, 83° sprint warp speed)
+    const targetFOV = (moveState.sprint && isMoving) ? 83 : 75;
     camera.fov += (targetFOV - camera.fov) * (1 - Math.exp(-8 * delta));
     camera.updateProjectionMatrix();
 
