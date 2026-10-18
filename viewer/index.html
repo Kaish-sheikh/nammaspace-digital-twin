@@ -33,13 +33,16 @@
           <span class="status-fidelity" id="status-fidelity">1.13M Splats • Ultra-HD Photorealism</span>
         </div>
 
-        <!-- Dual Environment Showcase Switcher -->
+        <!-- Triple Environment Showcase Switcher -->
         <div class="env-switcher">
           <button id="btn-env-studio" class="env-btn active" title="Ultra-HD Photorealistic Indoor Twin">
-            <span class="env-icon">🏛️</span> Ultra-HD Studio (1.13M Splats)
+            <span class="env-icon">🏛️</span> Studio (1.13M)
           </button>
-          <button id="btn-env-garden" class="env-btn" title="Open-Air Photorealistic Campus Twin">
-            <span class="env-icon">🌳</span> Spatial Courtyard (3.14M Splats)
+          <button id="btn-env-atrium" class="env-btn" title="Grand Commercial Complex & Atrium Concourse">
+            <span class="env-icon">🏬</span> Atrium (1.73M)
+          </button>
+          <button id="btn-env-garden" class="env-btn" title="Open-Air Campus Courtyard Twin">
+            <span class="env-icon">🌳</span> Courtyard (3.14M)
           </button>
         </div>
       </div>
@@ -72,10 +75,24 @@
           <span class="tf-icon">🏛️</span>
           <span class="tf-text">IIT BOMBAY TECHFEST</span>
         </div>
+        <button id="btn-tour" class="utility-btn tour-btn" title="Cinematic 3D Drone Tour (Press T)">
+          <span class="tour-icon">🎬</span>
+          <span class="tour-text">Tour</span>
+        </button>
         <button id="btn-help" class="utility-btn" title="Shortcuts & Controls">?</button>
         <button id="btn-fullscreen" class="utility-btn" title="Toggle Fullscreen">⛶</button>
       </div>
     </header>
+
+    <!-- Cinematic Drone Tour Banner -->
+    <div id="cinematic-banner" style="display: none;">
+      <div class="cinema-rec-dot"></div>
+      <div class="cinema-text">
+        <span class="cinema-title">CINEMATIC DRONE TOUR</span>
+        <span class="cinema-sub">Press <kbd>T</kbd> or <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> to Take Control</span>
+      </div>
+      <button id="btn-stop-tour" class="cinema-stop-btn" title="Exit Cinematic Tour">✕ Exit Tour</button>
+    </div>
 
     <!-- Left Floating Waypoint Navigation Dock -->
     <aside id="waypoint-dock">
@@ -176,9 +193,13 @@
       <div class="hud-helper-pill">
         <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Move</span>
         <span class="helper-divider">•</span>
-        <span>Mouse to Look</span>
+        <span><kbd>SHIFT</kbd> Sprint</span>
         <span class="helper-divider">•</span>
-        <span>Click 3D Beacon to Inspect</span>
+        <span><kbd>C</kbd> Crouch</span>
+        <span class="helper-divider">•</span>
+        <span><kbd>T</kbd> Tour</span>
+        <span class="helper-divider">•</span>
+        <span>Mouse to Look</span>
       </div>
     </nav>
 
@@ -286,8 +307,8 @@
             <span class="feat-label">Peak Splat Density</span>
           </div>
           <div class="feat-card">
-            <span class="feat-num">Dual-Twin</span>
-            <span class="feat-label">Indoor & Outdoor</span>
+            <span class="feat-num">Triple-Twin</span>
+            <span class="feat-label">Studio, Atrium & Courtyard</span>
           </div>
           <div class="feat-card">
             <span class="feat-num">60+ FPS</span>
@@ -301,16 +322,24 @@
             <span class="key-desc">Walk & Roam</span>
           </div>
           <div class="keymap-row">
+            <span class="keycap">SHIFT</span>
+            <span class="key-desc">Sprint (2x Speed)</span>
+          </div>
+          <div class="keymap-row">
+            <span class="keycap">C</span>
+            <span class="key-desc">Crouch (Low Angle)</span>
+          </div>
+          <div class="keymap-row">
+            <span class="keycap">T</span>
+            <span class="key-desc">Cinematic Tour</span>
+          </div>
+          <div class="keymap-row">
             <span class="keycap">MOUSE</span>
             <span class="key-desc">First-Person Look</span>
           </div>
           <div class="keymap-row">
             <span class="keycap">V</span>
-            <span class="key-desc">Toggle Dollhouse Orbit</span>
-          </div>
-          <div class="keymap-row">
-            <span class="keycap">ESC</span>
-            <span class="key-desc">Release Mouse Cursor</span>
+            <span class="key-desc">Dollhouse Orbit</span>
           </div>
         </div>
 

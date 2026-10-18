@@ -295,6 +295,129 @@ body {
   transform: translateY(-1px);
 }
 
+.utility-btn.tour-btn {
+  width: auto;
+  border-radius: var(--radius-full);
+  padding: 0 14px;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(185, 28, 28, 0.25));
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+  font-family: var(--font-sans);
+  font-size: 11px;
+}
+
+.utility-btn.tour-btn:hover {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.28), rgba(185, 28, 28, 0.4));
+  color: #ffffff;
+  border-color: rgba(239, 68, 68, 0.7);
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.35);
+}
+
+.utility-btn.tour-btn.active {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.6);
+  border-color: #ef4444;
+}
+
+.tour-icon {
+  font-size: 13px;
+}
+
+.tour-text {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* ===================================================
+   CINEMATIC DRONE TOUR BANNER
+   =================================================== */
+#cinematic-banner {
+  position: fixed;
+  top: 76px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(10, 12, 18, 0.9);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(239, 68, 68, 0.2);
+  backdrop-filter: var(--blur-hud);
+  -webkit-backdrop-filter: var(--blur-hud);
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  z-index: 100;
+  animation: fadeInDown 0.35s ease-out;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translate(-50%, -10px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.cinema-rec-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 0 0 10px #ef4444;
+  animation: cinemaPulse 1.2s infinite ease-in-out;
+}
+
+@keyframes cinemaPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(0.85); }
+}
+
+.cinema-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.cinema-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #fca5a5;
+}
+
+.cinema-sub {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.cinema-sub kbd {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-size: 9px;
+  color: #fff;
+  font-family: var(--font-mono);
+}
+
+.cinema-stop-btn {
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cinema-stop-btn:hover {
+  background: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
 /* ===================================================
    2. WAYPOINT NAVIGATION DOCK (LEFT SIDE)
    =================================================== */

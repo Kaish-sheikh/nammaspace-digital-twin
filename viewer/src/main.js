@@ -19,9 +19,15 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.set(0, EYE_HEIGHT, 5);
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({
+  antialias: true,
+  powerPreference: 'high-performance'
+});
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.domElement.style.position = 'fixed';
 renderer.domElement.style.top = '0';
 renderer.domElement.style.left = '0';
@@ -54,6 +60,9 @@ const btnFullscreen = document.getElementById('btn-fullscreen');
 const btnHelp = document.getElementById('btn-help');
 const helpModal = document.getElementById('help-modal');
 const btnCloseHelp = document.getElementById('btn-close-help');
+const btnTour = document.getElementById('btn-tour');
+const btnStopTour = document.getElementById('btn-stop-tour');
+const cinematicBanner = document.getElementById('cinematic-banner');
 
 // Blocker / Click to Enter
 if (btnEnter) {
@@ -142,13 +151,25 @@ if (helpModal) {
 }
 
 // ==========================================
-// 3. KEYBOARD INPUT TRACKING
+// 3. KEYBOARD INPUT TRACKING (GAME ENGINE PHYSICS)
 // ==========================================
-const moveState = { forward: false, backward: false, left: false, right: false };
+const moveState = {
+  forward: false,
+  backward: false,
+  left: false,
+  right: false,
+  sprint: false,
+  crouch: false
+};
 
 document.addEventListener('keydown', (event) => {
   if (event.code === 'KeyV') {
+    if (typeof stopCinematicTour === 'function' && isTourActive) stopCinematicTour();
     setMode(currentMode === 'walk' ? 'dollhouse' : 'walk');
+    return;
+  }
+  if (event.code === 'KeyT') {
+    if (typeof toggleCinematicTour === 'function') toggleCinematicTour();
     return;
   }
   if (event.code === 'KeyH') {
@@ -157,6 +178,14 @@ document.addEventListener('keydown', (event) => {
     }
     return;
   }
+
+  // If tour is playing and player touches movement keys, smoothly hand control back to game
+  if (typeof isTourActive !== 'undefined' && isTourActive) {
+    if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.code)) {
+      if (typeof stopCinematicTour === 'function') stopCinematicTour();
+    }
+  }
+
   if (currentMode !== 'walk') return;
 
   switch (event.code) {
@@ -164,6 +193,8 @@ document.addEventListener('keydown', (event) => {
     case 'KeyS': case 'ArrowDown': moveState.backward = true; break;
     case 'KeyA': case 'ArrowLeft': moveState.left = true; break;
     case 'KeyD': case 'ArrowRight': moveState.right = true; break;
+    case 'ShiftLeft': case 'ShiftRight': moveState.sprint = true; break;
+    case 'KeyC': moveState.crouch = !moveState.crouch; break;
   }
 });
 
@@ -173,6 +204,7 @@ document.addEventListener('keyup', (event) => {
     case 'KeyS': case 'ArrowDown': moveState.backward = false; break;
     case 'KeyA': case 'ArrowLeft': moveState.left = false; break;
     case 'KeyD': case 'ArrowRight': moveState.right = false; break;
+    case 'ShiftLeft': case 'ShiftRight': moveState.sprint = false; break;
   }
 });
 
@@ -249,6 +281,18 @@ const ENV_CONFIGS = {
     splatScale: 1.0,
     cameraPos: { x: 0, y: EYE_HEIGHT, z: 3.5 }
   },
+  atrium: {
+    name: 'Commercial Atrium',
+    path: '/atrium.splat',
+    size: '1.73M Splats',
+    splatCount: '1,734,000+ Splats',
+    fidelity: 'Grand Commercial Complex',
+    rotation: { x: Math.PI, y: 0, z: 0 },
+    position: { x: 0, y: 1.6, z: 0 },
+    scale: { x: 1.1, y: 1.1, z: 1.1 },
+    splatScale: 1.0,
+    cameraPos: { x: 0, y: EYE_HEIGHT, z: 2.8 }
+  },
   garden: {
     name: 'Spatial Courtyard',
     path: '/garden.ksplat',
@@ -294,6 +338,35 @@ const ENV_POIS = {
       pos: new THREE.Vector3(1.8, 0.8, 2.0),
       color: 0xf59e0b,
       icon: '⛩️'
+    }
+  ],
+  atrium: [
+    {
+      id: 'workstation',
+      title: 'Grand Galleria Plaza',
+      badge: 'CENTRAL LOBBY',
+      desc: 'Expansive multi-tier commercial atrium concourse with open skylight illumination and central lounge.',
+      pos: new THREE.Vector3(0.1, 0.7, 0.0),
+      color: 0x3b82f6,
+      icon: '🏛️'
+    },
+    {
+      id: 'display',
+      title: 'Retail Promenade Wing',
+      badge: 'COMMERCIAL',
+      desc: 'Curated shopping showcase gallery with structural glass pavilions and perimeter displays.',
+      pos: new THREE.Vector3(-1.8, 0.7, -1.5),
+      color: 0x818cf8,
+      icon: '🛍️'
+    },
+    {
+      id: 'door',
+      title: 'Mezzanine Transit Concourse',
+      badge: 'CONCOURSE',
+      desc: 'High-volume circulation corridor connecting the grand atrium to transit and executive lounges.',
+      pos: new THREE.Vector3(1.6, 0.7, 1.4),
+      color: 0x10b981,
+      icon: '🚊'
     }
   ],
   studio: [
@@ -642,8 +715,10 @@ function loadEnvironment(envKey, isInitial = false) {
   // Update Environment Button States
   const btnGarden = document.getElementById('btn-env-garden') || document.getElementById('btn-env-mobile');
   const btnStudio = document.getElementById('btn-env-studio');
+  const btnAtrium = document.getElementById('btn-env-atrium');
   if (btnGarden) btnGarden.classList.toggle('active', envKey === 'garden');
   if (btnStudio) btnStudio.classList.toggle('active', envKey === 'studio');
+  if (btnAtrium) btnAtrium.classList.toggle('active', envKey === 'atrium');
 
   // Reposition camera
   camera.position.set(config.cameraPos.x, config.cameraPos.y, config.cameraPos.z);
@@ -661,6 +736,7 @@ function loadEnvironment(envKey, isInitial = false) {
 // Environment Switcher Buttons
 const btnEnvGarden = document.getElementById('btn-env-garden') || document.getElementById('btn-env-mobile');
 const btnEnvStudio = document.getElementById('btn-env-studio');
+const btnEnvAtrium = document.getElementById('btn-env-atrium');
 
 if (btnEnvGarden) {
   btnEnvGarden.addEventListener('click', (e) => {
@@ -673,6 +749,13 @@ if (btnEnvStudio) {
   btnEnvStudio.addEventListener('click', (e) => {
     e.stopPropagation();
     if (currentEnv !== 'studio') loadEnvironment('studio');
+  });
+}
+
+if (btnEnvAtrium) {
+  btnEnvAtrium.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (currentEnv !== 'atrium') loadEnvironment('atrium');
   });
 }
 
@@ -1226,10 +1309,109 @@ if (minimapCanvas) {
 }
 
 // ==========================================
+// 8.5 🎬 CINEMATIC DRONE TOUR SYSTEM
+// ==========================================
+let isTourActive = false;
+let tourProgress = 0;
+let tourCurve = null;
+
+const TOUR_PATHS = {
+  studio: [
+    new THREE.Vector3(0, 1.8, 3.8),
+    new THREE.Vector3(1.5, 1.7, 2.2),
+    new THREE.Vector3(1.0, 1.3, 0.4),
+    new THREE.Vector3(0.0, 1.4, -0.4),
+    new THREE.Vector3(-1.4, 1.6, -0.8),
+    new THREE.Vector3(-1.6, 2.0, 1.5),
+    new THREE.Vector3(-0.6, 2.2, 3.2),
+    new THREE.Vector3(0, 1.8, 3.8)
+  ],
+  atrium: [
+    new THREE.Vector3(0, 2.2, 3.6),
+    new THREE.Vector3(2.2, 2.0, 1.8),
+    new THREE.Vector3(1.6, 1.5, -0.4),
+    new THREE.Vector3(0.0, 1.3, -1.5),
+    new THREE.Vector3(-2.0, 1.7, -0.6),
+    new THREE.Vector3(-2.2, 2.2, 1.8),
+    new THREE.Vector3(-0.5, 2.6, 3.2),
+    new THREE.Vector3(0, 2.2, 3.6)
+  ],
+  garden: [
+    new THREE.Vector3(0.2, 2.4, 3.8),
+    new THREE.Vector3(2.0, 2.0, 2.0),
+    new THREE.Vector3(1.5, 1.6, 0.2),
+    new THREE.Vector3(0.2, 1.4, -0.5),
+    new THREE.Vector3(-2.0, 1.7, -1.2),
+    new THREE.Vector3(-1.8, 2.2, 1.5),
+    new THREE.Vector3(-0.2, 2.6, 3.2),
+    new THREE.Vector3(0.2, 2.4, 3.8)
+  ]
+};
+
+function getTourCurveForEnv(envKey) {
+  const points = TOUR_PATHS[envKey] || TOUR_PATHS.studio;
+  return new THREE.CatmullRomCurve3(points, true, 'centripetal');
+}
+
+function startCinematicTour() {
+  isTourActive = true;
+  tourProgress = 0;
+  tourCurve = getTourCurveForEnv(currentEnv);
+
+  if (cinematicBanner) cinematicBanner.style.display = 'flex';
+  if (btnTour) btnTour.classList.add('active');
+  if (modeLabel) modeLabel.textContent = 'CINEMATIC DRONE TOUR';
+
+  pointerControls.unlock();
+  if (blocker) blocker.style.display = 'none';
+  if (crosshair) crosshair.style.opacity = '0';
+  orbitControls.enabled = false;
+}
+
+function stopCinematicTour() {
+  if (!isTourActive) return;
+  isTourActive = false;
+  if (cinematicBanner) cinematicBanner.style.display = 'none';
+  if (btnTour) btnTour.classList.remove('active');
+  if (modeLabel) modeLabel.textContent = currentMode === 'dollhouse' ? 'DOLLHOUSE (ORBIT)' : 'WALK (1ST PERSON)';
+
+  if (currentMode === 'walk') {
+    if (crosshair) crosshair.style.opacity = '1';
+    pointerControls.lock();
+  } else {
+    orbitControls.enabled = true;
+  }
+}
+
+function toggleCinematicTour() {
+  if (isTourActive) {
+    stopCinematicTour();
+  } else {
+    startCinematicTour();
+  }
+}
+
+if (btnTour) {
+  btnTour.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleCinematicTour();
+  });
+}
+
+if (btnStopTour) {
+  btnStopTour.addEventListener('click', (e) => {
+    e.stopPropagation();
+    stopCinematicTour();
+  });
+}
+
+// ==========================================
 // 9. ANIMATION LOOP & LIVE TELEMETRY
 // ==========================================
 const clock = new THREE.Clock();
 const walkSpeed = 3.5;
+const smoothVelocity = new THREE.Vector2(0, 0);
+let currentEyeHeight = EYE_HEIGHT;
 let bobTimer = 0;
 let pulseTimer = 0;
 
@@ -1259,7 +1441,7 @@ function animate() {
   });
 
   // Update Dynamic Distances in Waypoint Dock
-  const currentPois = ENV_POIS[currentEnv] || ENV_POIS.mobile;
+  const currentPois = ENV_POIS[currentEnv] || ENV_POIS.studio;
   currentPois.forEach((poi) => {
     const distEl = document.querySelector(`[data-dist="${poi.id}"]`);
     if (distEl) {
@@ -1285,22 +1467,69 @@ function animate() {
     }
   }
 
-  // Walk Movement
-  if (currentMode === 'walk' && pointerControls.isLocked) {
+  // Cinematic Drone Flythrough vs Game-Engine Character Movement
+  if (isTourActive && tourCurve) {
+    tourProgress += delta * 0.035; // ~28s continuous scenic loop
+    const t = tourProgress % 1.0;
+    const currentPoint = tourCurve.getPoint(t);
+    const lookAheadPoint = tourCurve.getPoint((t + 0.03) % 1.0);
+
+    camera.position.copy(currentPoint);
+    camera.lookAt(lookAheadPoint);
+
+    // Dynamic FOV for sweeping drone cinematography
+    camera.fov += (72 - camera.fov) * (1 - Math.exp(-6 * delta));
+    camera.updateProjectionMatrix();
+  } else if (currentMode === 'walk' && pointerControls.isLocked) {
     const isMoving = moveState.forward || moveState.backward || moveState.left || moveState.right;
 
-    if (moveState.forward) pointerControls.moveForward(walkSpeed * delta);
-    if (moveState.backward) pointerControls.moveForward(-walkSpeed * delta);
-    if (moveState.right) pointerControls.moveRight(walkSpeed * delta);
-    if (moveState.left) pointerControls.moveRight(-walkSpeed * delta);
+    // Speeds: Walk 3.5 m/s, Sprint 6.8 m/s (2x speed), Crouch 1.9 m/s
+    let currentSpeed = walkSpeed;
+    if (moveState.sprint && !moveState.crouch) currentSpeed = 6.8;
+    else if (moveState.crouch) currentSpeed = 1.9;
 
-    if (isMoving) {
-      bobTimer += delta * 10;
-      camera.position.y = EYE_HEIGHT + Math.sin(bobTimer) * 0.03;
-    } else {
-      camera.position.y += (EYE_HEIGHT - camera.position.y) * 0.1;
+    let targetZ = 0;
+    let targetX = 0;
+    if (moveState.forward) targetZ += 1;
+    if (moveState.backward) targetZ -= 1;
+    if (moveState.right) targetX += 1;
+    if (moveState.left) targetX -= 1;
+
+    const moveLen = Math.hypot(targetX, targetZ);
+    if (moveLen > 0) {
+      targetX = (targetX / moveLen) * currentSpeed;
+      targetZ = (targetZ / moveLen) * currentSpeed;
     }
 
+    // Smooth exponential acceleration / deceleration momentum
+    const accelFactor = 1 - Math.exp(-12 * delta);
+    smoothVelocity.x += (targetX - smoothVelocity.x) * accelFactor;
+    smoothVelocity.z += (targetZ - smoothVelocity.z) * accelFactor;
+
+    if (Math.abs(smoothVelocity.z) > 0.001) pointerControls.moveForward(smoothVelocity.z * delta);
+    if (Math.abs(smoothVelocity.x) > 0.001) pointerControls.moveRight(smoothVelocity.x * delta);
+
+    // Smooth eye height transition (Crouch 0.95m vs Standing 1.6m)
+    const targetBaseHeight = moveState.crouch ? 0.95 : EYE_HEIGHT;
+    currentEyeHeight += (targetBaseHeight - currentEyeHeight) * (1 - Math.exp(-10 * delta));
+
+    // Dynamic head-bobbing & lateral sway
+    const activeSpeed = Math.hypot(smoothVelocity.x, smoothVelocity.z);
+    if (activeSpeed > 0.2) {
+      const bobFreq = moveState.sprint ? 14 : (moveState.crouch ? 7 : 10);
+      bobTimer += delta * bobFreq;
+      const bobAmp = moveState.sprint ? 0.045 : (moveState.crouch ? 0.015 : 0.025);
+      camera.position.y = currentEyeHeight + Math.sin(bobTimer) * bobAmp;
+    } else {
+      camera.position.y += (currentEyeHeight - camera.position.y) * 0.15;
+    }
+
+    // Dynamic FOV Warp (75° base, 83° sprint warp speed, 72° crouch)
+    const targetFOV = (moveState.sprint && isMoving) ? 83 : (moveState.crouch ? 72 : 75);
+    camera.fov += (targetFOV - camera.fov) * (1 - Math.exp(-8 * delta));
+    camera.updateProjectionMatrix();
+
+    // Boundary constraints
     const LIMIT = (ROOM_SIZE / 2) - 0.5;
     camera.position.x = Math.max(-LIMIT, Math.min(LIMIT, camera.position.x));
     camera.position.z = Math.max(-LIMIT, Math.min(LIMIT, camera.position.z));
