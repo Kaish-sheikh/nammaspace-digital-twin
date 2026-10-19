@@ -1414,6 +1414,30 @@ body {
   filter: brightness(1.08);
 }
 
+.hero-enter-btn:disabled {
+  background: rgba(20, 27, 45, 0.8) !important;
+  color: rgba(255, 255, 255, 0.45) !important;
+  border-color: rgba(59, 130, 246, 0.2) !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.hero-enter-btn:disabled .enter-btn-pulse {
+  display: none !important;
+}
+
+.hero-enter-btn:disabled .enter-arrow {
+  display: inline-block;
+  animation: pulse-wait 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-wait {
+  0%, 100% { opacity: 0.4; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
 /* ===================================================
    9. HELP MODAL
    =================================================== */

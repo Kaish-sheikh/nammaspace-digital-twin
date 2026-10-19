@@ -65,26 +65,37 @@ const btnStopTour = document.getElementById('btn-stop-tour');
 const cinematicBanner = document.getElementById('cinematic-banner');
 
 // Blocker / Click to Enter
+let hasEnteredTwin = false;
+
 if (btnEnter) {
   btnEnter.addEventListener('click', (e) => {
     e.stopPropagation();
+    if (btnEnter.disabled) return;
+    hasEnteredTwin = true;
+    if (blocker) blocker.style.display = 'none';
     if (currentMode === 'walk') pointerControls.lock();
   });
 }
 
 if (blocker) {
   blocker.addEventListener('click', () => {
+    if (btnEnter && btnEnter.disabled) return;
+    hasEnteredTwin = true;
+    if (blocker) blocker.style.display = 'none';
     if (currentMode === 'walk') pointerControls.lock();
   });
 }
 
 pointerControls.addEventListener('lock', () => {
+  hasEnteredTwin = true;
   if (blocker) blocker.style.display = 'none';
   if (crosshair) crosshair.style.opacity = '1';
 });
 
 pointerControls.addEventListener('unlock', () => {
-  if (currentMode === 'walk' && blocker) {
+  // CRITICAL: Never reopen the start menu blocker once entered!
+  // This lets the cursor move freely so the user can click between models or use the UI.
+  if (!hasEnteredTwin && currentMode === 'walk' && blocker) {
     blocker.style.display = 'flex';
   }
   if (crosshair) crosshair.style.opacity = '0';
@@ -749,11 +760,22 @@ function loadEnvironment(envKey, isInitial = false) {
   const heroFill = document.getElementById('hero-stream-fill');
   const heroPct = document.getElementById('hero-stream-pct');
   const heroStatus = document.getElementById('hero-stream-status');
+  const btnEnter = document.getElementById('btn-enter');
+  const btnEnterText = document.getElementById('btn-enter-text');
+  const btnEnterArrow = document.getElementById('btn-enter-arrow');
+
   if (heroFill) heroFill.style.width = '15%';
   if (heroPct) heroPct.textContent = '15%';
   if (heroStatus) {
     heroStatus.classList.remove('ready');
     heroStatus.innerHTML = '<span class="status-dot"></span> STREAMING ULTRA-HD SPATIAL TWIN';
+  }
+
+  // Lock Enter button until model is fully ready
+  if (btnEnter && !hasEnteredTwin) {
+    btnEnter.disabled = true;
+    if (btnEnterText) btnEnterText.textContent = 'STREAMING SPATIAL TWIN (15%)...';
+    if (btnEnterArrow) btnEnterArrow.textContent = '⏳';
   }
 
   // Smooth simulated progress increment to guarantee responsive visual feedback
@@ -765,6 +787,9 @@ function loadEnvironment(envKey, isInitial = false) {
       const p = Math.min(90, Math.round(currentProgress));
       if (heroFill) heroFill.style.width = `${p}%`;
       if (heroPct) heroPct.textContent = `${p}%`;
+      if (btnEnter && !hasEnteredTwin && btnEnter.disabled && btnEnterText) {
+        btnEnterText.textContent = `STREAMING SPATIAL TWIN (${p}%)...`;
+      }
     }
   }, 250);
 
@@ -777,6 +802,9 @@ function loadEnvironment(envKey, isInitial = false) {
         const p = Math.min(95, Math.round(percent));
         if (heroFill) heroFill.style.width = `${p}%`;
         if (heroPct) heroPct.textContent = `${p}%`;
+        if (btnEnter && !hasEnteredTwin && btnEnter.disabled && btnEnterText) {
+          btnEnterText.textContent = `STREAMING SPATIAL TWIN (${p}%)...`;
+        }
       }
     }
   }).then(() => {
@@ -794,6 +822,13 @@ function loadEnvironment(envKey, isInitial = false) {
       heroStatus.innerHTML = '<span class="status-dot" style="background:#10b981;box-shadow:0 0 10px #10b981;"></span> SPATIAL ENGINE READY • 60 FPS';
       heroStatus.classList.add('ready');
     }
+
+    // Unlock Enter Button: Model is ready for exploration!
+    if (btnEnter && !hasEnteredTwin) {
+      btnEnter.disabled = false;
+      if (btnEnterText) btnEnterText.textContent = 'ENTER DIGITAL TWIN';
+      if (btnEnterArrow) btnEnterArrow.textContent = '→';
+    }
   }).catch((err) => {
     if (streamInterval) {
       clearInterval(streamInterval);
@@ -801,6 +836,11 @@ function loadEnvironment(envKey, isInitial = false) {
     }
     console.error('Error loading splat scene:', err);
     if (!isInitial) hideSceneLoader();
+    if (btnEnter && !hasEnteredTwin) {
+      btnEnter.disabled = false;
+      if (btnEnterText) btnEnterText.textContent = 'ENTER DIGITAL TWIN';
+      if (btnEnterArrow) btnEnterArrow.textContent = '→';
+    }
   });
 
   scene.add(splatViewer);
