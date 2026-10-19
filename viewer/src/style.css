@@ -477,10 +477,86 @@ body {
 }
 
 .btn-dock-toggle.active {
-  background: rgba(59, 130, 246, 0.2);
-  color: #60a5fa;
-  border-color: rgba(59, 130, 246, 0.5);
-  box-shadow: 0 0 10px var(--accent-cyan-glow);
+  background: rgba(234, 67, 53, 0.2);
+  color: #ea4335;
+  border-color: rgba(234, 67, 53, 0.5);
+  box-shadow: 0 0 10px rgba(234, 67, 53, 0.35);
+}
+
+/* Google Maps Indoor Search Bar */
+.maps-search-bar {
+  display: flex;
+  align-items: center;
+  background: rgba(12, 16, 26, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  gap: 8px;
+  backdrop-filter: var(--blur-hud);
+  -webkit-backdrop-filter: var(--blur-hud);
+  transition: all 0.25s ease;
+}
+
+.maps-search-bar:focus-within {
+  border-color: #ea4335;
+  box-shadow: 0 0 16px rgba(234, 67, 53, 0.4);
+  background: rgba(16, 22, 36, 0.96);
+}
+
+.search-lens {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.maps-search-bar input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.maps-search-bar input::placeholder {
+  color: var(--text-dim);
+}
+
+.search-clear-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0 4px;
+  transition: color 0.15s ease;
+}
+
+.search-clear-btn:hover {
+  color: #fff;
+}
+
+.waypoint-card.search-hidden {
+  display: none !important;
+}
+
+.wp-red {
+  background: rgba(234, 67, 53, 0.2) !important;
+  border-color: rgba(234, 67, 53, 0.45) !important;
+  color: #ea4335 !important;
+}
+
+.wp-orange {
+  background: rgba(245, 158, 11, 0.2) !important;
+  border-color: rgba(245, 158, 11, 0.45) !important;
+  color: #f59e0b !important;
+}
+
+.wp-blue {
+  background: rgba(59, 130, 246, 0.2) !important;
+  border-color: rgba(59, 130, 246, 0.45) !important;
+  color: #60a5fa !important;
 }
 
 
@@ -988,7 +1064,17 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+}
+
+.poi-badge-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.poi-pin-icon {
+  font-size: 14px;
 }
 
 .poi-badge {
@@ -997,9 +1083,9 @@ body {
   letter-spacing: 0.8px;
   padding: 3px 10px;
   border-radius: var(--radius-full);
-  background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: rgba(234, 67, 53, 0.15);
+  color: #ea4335;
+  border: 1px solid rgba(234, 67, 53, 0.35);
 }
 
 .modal-close {
@@ -1055,13 +1141,17 @@ body {
   color: var(--accent-emerald);
 }
 
+.stat-walk-time {
+  color: #10b981 !important;
+}
+
 .poi-nav-btn {
   position: relative;
   width: 100%;
   overflow: hidden;
-  background: linear-gradient(135deg, var(--accent-cyan), #0284c7);
-  color: #050811;
-  border: none;
+  background: linear-gradient(135deg, #ea4335, #d93025);
+  color: #ffffff;
+  border: 1px solid rgba(234, 67, 53, 0.5);
   padding: 12px;
   border-radius: var(--radius-md);
   font-family: var(--font-sans);
@@ -1069,8 +1159,14 @@ body {
   font-weight: 800;
   letter-spacing: 0.5px;
   cursor: pointer;
-  box-shadow: 0 6px 20px var(--accent-cyan-glow);
+  box-shadow: 0 6px 20px rgba(234, 67, 53, 0.4);
   transition: all 0.2s ease;
+}
+
+.poi-nav-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(234, 67, 53, 0.6);
+  filter: brightness(1.1);
 }
 
 .poi-nav-btn:hover {

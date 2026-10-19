@@ -339,134 +339,202 @@ const ENV_POIS = {
   garden: [
     {
       id: 'workstation',
-      title: 'Central Courtyard Plaza',
-      badge: 'STONE TERRACE',
-      desc: 'Sunlit stone dining terrace with architectural garden seating and open-air plaza.',
+      title: 'Exhibition Booth 24 (Quad)',
+      badge: 'LARGE EVENTS',
+      desc: 'Central convention exhibition booth on the open-air campus quad with live telemetry.',
       pos: new THREE.Vector3(0.2, 0.8, -0.1),
-      color: 0x3b82f6,
-      icon: '🏛️'
+      color: 0xea4335,
+      icon: '🎪'
     },
     {
       id: 'display',
-      title: 'Botanical Pergola',
-      badge: 'FLORAL ARBOR',
-      desc: 'Climbing botanical arbor with living floral vines and diffuse sunlight canopy.',
+      title: 'Botanical Pergola Seating',
+      badge: 'RELAXATION ZONE',
+      desc: 'Shaded floral canopy terrace with living botanical climbing vines and garden benches.',
       pos: new THREE.Vector3(-2.2, 0.8, -1.5),
       color: 0x10b981,
       icon: '🌿'
     },
     {
       id: 'door',
-      title: 'Heritage Stone Archway',
+      title: 'Meeting Point Archway',
       badge: 'CAMPUS GATE',
       desc: 'Historic masonry portal connecting the botanical grounds to the main campus quad.',
       pos: new THREE.Vector3(1.8, 0.8, 2.0),
-      color: 0xf59e0b,
+      color: 0x3b82f6,
       icon: '⛩️'
     }
   ],
   atrium: [
     {
       id: 'workstation',
-      title: 'Grand Galleria Plaza',
-      badge: 'CENTRAL LOBBY',
-      desc: 'Expansive multi-tier commercial atrium concourse with open skylight illumination and central lounge.',
+      title: 'Exhibition Booth 24',
+      badge: 'LARGE EVENTS',
+      desc: 'Central exhibition showcase booth with high-density foot traffic and live telemetry.',
       pos: new THREE.Vector3(0.1, 0.7, 0.0),
-      color: 0x3b82f6,
-      icon: '🏛️'
+      color: 0xea4335,
+      icon: '🎪'
     },
     {
       id: 'display',
-      title: 'Retail Promenade Wing',
-      badge: 'COMMERCIAL',
-      desc: 'Curated shopping showcase gallery with structural glass pavilions and perimeter displays.',
+      title: '3-Seater Sofa (IKEA Showcase)',
+      badge: 'RETAIL STORES',
+      desc: 'Curated home furniture retail display showcasing modular 3-seater sofa arrangements.',
       pos: new THREE.Vector3(-1.8, 0.7, -1.5),
-      color: 0x818cf8,
-      icon: '🛍️'
+      color: 0xf59e0b,
+      icon: '🛋️'
     },
     {
       id: 'door',
-      title: 'Mezzanine Transit Concourse',
-      badge: 'CONCOURSE',
-      desc: 'High-volume circulation corridor connecting the grand atrium to transit and executive lounges.',
+      title: 'Meeting Room A (Concourse)',
+      badge: 'OFFICE SPACES',
+      desc: 'Tenant conference suite and mezzanine transit concourse.',
       pos: new THREE.Vector3(1.6, 0.7, 1.4),
-      color: 0x10b981,
-      icon: '🚊'
+      color: 0x3b82f6,
+      icon: '🏢'
     }
   ],
   studio: [
     {
       id: 'workstation',
-      title: 'Command Desk & Telemetry Station',
-      badge: 'EXECUTIVE',
-      desc: 'Primary command workstation featuring dual curved displays, mechanical interface, and spatial telemetry.',
+      title: 'Meeting Room 4',
+      badge: 'OFFICE SPACES',
+      desc: 'Collaborative executive meeting room with dual conferencing displays and spatial acoustics.',
       pos: new THREE.Vector3(0.05, 0.45, -0.2),
-      color: 0x3b82f6,
-      icon: '🖥️'
+      color: 0xea4335,
+      icon: '🏢'
     },
     {
       id: 'display',
-      title: 'Knowledge Hub & Bookshelves',
-      badge: 'ARCHIVE',
-      desc: 'Floor-to-ceiling architectural reference archive and spatial acoustic shelving.',
+      title: '3-Seater Sofa & Lounge',
+      badge: 'RETAIL & RECEPTION',
+      desc: 'Ergonomic 3-seater modular sofa and discussion zone for informal syncs.',
       pos: new THREE.Vector3(-1.3, 0.8, -1.4),
-      color: 0x818cf8,
-      icon: '📚'
+      color: 0xf59e0b,
+      icon: '🛋️'
     },
     {
       id: 'door',
-      title: 'Executive Lounge Transition Corridor',
-      badge: 'EGRESS',
-      desc: 'Main egress connecting the studio workstation to the executive atrium and lounge.',
+      title: 'Meeting Room A',
+      badge: 'EXECUTIVE SUITE',
+      desc: 'Executive boardroom and primary transition corridor for team presentations.',
       pos: new THREE.Vector3(1.1, 0.4, 1.2),
-      color: 0x10b981,
+      color: 0x3b82f6,
       icon: '🚪'
     }
   ]
 };
 
-// Master pin visibility flag (default: OFF for clean, unencumbered photorealism)
-let pinsVisible = false;
+// Master pin visibility flag (default: ON for Google Maps indoor experience)
+let pinsVisible = true;
 const poiGroups = [];
 const poiClickableMeshes = [];
 
-// VisionOS Floating Glass Capsule Billboard Sprite
-function createTextSprite(title, badge, colorHex) {
+// ==========================================
+// 📍 GOOGLE MAPS INDOOR 3D PIN GENERATOR
+// ==========================================
+function createGoogleMapsPinTexture(title, badge, icon = '📍', pinColor = '#EA4335') {
   const canvas = document.createElement('canvas');
-  canvas.width = 384;
-  canvas.height = 96;
+  canvas.width = 512;
+  canvas.height = 340;
   const c = canvas.getContext('2d');
+  c.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Outer Frosted Glass Capsule Fill
-  c.fillStyle = 'rgba(15, 20, 32, 0.90)';
+  // 1. Floating Label Capsule Badge (Top)
+  c.font = '700 20px "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif';
+  const labelText = `${icon}  ${title}`;
+  const textWidth = c.measureText(labelText).width;
+  const badgeWidth = Math.max(240, textWidth + 50);
+  const badgeHeight = 54;
+  const badgeX = (512 - badgeWidth) / 2;
+  const badgeY = 16;
+
+  // Badge Drop Shadow
+  c.shadowColor = 'rgba(0, 0, 0, 0.55)';
+  c.shadowBlur = 14;
+  c.shadowOffsetY = 4;
+
+  // Badge Capsule Fill (Dark Obsidian with vibrant border)
+  c.fillStyle = 'rgba(12, 16, 26, 0.95)';
   c.beginPath();
-  c.roundRect(4, 4, 376, 88, 22);
+  c.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, 27);
   c.fill();
 
-  // Subtle Brushed Titanium Border
-  c.strokeStyle = 'rgba(255, 255, 255, 0.22)';
-  c.lineWidth = 2;
+  c.shadowColor = 'transparent';
+  c.strokeStyle = pinColor;
+  c.lineWidth = 3;
   c.beginPath();
-  c.roundRect(4, 4, 376, 88, 22);
+  c.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, 27);
   c.stroke();
 
-  // Accent Category Badge
-  c.fillStyle = colorHex;
-  c.font = 'bold 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+  // Category Sub-label
+  c.fillStyle = '#FBBC04';
+  c.font = '800 10px "JetBrains Mono", monospace';
   c.textAlign = 'center';
   c.textBaseline = 'middle';
-  c.fillText(badge.toUpperCase(), 192, 30);
+  c.fillText(badge.toUpperCase(), 256, badgeY + 17);
 
-  // Landmark Title Text
-  c.fillStyle = '#ffffff';
-  c.font = '700 21px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-  c.fillText(title, 192, 64);
+  // Main Place Title Text
+  c.fillStyle = '#FFFFFF';
+  c.font = '700 18px "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif';
+  c.fillText(labelText, 256, badgeY + 37);
 
-  const texture = new THREE.CanvasTexture(canvas);
-  const spriteMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false });
-  const sprite = new THREE.Sprite(spriteMaterial);
-  sprite.scale.set(1.4, 0.35, 1);
-  return sprite;
+  // Stem connecting badge to pin
+  c.strokeStyle = pinColor;
+  c.lineWidth = 2.5;
+  c.beginPath();
+  c.moveTo(256, badgeY + badgeHeight);
+  c.lineTo(256, 126);
+  c.stroke();
+
+  // 2. Iconic Google Maps Teardrop Marker
+  // Pin Dome Center: (256, 175), Radius = 44
+  // Needle Tip: (256, 295)
+  const cx = 256;
+  const cy = 175;
+  const r = 44;
+  const tipY = 295;
+
+  // Pin Drop Shadow
+  c.shadowColor = 'rgba(0, 0, 0, 0.65)';
+  c.shadowBlur = 18;
+  c.shadowOffsetY = 6;
+
+  c.beginPath();
+  c.moveTo(cx, tipY);
+  // Curve up along left flank
+  c.bezierCurveTo(cx - r * 0.95, cy + r * 1.1, cx - r, cy + r * 0.5, cx - r, cy);
+  // Arc over top circular dome
+  c.arc(cx, cy, r, Math.PI, 0, false);
+  // Curve down along right flank to tip
+  c.bezierCurveTo(cx + r, cy + r * 0.5, cx + r * 0.95, cy + r * 1.1, cx, tipY);
+  c.closePath();
+
+  // Vibrant Gradient Fill
+  const pinGrad = c.createLinearGradient(cx, cy - r, cx, tipY);
+  pinGrad.addColorStop(0, '#FF5722');
+  pinGrad.addColorStop(1, '#D93025');
+  c.fillStyle = pinGrad;
+  c.fill();
+
+  // Crisp White Outer Outline
+  c.shadowColor = 'transparent';
+  c.strokeStyle = '#FFFFFF';
+  c.lineWidth = 4.5;
+  c.stroke();
+
+  // 3. Iconic Center Circular Aperture (White ring with inner dark dot)
+  c.beginPath();
+  c.arc(cx, cy, 18, 0, Math.PI * 2);
+  c.fillStyle = '#FFFFFF';
+  c.fill();
+
+  c.beginPath();
+  c.arc(cx, cy, 9, 0, Math.PI * 2);
+  c.fillStyle = '#D93025';
+  c.fill();
+
+  return canvas;
 }
 
 // Dynamically rebuild 3D POI markers for the active room geometry
@@ -487,55 +555,61 @@ function rebuildPois(envKey) {
 
   const activePois = ENV_POIS[envKey] || ENV_POIS.studio;
 
-  activePois.forEach((poi) => {
+  activePois.forEach((poi, index) => {
     const group = new THREE.Group();
     group.position.copy(poi.pos);
 
-    // Glowing Core Sphere
-    const sphereGeo = new THREE.SphereGeometry(0.12, 16, 16);
-    const sphereMat = new THREE.MeshStandardMaterial({
-      color: poi.color,
-      emissive: poi.color,
-      emissiveIntensity: 0.9,
-      metalness: 0.8,
-      roughness: 0.2
+    // 1. Google Maps Billboard Canvas Sprite
+    const pinCanvas = createGoogleMapsPinTexture(poi.title, poi.badge, poi.icon, `#${poi.color.toString(16).padStart(6, '0')}`);
+    const texture = new THREE.CanvasTexture(pinCanvas);
+    texture.minFilter = THREE.LinearFilter;
+    const spriteMat = new THREE.SpriteMaterial({
+      map: texture,
+      transparent: true,
+      depthTest: false
     });
-    const sphere = new THREE.Mesh(sphereGeo, sphereMat);
-    sphere.userData = { poiId: poi.id };
-    group.add(sphere);
-    poiClickableMeshes.push(sphere);
+    const pinSprite = new THREE.Sprite(spriteMat);
+    pinSprite.scale.set(1.65, 1.1, 1);
+    // Anchor pin needle tip exactly at (0.5, 0.132) corresponding to (256, 295) of 340 height
+    pinSprite.center.set(0.5, 0.132);
+    pinSprite.position.y = 0.05;
+    group.add(pinSprite);
 
-    // Vertical Light Beacon to Floor
+    // 2. Invisible 3D Click Hitbox (Ensures clicking anywhere on the pin selects it)
+    const hitGeo = new THREE.CylinderGeometry(0.5, 0.5, 1.4, 8);
+    const hitMat = new THREE.MeshBasicMaterial({ visible: false });
+    const hitMesh = new THREE.Mesh(hitGeo, hitMat);
+    hitMesh.position.y = 0.6;
+    hitMesh.userData = { poiId: poi.id };
+    group.add(hitMesh);
+    poiClickableMeshes.push(hitMesh);
+
+    // 3. Vertical Light Beacon Guideline to Floor
     const beamGeo = new THREE.CylinderGeometry(0.015, 0.015, poi.pos.y, 8);
     const beamMat = new THREE.MeshBasicMaterial({
       color: poi.color,
       transparent: true,
-      opacity: 0.6
+      opacity: 0.65
     });
     const beam = new THREE.Mesh(beamGeo, beamMat);
     beam.position.y = -poi.pos.y / 2;
     group.add(beam);
 
-    // Pulsing Floor Target Ring
-    const ringGeo = new THREE.RingGeometry(0.2, 0.35, 32);
+    // 4. Pulsing Google Maps Floor Target Halo
+    const ringGeo = new THREE.RingGeometry(0.22, 0.42, 32);
     const ringMat = new THREE.MeshBasicMaterial({
       color: poi.color,
       side: THREE.DoubleSide,
       transparent: true,
-      opacity: 0.8
+      opacity: 0.85
     });
     const ring = new THREE.Mesh(ringGeo, ringMat);
     ring.rotation.x = -Math.PI / 2;
     ring.position.y = -poi.pos.y + 0.02;
     group.add(ring);
 
-    // VisionOS Floating Glass Capsule Badge
-    const labelSprite = createTextSprite(poi.title, poi.badge, `#${poi.color.toString(16).padStart(6, '0')}`);
-    labelSprite.position.y = 0.35;
-    group.add(labelSprite);
-
-    group.userData = { poi, ring };
-    // Pins hidden by default unless toggled on by user
+    group.userData = { poi, ring, sprite: pinSprite, baseY: 0.05, index };
+    // Visible by default
     group.visible = pinsVisible;
     scene.add(group);
     poiGroups.push(group);
@@ -929,6 +1003,7 @@ const poiDesc = document.getElementById('poi-desc');
 const poiBadge = document.getElementById('poi-badge');
 const poiCoords = document.getElementById('poi-coords');
 const poiDist = document.getElementById('poi-dist');
+const poiWalkTime = document.getElementById('poi-walk-time');
 const poiCloseBtn = document.getElementById('poi-close-btn');
 const btnPoiNav = document.getElementById('btn-poi-navigate');
 const activeRouteBanner = document.getElementById('active-route-banner');
@@ -938,7 +1013,7 @@ const navToast = document.getElementById('nav-toast');
 const waypointCards = document.querySelectorAll('.waypoint-card');
 
 function selectPoi(poiId) {
-  const activePois = ENV_POIS[currentEnv] || ENV_POIS.mobile;
+  const activePois = ENV_POIS[currentEnv] || ENV_POIS.studio;
   const poi = activePois.find((p) => p.id === poiId);
   if (!poi) return;
 
@@ -950,6 +1025,10 @@ function selectPoi(poiId) {
 
   const dist = camera.position.distanceTo(poi.pos);
   if (poiDist) poiDist.textContent = `${dist.toFixed(1)}m`;
+  if (poiWalkTime) {
+    const walkSecs = Math.max(3, Math.ceil(dist / 1.1));
+    poiWalkTime.textContent = `~${walkSecs} sec`;
+  }
 
   if (poiModal) poiModal.style.display = 'block';
 
@@ -1007,6 +1086,71 @@ waypointCards.forEach((card) => {
     if (poiId) selectPoi(poiId);
   });
 });
+
+// Google Maps Indoor Search Controller (Slide 3: Search for a room or item)
+const mapsSearchInput = document.getElementById('maps-search-input');
+const btnClearSearch = document.getElementById('btn-clear-search');
+
+function filterWaypoints(query) {
+  const q = (query || '').trim().toLowerCase();
+  if (btnClearSearch) btnClearSearch.style.display = q ? 'block' : 'none';
+
+  let firstMatchId = null;
+
+  waypointCards.forEach((card) => {
+    const title = (card.querySelector('.wp-title')?.textContent || '').toLowerCase();
+    const tag = (card.querySelector('.wp-tag')?.textContent || '').toLowerCase();
+    const poiId = card.getAttribute('data-poi') || '';
+    const match = !q || title.includes(q) || tag.includes(q) || poiId.includes(q);
+    card.classList.toggle('search-hidden', !match);
+    if (match && !firstMatchId) firstMatchId = poiId;
+  });
+
+  // Dynamically filter 3D pin markers in the 3D scene
+  poiGroups.forEach((g) => {
+    const poi = g.userData?.poi;
+    if (!poi) return;
+    const title = (poi.title || '').toLowerCase();
+    const badge = (poi.badge || '').toLowerCase();
+    const match = !q || title.includes(q) || badge.includes(q) || poi.id.includes(q);
+    if (activeTargetPoi && poi.id === activeTargetPoi.id) {
+      g.visible = true;
+    } else {
+      g.visible = pinsVisible && match;
+    }
+  });
+
+  return firstMatchId;
+}
+
+if (mapsSearchInput) {
+  mapsSearchInput.addEventListener('input', (e) => {
+    filterWaypoints(e.target.value);
+  });
+
+  mapsSearchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const firstId = filterWaypoints(mapsSearchInput.value);
+      if (firstId) {
+        selectPoi(firstId);
+        const activePois = ENV_POIS[currentEnv] || ENV_POIS.studio;
+        const p = activePois.find((x) => x.id === firstId);
+        if (p) camera.lookAt(p.pos.x, EYE_HEIGHT, p.pos.z);
+      }
+    }
+  });
+}
+
+if (btnClearSearch) {
+  btnClearSearch.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (mapsSearchInput) {
+      mapsSearchInput.value = '';
+      filterWaypoints('');
+      mapsSearchInput.focus();
+    }
+  });
+}
 
 if (btnClearRoute) {
   btnClearRoute.addEventListener('click', (e) => {
@@ -1456,11 +1600,18 @@ function animate() {
     scanPlane.position.y = 0.2 + (Math.sin(pulseTimer * 1.2) + 1) * 1.3;
   }
 
-  // Pulse POI Target Rings
+  // Pulse POI Target Rings & Gentle Floating Bob on 3D Google Maps Pins
   poiGroups.forEach((g) => {
-    if (g.userData.ring && g.visible) {
-      const scale = 1 + Math.sin(pulseTimer) * 0.15;
-      g.userData.ring.scale.set(scale, scale, 1);
+    if (g.visible) {
+      if (g.userData.ring) {
+        const scale = 1 + Math.sin(pulseTimer) * 0.15;
+        g.userData.ring.scale.set(scale, scale, 1);
+      }
+      if (g.userData.sprite) {
+        const idx = g.userData.index || 0;
+        const bob = Math.sin(pulseTimer * 1.8 + idx) * 0.04;
+        g.userData.sprite.position.y = (g.userData.baseY || 0.05) + bob;
+      }
     }
   });
 
@@ -1482,6 +1633,10 @@ function animate() {
     if (activeTargetPoi) {
       const dist = camera.position.distanceTo(activeTargetPoi.pos);
       if (poiDist) poiDist.textContent = `${dist.toFixed(1)}m`;
+      if (poiWalkTime) {
+        const walkSecs = Math.max(3, Math.ceil(dist / 1.1));
+        poiWalkTime.textContent = `~${walkSecs} sec`;
+      }
 
       if (dist < 1.0) {
         if (navToast) navToast.style.display = 'block';

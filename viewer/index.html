@@ -99,53 +99,59 @@
       <div class="dock-header">
         <div class="dock-title">
           <span class="dock-dot"></span>
-          WAYPOINTS
+          INDOOR MAPS
         </div>
         <div class="dock-actions">
-          <button id="btn-toggle-pins" class="btn-dock-toggle" title="Show or Hide 3D Landmark Markers">📍 Pins: OFF</button>
+          <button id="btn-toggle-pins" class="btn-dock-toggle active" title="Show or Hide 3D Landmark Markers">📍 Pins: ON</button>
         </div>
       </div>
 
+      <!-- Google Maps Indoor Search (Slide 3: Search for a room or item) -->
+      <div class="maps-search-bar">
+        <span class="search-lens">🔍</span>
+        <input type="text" id="maps-search-input" placeholder="Search rooms, booths, items..." autocomplete="off" />
+        <button id="btn-clear-search" class="search-clear-btn" style="display: none;" title="Clear Search">✕</button>
+      </div>
 
       <div class="waypoint-list">
         <button class="waypoint-card" data-poi="workstation">
-          <div class="wp-icon wp-cyan">🖥️</div>
+          <div class="wp-icon wp-red">🏢</div>
           <div class="wp-info">
             <div class="wp-top">
-              <span class="wp-title">Command Desk & Telemetry Station</span>
-              <span class="wp-tag">EXECUTIVE</span>
+              <span class="wp-title">Meeting Room 4</span>
+              <span class="wp-tag">OFFICE</span>
             </div>
             <div class="wp-meta">
               <span class="wp-dist" data-dist="workstation">-- m</span>
-              <span class="wp-action">Plot Route →</span>
+              <span class="wp-action">Directions →</span>
             </div>
           </div>
         </button>
 
         <button class="waypoint-card" data-poi="display">
-          <div class="wp-icon wp-magenta">📚</div>
+          <div class="wp-icon wp-orange">🛋️</div>
           <div class="wp-info">
             <div class="wp-top">
-              <span class="wp-title">Knowledge Hub & Bookshelves</span>
-              <span class="wp-tag">ARCHIVE</span>
+              <span class="wp-title">3-Seater Sofa & Lounge</span>
+              <span class="wp-tag">LOUNGE</span>
             </div>
             <div class="wp-meta">
               <span class="wp-dist" data-dist="display">-- m</span>
-              <span class="wp-action">Plot Route →</span>
+              <span class="wp-action">Directions →</span>
             </div>
           </div>
         </button>
 
         <button class="waypoint-card" data-poi="door">
-          <div class="wp-icon wp-emerald">🚪</div>
+          <div class="wp-icon wp-blue">🚪</div>
           <div class="wp-info">
             <div class="wp-top">
-              <span class="wp-title">Executive Lounge Transition Corridor</span>
-              <span class="wp-tag">EGRESS</span>
+              <span class="wp-title">Meeting Room A</span>
+              <span class="wp-tag">SUITE</span>
             </div>
             <div class="wp-meta">
               <span class="wp-dist" data-dist="door">-- m</span>
-              <span class="wp-action">Plot Route →</span>
+              <span class="wp-action">Directions →</span>
             </div>
           </div>
         </button>
@@ -253,30 +259,33 @@
     <!-- Aim Reticle for Walk Mode -->
     <div id="crosshair"></div>
 
-    <!-- Inspection Modal (Frosted Glassmorphic POI Card) -->
+    <!-- Inspection Modal (Google Maps Indoor Place Card) -->
     <div id="poi-modal" style="display: none;">
       <div class="poi-card">
         <div class="poi-header">
-          <span class="poi-badge" id="poi-badge">LANDMARK</span>
+          <div class="poi-badge-wrap">
+            <span class="poi-pin-icon">📍</span>
+            <span class="poi-badge" id="poi-badge">INDOOR PLACE</span>
+          </div>
           <button id="poi-close-btn" class="modal-close" title="Close">&times;</button>
         </div>
-        <h2 id="poi-title">Workstation Alpha</h2>
-        <p id="poi-desc">Primary workspace desk with dual monitors and computing unit.</p>
+        <h2 id="poi-title">Meeting Room 4</h2>
+        <p id="poi-desc">Collaborative meeting room with executive conferencing displays.</p>
         
         <div class="poi-grid">
-          <div class="poi-stat">
-            <span class="stat-label">COORDINATES</span>
-            <span class="stat-val" id="poi-coords">X: 1.8, Z: -1.2</span>
-          </div>
           <div class="poi-stat">
             <span class="stat-label">DISTANCE</span>
             <span class="stat-val" id="poi-dist">3.4m</span>
           </div>
+          <div class="poi-stat">
+            <span class="stat-label">WALK TIME</span>
+            <span class="stat-val stat-walk-time" id="poi-walk-time">~15 sec</span>
+          </div>
         </div>
 
-        <button id="btn-poi-navigate" class="poi-nav-btn">
+        <button id="btn-poi-navigate" class="poi-nav-btn maps-directions-btn">
           <span class="btn-glow-pulse"></span>
-          <span>🧭 Navigate Guided Path (A*)</span>
+          <span>🚶 Directions (Google Maps A* Path)</span>
         </button>
       </div>
     </div>
