@@ -301,10 +301,10 @@ const ENV_CONFIGS = {
     splatCount: '1,130,000+ Splats',
     fidelity: 'Ultra-HD Photorealism',
     rotation: { x: Math.PI, y: 0, z: 0 },
-    position: { x: 0, y: 0.5, z: 0 },
-    scale: { x: 1.2, y: 1.2, z: 1.2 },
+    position: { x: 0, y: 1.4, z: 0 },
+    scale: { x: 1.0, y: 1.0, z: 1.0 },
     splatScale: 1.0,
-    cameraPos: { x: 0, y: EYE_HEIGHT, z: 3.5 }
+    cameraPos: { x: 0, y: EYE_HEIGHT, z: 3.2 }
   },
   atrium: {
     name: 'Commercial Atrium',
@@ -313,8 +313,8 @@ const ENV_CONFIGS = {
     splatCount: '1,734,000+ Splats',
     fidelity: 'Grand Commercial Complex',
     rotation: { x: Math.PI, y: 0, z: 0 },
-    position: { x: 0, y: 1.6, z: 0 },
-    scale: { x: 1.1, y: 1.1, z: 1.1 },
+    position: { x: 1.4, y: 1.9, z: -0.5 },
+    scale: { x: 1.0, y: 1.0, z: 1.0 },
     splatScale: 1.0,
     cameraPos: { x: 0, y: EYE_HEIGHT, z: 2.8 }
   },
@@ -371,7 +371,7 @@ const ENV_POIS = {
       title: 'Exhibition Booth 24',
       badge: 'LARGE EVENTS',
       desc: 'Central exhibition showcase booth with high-density foot traffic and live telemetry.',
-      pos: new THREE.Vector3(0.1, 0.7, 0.0),
+      pos: new THREE.Vector3(0.1, 0.75, 0.0),
       color: 0xea4335,
       icon: '🎪'
     },
@@ -400,7 +400,7 @@ const ENV_POIS = {
       title: 'Meeting Room 4',
       badge: 'OFFICE SPACES',
       desc: 'Collaborative executive meeting room with dual conferencing displays and spatial acoustics.',
-      pos: new THREE.Vector3(0.05, 0.45, -0.2),
+      pos: new THREE.Vector3(0.05, 0.75, -0.2),
       color: 0xea4335,
       icon: '🏢'
     },
@@ -409,7 +409,7 @@ const ENV_POIS = {
       title: '3-Seater Sofa & Lounge',
       badge: 'RETAIL & RECEPTION',
       desc: 'Ergonomic 3-seater modular sofa and discussion zone for informal syncs.',
-      pos: new THREE.Vector3(-1.3, 0.8, -1.4),
+      pos: new THREE.Vector3(-1.3, 0.65, -1.4),
       color: 0xf59e0b,
       icon: '🛋️'
     },
@@ -418,15 +418,15 @@ const ENV_POIS = {
       title: 'Meeting Room A',
       badge: 'EXECUTIVE SUITE',
       desc: 'Executive boardroom and primary transition corridor for team presentations.',
-      pos: new THREE.Vector3(1.1, 0.4, 1.2),
+      pos: new THREE.Vector3(1.1, 0.5, 1.2),
       color: 0x3b82f6,
       icon: '🚪'
     }
   ]
 };
 
-// Master pin visibility flag (default: ON for Google Maps indoor experience)
-let pinsVisible = true;
+// Master pin visibility flag (default: OFF for clean, unencumbered photorealism)
+let pinsVisible = false;
 const poiGroups = [];
 const poiClickableMeshes = [];
 
