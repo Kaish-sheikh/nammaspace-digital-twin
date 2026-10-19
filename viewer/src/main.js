@@ -261,10 +261,10 @@ floorMesh.rotation.x = -Math.PI / 2;
 floorMesh.position.y = -0.01;
 scene.add(floorMesh);
 
-// Floor Grid & Lighting
+// Floor Grid & Lighting (Floor plane only, grid hidden for photorealism)
 const gridHelper = new THREE.GridHelper(ROOM_SIZE, 20, 0x3b82f6, 0x1e293b);
 gridHelper.position.y = 0;
-scene.add(gridHelper);
+// scene.add(gridHelper); // Hidden for photorealistic fidelity
 
 scene.add(new THREE.AmbientLight(0xffffff, 1.0));
 
@@ -310,7 +310,7 @@ const ENV_CONFIGS = {
     path: '/studio_room.splat',
     size: '1.13M Splats',
     splatCount: '1,130,000+ Splats',
-    fidelity: 'Ultra-HD Photorealism',
+    fidelity: 'Photorealistic 3DGS',
     rotation: { x: Math.PI, y: 0, z: 0 },
     position: { x: 0, y: 1.4, z: 0 },
     scale: { x: 1.0, y: 1.0, z: 1.0 },
@@ -322,7 +322,7 @@ const ENV_CONFIGS = {
     path: '/atrium.splat',
     size: '1.73M Splats',
     splatCount: '1,734,000+ Splats',
-    fidelity: 'Grand Commercial Complex',
+    fidelity: 'Commercial Concourse',
     rotation: { x: Math.PI + 0.0618, y: 0, z: 0.016 },
     position: { x: 1.4, y: 1.91, z: -0.5 },
     scale: { x: 1.0, y: 1.0, z: 1.0 },
@@ -334,7 +334,7 @@ const ENV_CONFIGS = {
     path: '/garden.ksplat',
     size: '3.14M Splats',
     splatCount: '3,135,000+ Splats',
-    fidelity: 'Outdoor Photorealism',
+    fidelity: 'Open-Air Quad',
     rotation: { x: Math.PI - 0.5092, y: 0, z: 0 },
     position: { x: 0.45, y: 3.2, z: -0.3 },
     scale: { x: 1.0, y: 1.0, z: 1.0 },
@@ -350,88 +350,88 @@ const ENV_POIS = {
   garden: [
     {
       id: 'workstation',
-      title: 'Exhibition Booth 24 (Quad)',
-      badge: 'LARGE EVENTS',
+      title: 'Exhibition Booth 24',
+      badge: 'CONVENTION',
       desc: 'Central convention exhibition booth on the open-air campus quad with live telemetry.',
       pos: new THREE.Vector3(0.2, 0.8, -0.1),
       color: 0xea4335,
-      icon: '🎪'
+      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>'
     },
     {
       id: 'display',
-      title: 'Botanical Pergola Seating',
-      badge: 'RELAXATION ZONE',
+      title: 'Botanical Pergola',
+      badge: 'LOUNGE',
       desc: 'Shaded floral canopy terrace with living botanical climbing vines and garden benches.',
       pos: new THREE.Vector3(-2.2, 0.8, -1.5),
       color: 0x10b981,
-      icon: '🌿'
+      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5"></path><path d="M2 15h20v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-4z"></path></svg>'
     },
     {
       id: 'door',
       title: 'Meeting Point Archway',
-      badge: 'CAMPUS GATE',
+      badge: 'ENTRANCE',
       desc: 'Historic masonry portal connecting the botanical grounds to the main campus quad.',
       pos: new THREE.Vector3(1.8, 0.8, 2.0),
       color: 0x3b82f6,
-      icon: '⛩️'
+      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16"></path><circle cx="14" cy="12" r="1"></circle></svg>'
     }
   ],
   atrium: [
     {
       id: 'workstation',
       title: 'Exhibition Booth 24',
-      badge: 'LARGE EVENTS',
+      badge: 'CONVENTION',
       desc: 'Central exhibition showcase booth with high-density foot traffic and live telemetry.',
       pos: new THREE.Vector3(0.1, 0.75, 0.0),
       color: 0xea4335,
-      icon: '🎪'
+      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>'
     },
     {
       id: 'display',
-      title: '3-Seater Sofa (IKEA Showcase)',
-      badge: 'RETAIL STORES',
+      title: 'Showcase Lounge',
+      badge: 'LOUNGE',
       desc: 'Curated home furniture retail display showcasing modular 3-seater sofa arrangements.',
       pos: new THREE.Vector3(-1.8, 0.7, -1.5),
       color: 0xf59e0b,
-      icon: '🛋️'
+      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5"></path><path d="M2 15h20v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-4z"></path></svg>'
     },
     {
       id: 'door',
-      title: 'Meeting Room A (Concourse)',
-      badge: 'OFFICE SPACES',
+      title: 'Meeting Room A',
+      badge: 'SUITE',
       desc: 'Tenant conference suite and mezzanine transit concourse.',
       pos: new THREE.Vector3(1.6, 0.7, 1.4),
       color: 0x3b82f6,
-      icon: '🏢'
+      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16"></path><circle cx="14" cy="12" r="1"></circle></svg>'
     }
   ],
   studio: [
     {
       id: 'workstation',
       title: 'Meeting Room 4',
-      badge: 'OFFICE SPACES',
+      badge: 'OFFICE',
       desc: 'Collaborative executive meeting room with dual conferencing displays and spatial acoustics.',
       pos: new THREE.Vector3(0.05, 0.75, -0.2),
       color: 0xea4335,
-      icon: '🏢'
+      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>'
     },
     {
       id: 'display',
       title: '3-Seater Sofa & Lounge',
-      badge: 'RETAIL & RECEPTION',
+      badge: 'LOUNGE',
       desc: 'Ergonomic 3-seater modular sofa and discussion zone for informal syncs.',
       pos: new THREE.Vector3(-1.3, 0.65, -1.4),
       color: 0xf59e0b,
-      icon: '🛋️'
+      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5"></path><path d="M2 15h20v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-4z"></path></svg>'
     },
     {
       id: 'door',
       title: 'Meeting Room A',
-      badge: 'EXECUTIVE SUITE',
+      badge: 'SUITE',
       desc: 'Executive boardroom and primary transition corridor for team presentations.',
       pos: new THREE.Vector3(1.1, 0.5, 1.2),
       color: 0x3b82f6,
-      icon: '🚪'
+      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16"></path><circle cx="14" cy="12" r="1"></circle></svg>'
     }
   ]
 };
@@ -453,9 +453,9 @@ function createGoogleMapsPinTexture(title, badge, icon = '📍', pinColor = '#EA
 
   // 1. Floating Label Capsule Badge (Top)
   c.font = '700 20px "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif';
-  const labelText = `${icon}  ${title}`;
+  const labelText = title;
   const textWidth = c.measureText(labelText).width;
-  const badgeWidth = Math.max(240, textWidth + 50);
+  const badgeWidth = Math.max(220, textWidth + 40);
   const badgeHeight = 54;
   const badgeX = (512 - badgeWidth) / 2;
   const badgeY = 16;
@@ -636,7 +636,9 @@ function updateDockWaypoints(envKey) {
       const iconEl = card.querySelector('.wp-icon');
       const titleEl = card.querySelector('.wp-title');
       const tagEl = card.querySelector('.wp-tag');
-      if (iconEl) iconEl.textContent = poi.icon;
+      if (iconEl && poi.iconSvg) {
+        iconEl.innerHTML = poi.iconSvg;
+      }
       if (titleEl) titleEl.textContent = poi.title;
       if (tagEl) tagEl.textContent = poi.badge.split(' ')[0];
     }
@@ -768,14 +770,14 @@ function loadEnvironment(envKey, isInitial = false) {
   if (heroPct) heroPct.textContent = '15%';
   if (heroStatus) {
     heroStatus.classList.remove('ready');
-    heroStatus.innerHTML = '<span class="status-dot"></span> STREAMING ULTRA-HD SPATIAL TWIN';
+    heroStatus.innerHTML = '<span class="status-dot"></span> STREAMING DIGITAL TWIN';
   }
 
   // Lock Enter button until model is fully ready
   if (btnEnter && !hasEnteredTwin) {
     btnEnter.disabled = true;
-    if (btnEnterText) btnEnterText.textContent = 'STREAMING SPATIAL TWIN (15%)...';
-    if (btnEnterArrow) btnEnterArrow.textContent = '⏳';
+    if (btnEnterText) btnEnterText.textContent = 'STREAMING DIGITAL TWIN (15%)...';
+    if (btnEnterArrow) btnEnterArrow.textContent = '···';
   }
 
   // Smooth simulated progress increment to guarantee responsive visual feedback
@@ -788,7 +790,7 @@ function loadEnvironment(envKey, isInitial = false) {
       if (heroFill) heroFill.style.width = `${p}%`;
       if (heroPct) heroPct.textContent = `${p}%`;
       if (btnEnter && !hasEnteredTwin && btnEnter.disabled && btnEnterText) {
-        btnEnterText.textContent = `STREAMING SPATIAL TWIN (${p}%)...`;
+        btnEnterText.textContent = `STREAMING DIGITAL TWIN (${p}%)...`;
       }
     }
   }, 250);
@@ -803,7 +805,7 @@ function loadEnvironment(envKey, isInitial = false) {
         if (heroFill) heroFill.style.width = `${p}%`;
         if (heroPct) heroPct.textContent = `${p}%`;
         if (btnEnter && !hasEnteredTwin && btnEnter.disabled && btnEnterText) {
-          btnEnterText.textContent = `STREAMING SPATIAL TWIN (${p}%)...`;
+          btnEnterText.textContent = `STREAMING DIGITAL TWIN (${p}%)...`;
         }
       }
     }
@@ -819,7 +821,7 @@ function loadEnvironment(envKey, isInitial = false) {
     if (heroFill) heroFill.style.width = '100%';
     if (heroPct) heroPct.textContent = '100%';
     if (heroStatus) {
-      heroStatus.innerHTML = '<span class="status-dot" style="background:#10b981;box-shadow:0 0 10px #10b981;"></span> SPATIAL ENGINE READY • 60 FPS';
+      heroStatus.innerHTML = '<span class="status-dot" style="background:#10b981;box-shadow:0 0 10px #10b981;"></span> SPATIAL TWIN READY • 60 FPS';
       heroStatus.classList.add('ready');
     }
 
@@ -1224,6 +1226,10 @@ const mouse = new THREE.Vector2();
 window.addEventListener('click', (event) => {
   if (pointerControls.isLocked) return;
 
+  // Don't re-lock if user clicked inside floating UI panels, header, dock, minimap or modals
+  const isUI = event.target.closest('#command-header, #waypoint-dock, #minimap-container, #bottom-hud, #poi-modal, #help-modal, #blocker, #scene-loader, #cinematic-banner');
+  if (isUI) return;
+
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
@@ -1234,6 +1240,8 @@ window.addEventListener('click', (event) => {
   if (intersects.length > 0) {
     const poiId = intersects[0].object.userData.poiId;
     if (poiId) selectPoi(poiId);
+  } else if (hasEnteredTwin && currentMode === 'walk') {
+    pointerControls.lock();
   }
 });
 
@@ -1488,11 +1496,11 @@ function updateMinimap() {
   // 11. Dynamic Radar Header Status Text
   if (radarStatusEl) {
     if (activeTargetPoi) {
-      radarStatusEl.innerHTML = `<span style="color:#10b981;font-weight:800;">LOCK: ${activeTargetPoi.title.substring(0, 9).toUpperCase()}</span>`;
+      radarStatusEl.innerHTML = `<span style="color:#10b981;font-weight:700;">ROUTE ACTIVE</span>`;
     } else if (pinsVisible) {
-      radarStatusEl.innerHTML = `<span style="color:#60a5fa;font-weight:700;">PINS: ACTIVE</span>`;
+      radarStatusEl.innerHTML = `<span style="color:#60a5fa;font-weight:700;">LANDMARKS</span>`;
     } else {
-      radarStatusEl.innerHTML = `<span style="color:var(--text-dim);">STEALTH 1:1</span>`;
+      radarStatusEl.innerHTML = `<span style="color:var(--text-dim);">1:1 SCALE</span>`;
     }
   }
 }
@@ -1505,7 +1513,7 @@ if (minimapCanvas) {
     const clickX = e.clientX - rect.left;
     const clickY = e.clientY - rect.top;
 
-    const activePois = ENV_POIS[currentEnv] || ENV_POIS.mobile;
+    const activePois = ENV_POIS[currentEnv] || ENV_POIS.studio;
     for (const poi of activePois) {
       const lx = (poi.pos.x + ROOM_SIZE / 2) * MM_SCALE;
       const lz = (poi.pos.z + ROOM_SIZE / 2) * MM_SCALE;
@@ -1669,7 +1677,6 @@ function animate() {
   // Animate Navigation Path
   if (navPathLine && navPathLine.material) {
     navPathLine.material.dashOffset -= delta * 1.5;
-    updateNavigationPath();
 
     if (activeTargetPoi) {
       const dist = camera.position.distanceTo(activeTargetPoi.pos);

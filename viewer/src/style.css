@@ -790,15 +790,7 @@ body {
 }
 
 .radar-sweep {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 12px;
-  background: conic-gradient(from 0deg, rgba(59, 130, 246, 0.2) 0deg, transparent 60deg);
-  pointer-events: none;
-  animation: sweep 4s linear infinite;
+  display: none !important;
 }
 
 @keyframes sweep {
@@ -924,6 +916,7 @@ body {
   left: 24px;
   z-index: 15;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: none !important;
 }
 
 .drawer-trigger {
@@ -1169,12 +1162,6 @@ body {
   filter: brightness(1.1);
 }
 
-.poi-nav-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px var(--accent-cyan-glow);
-  filter: brightness(1.1);
-}
-
 /* ===================================================
    7. NAVIGATION ARRIVAL TOAST
    =================================================== */
@@ -1389,6 +1376,8 @@ body {
 }
 
 .hero-enter-btn {
+  position: relative;
+  overflow: hidden;
   width: 100%;
   background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: #ffffff;
@@ -1436,6 +1425,29 @@ body {
 @keyframes pulse-wait {
   0%, 100% { opacity: 0.4; transform: scale(0.9); }
   50% { opacity: 1; transform: scale(1.15); }
+}
+
+.hero-enter-btn:not(:disabled) {
+  animation: btnReady 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes btnReady {
+  from { transform: scale(0.95); opacity: 0.7; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.enter-btn-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), transparent);
+  animation: enterPulse 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes enterPulse {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
 }
 
 /* ===================================================
