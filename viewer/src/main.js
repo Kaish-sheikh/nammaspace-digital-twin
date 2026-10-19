@@ -312,8 +312,8 @@ const ENV_CONFIGS = {
     size: '1.73M Splats',
     splatCount: '1,734,000+ Splats',
     fidelity: 'Grand Commercial Complex',
-    rotation: { x: Math.PI, y: 0, z: 0 },
-    position: { x: 1.4, y: 1.9, z: -0.5 },
+    rotation: { x: Math.PI + 0.0618, y: 0, z: 0.016 },
+    position: { x: 1.4, y: 1.91, z: -0.5 },
     scale: { x: 1.0, y: 1.0, z: 1.0 },
     splatScale: 1.0,
     cameraPos: { x: 0, y: EYE_HEIGHT, z: 2.8 }
@@ -819,8 +819,9 @@ function loadEnvironment(envKey, isInitial = false) {
   if (btnStudio) btnStudio.classList.toggle('active', envKey === 'studio');
   if (btnAtrium) btnAtrium.classList.toggle('active', envKey === 'atrium');
 
-  // Reposition camera
+  // Reposition camera & level horizon
   camera.position.set(config.cameraPos.x, config.cameraPos.y, config.cameraPos.z);
+  camera.rotation.set(0, 0, 0);
 
   // Synchronize POIs to active environment
   if (typeof rebuildPois === 'function') {
