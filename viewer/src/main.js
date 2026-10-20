@@ -176,6 +176,39 @@ document.addEventListener('keydown', (event) => {
   const key = event.key ? event.key.toLowerCase() : '';
   const code = event.code || '';
 
+  // 3. Esc button to show the previous menu (Start / Pause Blocker)
+  if (event.key === 'Escape' || code === 'Escape') {
+    if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
+      document.activeElement.blur();
+      return;
+    }
+    if (helpModal && helpModal.style.display === 'flex') {
+      helpModal.style.display = 'none';
+      return;
+    }
+    if (poiModal && poiModal.style.display === 'block') {
+      poiModal.style.display = 'none';
+      return;
+    }
+    if (blocker) {
+      if (blocker.style.display === 'flex') {
+        blocker.style.display = 'none';
+        if (currentMode === 'walk') pointerControls.lock();
+      } else {
+        blocker.style.display = 'flex';
+        const btnEnterText = document.getElementById('btn-enter-text');
+        if (btnEnterText && hasEnteredTwin) btnEnterText.textContent = 'RESUME DIGITAL TWIN';
+        if (pointerControls.isLocked) pointerControls.unlock();
+      }
+    }
+    return;
+  }
+
+  // Ignore movement shortcuts if typing inside search input
+  if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
+    return;
+  }
+
   if (code === 'KeyV' || key === 'v') {
     if (typeof stopCinematicTour === 'function' && isTourActive) stopCinematicTour();
     setMode(currentMode === 'walk' ? 'dollhouse' : 'walk');
@@ -212,6 +245,7 @@ document.addEventListener('keydown', (event) => {
 });
 
 document.addEventListener('keyup', (event) => {
+  if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
   const key = event.key ? event.key.toLowerCase() : '';
   const code = event.code || '';
 
@@ -347,67 +381,9 @@ const ENV_CONFIGS = {
 // 📍 ENVIRONMENT-SPECIFIC 3D WAYPOINTS (POIS)
 // ==========================================
 const ENV_POIS = {
-  garden: [
-    {
-      id: 'workstation',
-      title: 'Exhibition Booth 24',
-      badge: 'CONVENTION',
-      desc: 'Central convention exhibition booth on the open-air campus quad with live telemetry.',
-      pos: new THREE.Vector3(0.2, 0.8, -0.1),
-      color: 0xea4335,
-      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>'
-    },
-    {
-      id: 'display',
-      title: 'Botanical Pergola',
-      badge: 'LOUNGE',
-      desc: 'Shaded floral canopy terrace with living botanical climbing vines and garden benches.',
-      pos: new THREE.Vector3(-2.2, 0.8, -1.5),
-      color: 0x10b981,
-      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5"></path><path d="M2 15h20v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-4z"></path></svg>'
-    },
-    {
-      id: 'door',
-      title: 'Meeting Point Archway',
-      badge: 'ENTRANCE',
-      desc: 'Historic masonry portal connecting the botanical grounds to the main campus quad.',
-      pos: new THREE.Vector3(1.8, 0.8, 2.0),
-      color: 0x3b82f6,
-      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16"></path><circle cx="14" cy="12" r="1"></circle></svg>'
-    }
-  ],
-  atrium: [
-    {
-      id: 'workstation',
-      title: 'Exhibition Booth 24',
-      badge: 'CONVENTION',
-      desc: 'Central exhibition showcase booth with high-density foot traffic and live telemetry.',
-      pos: new THREE.Vector3(0.1, 0.75, 0.0),
-      color: 0xea4335,
-      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>'
-    },
-    {
-      id: 'display',
-      title: 'Showcase Lounge',
-      badge: 'LOUNGE',
-      desc: 'Curated home furniture retail display showcasing modular 3-seater sofa arrangements.',
-      pos: new THREE.Vector3(-1.8, 0.7, -1.5),
-      color: 0xf59e0b,
-      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5"></path><path d="M2 15h20v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-4z"></path></svg>'
-    },
-    {
-      id: 'door',
-      title: 'Meeting Room A',
-      badge: 'SUITE',
-      desc: 'Tenant conference suite and mezzanine transit concourse.',
-      pos: new THREE.Vector3(1.6, 0.7, 1.4),
-      color: 0x3b82f6,
-      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16"></path><circle cx="14" cy="12" r="1"></circle></svg>'
-    }
-  ],
   studio: [
     {
-      id: 'workstation',
+      id: 'studio_meeting',
       title: 'Meeting Room 4',
       badge: 'OFFICE',
       desc: 'Collaborative executive meeting room with dual conferencing displays and spatial acoustics.',
@@ -416,22 +392,107 @@ const ENV_POIS = {
       iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>'
     },
     {
-      id: 'display',
+      id: 'studio_lounge',
       title: '3-Seater Sofa & Lounge',
       badge: 'LOUNGE',
-      desc: 'Ergonomic 3-seater modular sofa and discussion zone for informal syncs.',
-      pos: new THREE.Vector3(-1.3, 0.65, -1.4),
+      desc: 'Ergonomic 3-seater modular sofa and discussion zone for informal team syncs.',
+      pos: new THREE.Vector3(-1.8, 0.65, -1.8),
       color: 0xf59e0b,
       iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5"></path><path d="M2 15h20v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-4z"></path></svg>'
     },
     {
-      id: 'door',
-      title: 'Meeting Room A',
+      id: 'studio_suite',
+      title: 'Executive Suite A',
       badge: 'SUITE',
-      desc: 'Executive boardroom and primary transition corridor for team presentations.',
-      pos: new THREE.Vector3(1.1, 0.5, 1.2),
+      desc: 'Private executive workstation and presentation concourse with dual-monitor terminal.',
+      pos: new THREE.Vector3(1.8, 0.5, 1.5),
       color: 0x3b82f6,
       iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16"></path><circle cx="14" cy="12" r="1"></circle></svg>'
+    },
+    {
+      id: 'studio_entrance',
+      title: 'Suite Entrance Portal',
+      badge: 'ENTRANCE',
+      desc: 'Main biometric entry threshold and spatial reception foyer connecting to studio wing.',
+      pos: new THREE.Vector3(-0.5, 0.5, 3.0),
+      color: 0x10b981,
+      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>'
+    }
+  ],
+  atrium: [
+    {
+      id: 'atrium_booth',
+      title: 'Central Exhibition Booth',
+      badge: 'CONVENTION',
+      desc: 'High-density commercial exhibit platform with interactive digital kiosk and live telemetry.',
+      pos: new THREE.Vector3(0.5, 0.75, -2.5),
+      color: 0xea4335,
+      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>'
+    },
+    {
+      id: 'atrium_lounge',
+      title: 'Retail Furniture Showcase',
+      badge: 'RETAIL',
+      desc: 'Curated home furniture retail display showcasing modular seating and interior decor.',
+      pos: new THREE.Vector3(-4.2, 0.75, 0.8),
+      color: 0xf59e0b,
+      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5"></path><path d="M2 15h20v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-4z"></path></svg>'
+    },
+    {
+      id: 'atrium_suite',
+      title: 'Mezzanine Suite A',
+      badge: 'SUITE',
+      desc: 'Tenant conference suite and upper-level transit gallery overlooking the concourse.',
+      pos: new THREE.Vector3(3.8, 0.75, 1.2),
+      color: 0x3b82f6,
+      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16"></path><circle cx="14" cy="12" r="1"></circle></svg>'
+    },
+    {
+      id: 'atrium_concourse',
+      title: 'Main Concourse Portal',
+      badge: 'TRANSIT',
+      desc: 'Grand pedestrian concourse connecting commercial wings to the central atrium.',
+      pos: new THREE.Vector3(-0.5, 0.75, 4.2),
+      color: 0x10b981,
+      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>'
+    }
+  ],
+  garden: [
+    {
+      id: 'garden_pavilion',
+      title: 'Exhibition Pavilion 24',
+      badge: 'PAVILION',
+      desc: 'Central convention exhibition pavilion on the open-air campus quad with live telemetry.',
+      pos: new THREE.Vector3(0.2, 0.8, -1.2),
+      color: 0xea4335,
+      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>'
+    },
+    {
+      id: 'garden_pergola',
+      title: 'Botanical Pergola & Terrace',
+      badge: 'LOUNGE',
+      desc: 'Shaded floral canopy terrace with living botanical climbing vines and garden benches.',
+      pos: new THREE.Vector3(-3.5, 0.8, 2.5),
+      color: 0x10b981,
+      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5"></path><path d="M2 15h20v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-4z"></path></svg>'
+    },
+    {
+      id: 'garden_archway',
+      title: 'Heritage Stone Archway',
+      badge: 'HERITAGE',
+      desc: 'Historic masonry portal connecting the botanical grounds to the academic square.',
+      pos: new THREE.Vector3(3.2, 0.8, 3.8),
+      color: 0x3b82f6,
+      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16"></path><circle cx="14" cy="12" r="1"></circle></svg>'
+    },
+    {
+      id: 'garden_promenade',
+      title: 'Promenade Walkway',
+      badge: 'WALKWAY',
+      desc: 'Scenic paved walkway along the perimeter garden with ambient solar lamps.',
+      pos: new THREE.Vector3(-2.8, 0.8, -3.2),
+      color: 0xf59e0b,
+      iconSvg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>'
     }
   ]
 };
@@ -523,8 +584,8 @@ function createGoogleMapsPinTexture(title, badge, icon = '📍', pinColor = '#EA
 
   // Vibrant Gradient Fill
   const pinGrad = c.createLinearGradient(cx, cy - r, cx, tipY);
-  pinGrad.addColorStop(0, '#FF5722');
-  pinGrad.addColorStop(1, '#D93025');
+  pinGrad.addColorStop(0, pinColor);
+  pinGrad.addColorStop(1, pinColor);
   c.fillStyle = pinGrad;
   c.fill();
 
@@ -542,7 +603,7 @@ function createGoogleMapsPinTexture(title, badge, icon = '📍', pinColor = '#EA
 
   c.beginPath();
   c.arc(cx, cy, 9, 0, Math.PI * 2);
-  c.fillStyle = '#D93025';
+  c.fillStyle = pinColor;
   c.fill();
 
   return canvas;
@@ -627,22 +688,54 @@ function rebuildPois(envKey) {
   });
 }
 
-// Dynamically synchronize the left Waypoint Dock titles, tags and icons
+function hexToRgbString(num) {
+  const r = (num >> 16) & 255;
+  const g = (num >> 8) & 255;
+  const b = num & 255;
+  return `${r}, ${g}, ${b}`;
+}
+
+// Dynamically generate and synchronize the left Waypoint Dock cards for the active environment
 function updateDockWaypoints(envKey) {
+  const waypointList = document.querySelector('.waypoint-list');
+  if (!waypointList) return;
   const activePois = ENV_POIS[envKey] || ENV_POIS.studio;
-  activePois.forEach((poi) => {
-    const card = document.querySelector(`.waypoint-card[data-poi="${poi.id}"]`);
-    if (card) {
-      const iconEl = card.querySelector('.wp-icon');
-      const titleEl = card.querySelector('.wp-title');
-      const tagEl = card.querySelector('.wp-tag');
-      if (iconEl && poi.iconSvg) {
-        iconEl.innerHTML = poi.iconSvg;
-      }
-      if (titleEl) titleEl.textContent = poi.title;
-      if (tagEl) tagEl.textContent = poi.badge.split(' ')[0];
-    }
+
+  waypointList.innerHTML = activePois.map((poi) => {
+    const rgb = hexToRgbString(poi.color);
+    return `
+      <button class="waypoint-card" data-poi="${poi.id}">
+        <div class="wp-icon" style="color: #${poi.color.toString(16).padStart(6, '0')}; background: rgba(${rgb}, 0.14); border: 1px solid rgba(${rgb}, 0.35);">
+          ${poi.iconSvg || '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg>'}
+        </div>
+        <div class="wp-info">
+          <div class="wp-top">
+            <span class="wp-title">${poi.title}</span>
+            <span class="wp-tag">${poi.badge.split(' ')[0]}</span>
+          </div>
+          <div class="wp-meta">
+            <span class="wp-dist" data-dist="${poi.id}">-- m</span>
+            <span class="wp-action">Directions →</span>
+          </div>
+        </div>
+      </button>
+    `;
+  }).join('');
+
+  // Re-attach click listeners to each generated card
+  waypointList.querySelectorAll('.waypoint-card').forEach((card) => {
+    card.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const poiId = card.getAttribute('data-poi');
+      if (poiId) selectPoi(poiId);
+    });
   });
+
+  // Re-apply current search filter if search input has a query
+  const mapsInput = document.getElementById('maps-search-input');
+  if (mapsInput && mapsInput.value && typeof filterWaypoints === 'function') {
+    filterWaypoints(mapsInput.value);
+  }
 }
 
 // Scene Transition Loading Screen Controller
@@ -729,6 +822,9 @@ function applySplatScale(scale) {
 function loadEnvironment(envKey, isInitial = false) {
   const config = ENV_CONFIGS[envKey];
   if (!config) return;
+  if (typeof clearNavigation === 'function') {
+    clearNavigation();
+  }
   currentEnv = envKey;
 
   // Trigger high-tech loading screen
@@ -1053,7 +1149,48 @@ const activeRouteBanner = document.getElementById('active-route-banner');
 const routeTargetName = document.getElementById('route-target-name');
 const btnClearRoute = document.getElementById('btn-clear-route');
 const navToast = document.getElementById('nav-toast');
-const waypointCards = document.querySelectorAll('.waypoint-card');
+let destinationReachedTimeout = null;
+
+function handleDestinationReached() {
+  if (!activeTargetPoi) return;
+
+  // 1. Close POI inspection card modal immediately upon arrival
+  if (poiModal) poiModal.style.display = 'none';
+
+  // 2. Display destination toast and auto-dismiss after 3.5 seconds
+  if (navToast) {
+    navToast.style.display = 'block';
+    if (destinationReachedTimeout) clearTimeout(destinationReachedTimeout);
+    destinationReachedTimeout = setTimeout(() => {
+      if (navToast) navToast.style.display = 'none';
+    }, 3500);
+  }
+
+  // 3. Cleanly clear the active 3D navigation route line and route banner
+  if (navPathLine) {
+    scene.remove(navPathLine);
+    if (navPathLine.geometry) navPathLine.geometry.dispose();
+    if (navPathLine.material) navPathLine.material.dispose();
+    navPathLine = null;
+  }
+  if (activeRouteBanner) activeRouteBanner.style.display = 'none';
+
+  // 4. Remove active card highlight in left dock
+  document.querySelectorAll('.waypoint-card').forEach((card) => card.classList.remove('active-target'));
+
+  // 5. Reset target and restore pin visibility
+  activeTargetPoi = null;
+  const q = (mapsSearchInput?.value || '').trim().toLowerCase();
+  poiGroups.forEach((g) => {
+    if (q) {
+      const p = g.userData?.poi;
+      const match = p && ((p.title || '').toLowerCase().includes(q) || (p.badge || '').toLowerCase().includes(q) || p.id.toLowerCase().includes(q));
+      g.visible = Boolean(match);
+    } else {
+      g.visible = pinsVisible;
+    }
+  });
+}
 
 function selectPoi(poiId) {
   const activePois = ENV_POIS[currentEnv] || ENV_POIS.studio;
@@ -1080,12 +1217,19 @@ function selectPoi(poiId) {
     if (g.userData && g.userData.poi && g.userData.poi.id === poiId) {
       g.visible = true;
     } else if (!pinsVisible) {
-      g.visible = false;
+      const q = (mapsSearchInput?.value || '').trim().toLowerCase();
+      const poiItem = g.userData?.poi;
+      const match = q && poiItem && (
+        (poiItem.title || '').toLowerCase().includes(q) ||
+        (poiItem.badge || '').toLowerCase().includes(q) ||
+        poiItem.id.toLowerCase().includes(q)
+      );
+      g.visible = Boolean(match);
     }
   });
 
   // Update Left Dock Active Card
-  waypointCards.forEach((card) => {
+  document.querySelectorAll('.waypoint-card').forEach((card) => {
     if (card.getAttribute('data-poi') === poiId) {
       card.classList.add('active-target');
     } else {
@@ -1113,16 +1257,23 @@ function clearNavigation() {
   if (activeRouteBanner) activeRouteBanner.style.display = 'none';
   if (navToast) navToast.style.display = 'none';
 
-  waypointCards.forEach((card) => card.classList.remove('active-target'));
+  document.querySelectorAll('.waypoint-card').forEach((card) => card.classList.remove('active-target'));
 
-  // Reset pin visibility to match master toggle state
+  // Reset pin visibility to match master toggle state or active search
+  const q = (mapsSearchInput?.value || '').trim().toLowerCase();
   poiGroups.forEach((g) => {
-    g.visible = pinsVisible;
+    if (q) {
+      const p = g.userData?.poi;
+      const match = p && ((p.title || '').toLowerCase().includes(q) || (p.badge || '').toLowerCase().includes(q) || p.id.toLowerCase().includes(q));
+      g.visible = Boolean(match);
+    } else {
+      g.visible = pinsVisible;
+    }
   });
 }
 
-// Left Dock Click Listeners
-waypointCards.forEach((card) => {
+// Initial Left Dock Click Listeners (if pre-rendered)
+document.querySelectorAll('.waypoint-card').forEach((card) => {
   card.addEventListener('click', (e) => {
     e.stopPropagation();
     const poiId = card.getAttribute('data-poi');
@@ -1140,26 +1291,29 @@ function filterWaypoints(query) {
 
   let firstMatchId = null;
 
-  waypointCards.forEach((card) => {
+  document.querySelectorAll('.waypoint-card').forEach((card) => {
     const title = (card.querySelector('.wp-title')?.textContent || '').toLowerCase();
     const tag = (card.querySelector('.wp-tag')?.textContent || '').toLowerCase();
     const poiId = card.getAttribute('data-poi') || '';
-    const match = !q || title.includes(q) || tag.includes(q) || poiId.includes(q);
+    const match = !q || title.includes(q) || tag.includes(q) || poiId.toLowerCase().includes(q);
     card.classList.toggle('search-hidden', !match);
     if (match && !firstMatchId) firstMatchId = poiId;
   });
 
   // Dynamically filter 3D pin markers in the 3D scene
+  // REQUIREMENT 1: Search bar dynamically illuminates matching 3D pins even if pinsVisible === false!
   poiGroups.forEach((g) => {
     const poi = g.userData?.poi;
     if (!poi) return;
     const title = (poi.title || '').toLowerCase();
     const badge = (poi.badge || '').toLowerCase();
-    const match = !q || title.includes(q) || badge.includes(q) || poi.id.includes(q);
+    const match = !q || title.includes(q) || badge.includes(q) || poi.id.toLowerCase().includes(q);
     if (activeTargetPoi && poi.id === activeTargetPoi.id) {
       g.visible = true;
+    } else if (q) {
+      g.visible = match;
     } else {
-      g.visible = pinsVisible && match;
+      g.visible = pinsVisible;
     }
   });
 
@@ -1179,6 +1333,7 @@ if (mapsSearchInput) {
         const activePois = ENV_POIS[currentEnv] || ENV_POIS.studio;
         const p = activePois.find((x) => x.id === firstId);
         if (p) camera.lookAt(p.pos.x, EYE_HEIGHT, p.pos.z);
+        mapsSearchInput.blur();
       }
     }
   });
@@ -1341,12 +1496,21 @@ function updateMinimap() {
   // Bottom-right
   ctx.beginPath(); ctx.moveTo(MM_SIZE - pad - clen, MM_SIZE - pad); ctx.lineTo(MM_SIZE - pad, MM_SIZE - pad); ctx.lineTo(MM_SIZE - pad, MM_SIZE - pad - clen); ctx.stroke();
 
-  // 7. POI BLIPS (RULE: HIDDEN WHEN PINS ARE OFF, UNLESS IT IS THE ACTIVE TARGET)
+  // 7. POI BLIPS (RULE: HIDDEN WHEN PINS ARE OFF, UNLESS IT IS THE ACTIVE TARGET OR SEARCH MATCH)
   const activePois = ENV_POIS[currentEnv] || ENV_POIS.studio;
+  const q = (mapsSearchInput?.value || '').trim().toLowerCase();
   activePois.forEach((poi) => {
     const isTarget = activeTargetPoi && activeTargetPoi.id === poi.id;
-    // Strict requirement: If pins are OFF and this is NOT active target, do NOT draw it!
-    if (!pinsVisible && !isTarget) return;
+    const isSearchMatch = Boolean(
+      q && (
+        (poi.title || '').toLowerCase().includes(q) ||
+        (poi.badge || '').toLowerCase().includes(q) ||
+        poi.id.toLowerCase().includes(q)
+      )
+    );
+
+    // Strict requirement: If pins are OFF and this is NOT active target and NOT matching search, do NOT draw it!
+    if (!pinsVisible && !isTarget && !isSearchMatch) return;
 
     const lx = (poi.pos.x + ROOM_SIZE / 2) * MM_SCALE;
     const lz = (poi.pos.z + ROOM_SIZE / 2) * MM_SCALE;
@@ -1440,13 +1604,13 @@ function updateMinimap() {
     ctx.shadowBlur = 0;
   }
 
-  // 9. Player Realistic FOV Vision Cone
+  // 9. Player Realistic FOV Vision Cone (Accurately aligned with 2D radar axes)
   const dir = new THREE.Vector3();
   camera.getWorldDirection(dir);
-  const angle = Math.atan2(dir.x, dir.z);
+  const fovAngle = Math.atan2(dir.z, dir.x);
 
   const fovRadius = 32;
-  const fovSpread = 0.52; // ~60 degree viewing cone
+  const fovSpread = 0.52; // ~60 degree viewing cone (±30 deg)
   const coneGrad = ctx.createRadialGradient(px, pz, 2, px, pz, fovRadius);
   coneGrad.addColorStop(0, 'rgba(59, 130, 246, 0.45)');
   coneGrad.addColorStop(0.5, 'rgba(59, 130, 246, 0.15)');
@@ -1455,7 +1619,7 @@ function updateMinimap() {
   ctx.fillStyle = coneGrad;
   ctx.beginPath();
   ctx.moveTo(px, pz);
-  ctx.arc(px, pz, fovRadius, angle - Math.PI / 2 - fovSpread, angle - Math.PI / 2 + fovSpread);
+  ctx.arc(px, pz, fovRadius, fovAngle - fovSpread, fovAngle + fovSpread);
   ctx.closePath();
   ctx.fill();
 
@@ -1464,25 +1628,25 @@ function updateMinimap() {
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(px, pz);
-  ctx.lineTo(px + Math.cos(angle - Math.PI / 2 - fovSpread) * fovRadius, pz + Math.sin(angle - Math.PI / 2 - fovSpread) * fovRadius);
+  ctx.lineTo(px + Math.cos(fovAngle - fovSpread) * fovRadius, pz + Math.sin(fovAngle - fovSpread) * fovRadius);
   ctx.moveTo(px, pz);
-  ctx.lineTo(px + Math.cos(angle - Math.PI / 2 + fovSpread) * fovRadius, pz + Math.sin(angle - Math.PI / 2 + fovSpread) * fovRadius);
+  ctx.lineTo(px + Math.cos(fovAngle + fovSpread) * fovRadius, pz + Math.sin(fovAngle + fovSpread) * fovRadius);
   ctx.stroke();
 
   // 10. Player Delta Fighter Chevron (Rotates with Player Heading)
   ctx.save();
   ctx.translate(px, pz);
-  ctx.rotate(angle);
+  ctx.rotate(fovAngle);
 
-  // Outer Delta Chevron
+  // Outer Delta Chevron (nose points forward along +X in local space)
   ctx.fillStyle = '#3b82f6';
   ctx.shadowColor = '#3b82f6';
   ctx.shadowBlur = 8;
   ctx.beginPath();
-  ctx.moveTo(0, 7); // nose pointing in forward local orientation
-  ctx.lineTo(-4.5, -5);
-  ctx.lineTo(0, -2.5);
-  ctx.lineTo(4.5, -5);
+  ctx.moveTo(7, 0); // nose pointing forward along view direction
+  ctx.lineTo(-5, -4.5);
+  ctx.lineTo(-2.5, 0);
+  ctx.lineTo(-5, 4.5);
   ctx.closePath();
   ctx.fill();
 
@@ -1677,20 +1841,19 @@ function animate() {
   // Animate Navigation Path
   if (navPathLine && navPathLine.material) {
     navPathLine.material.dashOffset -= delta * 1.5;
+  }
 
-    if (activeTargetPoi) {
-      const dist = camera.position.distanceTo(activeTargetPoi.pos);
-      if (poiDist) poiDist.textContent = `${dist.toFixed(1)}m`;
-      if (poiWalkTime) {
-        const walkSecs = Math.max(3, Math.ceil(dist / 1.1));
-        poiWalkTime.textContent = `~${walkSecs} sec`;
-      }
+  // Active Target Tracking & Requirement 5: Auto-dismiss popups on arrival (< 1.0m)
+  if (activeTargetPoi) {
+    const dist = camera.position.distanceTo(activeTargetPoi.pos);
+    if (poiDist) poiDist.textContent = `${dist.toFixed(1)}m`;
+    if (poiWalkTime) {
+      const walkSecs = Math.max(3, Math.ceil(dist / 1.1));
+      poiWalkTime.textContent = `~${walkSecs} sec`;
+    }
 
-      if (dist < 1.0) {
-        if (navToast) navToast.style.display = 'block';
-      } else {
-        if (navToast) navToast.style.display = 'none';
-      }
+    if (dist < 1.0) {
+      handleDestinationReached();
     }
   }
 
