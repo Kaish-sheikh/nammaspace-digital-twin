@@ -61,10 +61,7 @@ flowchart TD
 ```text
 nammaspace-digital-twin/
 ├── README.md                    # Project overview, architecture & quick start
-├── ROUND1_TECHNICAL_ABSTRACT.md # 5-page research & competition abstract for IIT Bombay Techfest
 ├── SOP.md                       # Standard Operating Procedure for monocular video capture
-├── GLOSSARY.md                  # Comprehensive glossary of technical terms & concepts
-├── submission/                  # Formatted submission dossiers (PDF & HTML)
 └── viewer/                      # WebGL interactive 3D client (Vite + Three.js)
     ├── index.html               # Main viewer UI, HUD, search bar, glassmorphic modal
     ├── public/
@@ -138,7 +135,6 @@ npm run build
 ---
 
 ## 📜 Documentation Links
-- **Technical Abstract:** [`ROUND1_TECHNICAL_ABSTRACT.md`](ROUND1_TECHNICAL_ABSTRACT.md)
 - **Standard Operating Procedure:** [`SOP.md`](SOP.md)
 ---
 *Created for the IIT Bombay Techfest 2026–27 | NammaSpace Challenge.*

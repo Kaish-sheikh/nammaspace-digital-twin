@@ -18,3 +18,7 @@ Thumbs.db
 
 # Local reference files (kept on machine, hidden from git & judges)
 GLOSSARY.md
+
+# Competition submission dossiers (uploaded to Google Drive, hidden from GitHub)
+submission/
+ROUND1_TECHNICAL_ABSTRACT.md
