@@ -195,7 +195,7 @@
       <div class="subtitle">Interactive 3D Digital Twin & Real-Time Spatial Navigation Engine</div>
     </div>
     <div class="meta-box">
-      <div><strong>Challenge:</strong> Namma Space</div>
+      <div><strong>Challenge:</strong> NammaSpace</div>
       <div><strong>Round:</strong> 1 (3D Reconstruction & Roaming)</div>
       <div><strong>Status:</strong> Live Production Deployed</div>
     </div>
@@ -220,7 +220,7 @@
         <a href="https://nammaspace-digital-twin.vercel.app/" target="_blank">https://nammaspace-digital-twin.vercel.app/</a>
       </div>
       <div class="card-desc">
-        Runs locked at <strong>60+ FPS</strong> in any modern desktop or mobile browser (Chrome, Edge, Safari, Brave). Features first-person exploration, dual-model switching (Mobile Scan vs. Ultra-HD Studio), interactive 3D waypoints, and real-time obstacle-avoiding floor pathfinding with a 2D synchronized radar.
+        Runs locked at <strong>60+ FPS</strong> in any modern desktop or mobile browser (Chrome, Edge, Safari, Brave). Features first-person exploration, a <strong>Triple-Environment Showcase (Studio 1.13M, Atrium 1.73M, Courtyard 3.14M — Total 6.0M+ splats)</strong>, Google Maps indoor search & 3D pins, obstacle-avoiding A* walking pathfinding, and a synchronized architectural 2D floor radar.
       </div>
     </div>
 
@@ -234,7 +234,7 @@
         <a href="https://github.com/Kaish-sheikh/nammaspace-digital-twin" target="_blank">https://github.com/Kaish-sheikh/nammaspace-digital-twin</a>
       </div>
       <div class="card-desc">
-        Complete codebase containing the Three.js WebGL engine, 3D Gaussian Splatting scene loaders, Catmull-Rom pathfinding algorithms, 4-Pass smartphone capture Standard Operating Procedure (SOP), and sample trained splat binaries.
+        Complete codebase containing the Three.js WebGL engine, 3D Gaussian Splatting scene loaders, Catmull-Rom pathfinding algorithms, Jacobi ground-plane eigendecomposition leveling, monocular capture Standard Operating Procedure (SOP), and sample trained splat binaries.
       </div>
     </div>
   </div>
@@ -243,23 +243,23 @@
 
   <div class="guide-grid">
     <div class="guide-item">
-      <div class="guide-label">🕹️ Movement Controls</div>
-      <div class="guide-desc">Use <code>W / A / S / D</code> to walk forward, left, backward, and right. Move your mouse to look around in first-person view.</div>
+      <div class="guide-label">🕹️ Locomotion & Controls</div>
+      <div class="guide-desc">Use <code>W / A / S / D</code> to walk and <code>SHIFT</code> to sprint. Move your mouse to look around in first-person view. Middle-click or <code>ESC</code> frees the cursor; clicking the 3D scene smoothly re-engages walk mode.</div>
     </div>
 
     <div class="guide-item">
-      <div class="guide-label">🔄 Dual-Twin Environment Switcher</div>
-      <div class="guide-desc">Toggle between <strong>Ultra-HD Studio (1.13M Splats, Indoor)</strong> and the <strong>Spatial Courtyard (3.14M Splats, Outdoor)</strong> via the top command header.</div>
+      <div class="guide-label">🔄 Triple-Environment Switcher</div>
+      <div class="guide-desc">Toggle between <strong>Studio (1.13M)</strong>, <strong>Atrium (1.73M)</strong>, and <strong>Courtyard (3.14M)</strong> via the top header. All models are mathematically pre-leveled to ground plane Y=0.</div>
     </div>
 
     <div class="guide-item">
-      <div class="guide-label">📍 Interactive 3D Waypoint Dock</div>
-      <div class="guide-desc">Click any card in the left Waypoints dock to illuminate an obstacle-aware green laser walking path across the floor directly to that station.</div>
+      <div class="guide-label">🔍 Google Maps Indoor Search & 3D Pins</div>
+      <div class="guide-desc">Type in the search bar to filter destinations; press <code>Enter</code> to auto-orient the camera. Toggle <code>Pins: OFF / ON</code> to reveal 3D teardrop markers with floor target rings.</div>
     </div>
 
     <div class="guide-item">
-      <div class="guide-label">📡 Real-Time 2D Floor Radar</div>
-      <div class="guide-desc">Top-right radar minimap tracks your real-time heading with a rotating delta fighter chevron, FOV vision cone, and metric range rings.</div>
+      <div class="guide-label">🧭 Obstacle-Aware A* Waypoint Pathfinding</div>
+      <div class="guide-desc">Select any waypoint to project an animated neon dashed walking path across the floor avoiding room obstacles, with live distance and travel time estimation.</div>
     </div>
   </div>
 

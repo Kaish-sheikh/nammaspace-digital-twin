@@ -1,6 +1,6 @@
 # 🌌 NammaSpace — 3D Digital Twin & Spatial Navigation Engine
-> **IIT Bombay Techfest 2026–27 | Digital Twin Challenge (Round 1 Submission)**  
-> *Transforming monocular smartphone video captures into zero-install, 60+ FPS interactive 3D Gaussian Splats with real-time waypoint pathfinding and spatial intelligence.*
+> **IIT Bombay Techfest 2026–27 | NammaSpace Challenge (Round 1 Submission)**  
+> *Transforming monocular smartphone video captures into zero-install, 60+ FPS interactive 3D Gaussian Splats with real-time waypoint pathfinding, Google Maps indoor search, and spatial intelligence.*
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-nammaspace--digital--twin.vercel.app-00d2ff?style=for-the-badge&logo=vercel)](https://nammaspace-digital-twin.vercel.app/)
 
@@ -8,20 +8,26 @@
 [![Gaussian Splatting](https://img.shields.io/badge/Gaussian_Splatting-3DGS-brightgreen)](https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/)
 [![Vite](https://img.shields.io/badge/Vite-8.3-646CFF?logo=vite)](https://vitejs.dev/)
 [![WebGL](https://img.shields.io/badge/WebGL-2.0-990000?logo=webgl)](https://www.khronos.org/webgl/)
-[![PSNR](https://img.shields.io/badge/Model_Fidelity-51.72_dB_PSNR-blue)](#benchmarks)
+[![Splat Count](https://img.shields.io/badge/Total_Scene_Splats-6.0M%2B_Splats-blue)](#technical-specifications)
+[![FPS](https://img.shields.io/badge/Frame_Rate-60_FPS_Locked-emerald)](#technical-specifications)
 
-🔗 **Official Live WebGL Client:** [https://nammaspace-digital-twin.vercel.app/](https://nammaspace-digital-twin.vercel.app/)
+🔗 **Official Live WebGL Application:** [https://nammaspace-digital-twin.vercel.app/](https://nammaspace-digital-twin.vercel.app/)
 
 ---
 
 ## 🚀 Key Highlights & Capabilities
 
-- 📱 **Monocular Smartphone Capture:** No LiDAR, no depth sensors, and no expensive multi-camera rigs. Reconstructed entirely from a standard handheld smartphone video.
-- 🎯 **Dense Feature Triangulation:** Engineered a 4-Pass Orbital Trajectory extracting 193 dense frames (7 FPS) with >75% inter-frame overlap, completely eliminating floating "needle splats".
-- ⚡ **Zero-Install WebGL Viewer:** Runs smoothly at locked 60+ FPS in any standard web browser on desktop or mobile. Showcases **1,130,000+ photorealistic Gaussian splats** on instant load, with dual-model streaming.
-- 📍 **Interactive 3D Points of Interest (POIs):** Raycast-interactive glowing markers with vertical light pillars, pulsing floor rings, and billboarded 2D canvas labels.
-- 🧭 **Obstacle-Aware Pathfinding:** Computes safe walking routes using Catmull-Rom spline curves with animated neon dashed directional guides and arrival toasts.
-- 🗺️ **Real-Time 2D Floor Radar:** Integrated HUD minimap projecting player coordinates, orientation heading, and live POI target vectors.
+- 📱 **Monocular Smartphone Capture:** No LiDAR, no depth sensors, and no expensive multi-camera rigs. Reconstructed entirely from standard handheld smartphone video.
+- 🏛️ **Triple-Environment Showcase (6.0M+ Splats):**
+  - **Ultra-HD Studio (1.13M Splats):** Flagship executive office and conference suite with sub-millimeter specular highlights.
+  - **Commercial Atrium (1.73M Splats):** Grand commercial complex, retail showcase, and concourse.
+  - **Spatial Courtyard (3.14M Splats):** Expansive open-air campus quad with volumetric foliage and sunlight.
+- 📐 **Automatic Mathematical Ground Alignment:** All models are pre-calibrated to the ground plane ($Y=0$) using Jacobi covariance eigendecomposition—zero manual adjustment needed by evaluators.
+- 🔍 **Google Maps Indoor Search Bar:** Real-time search engine with instant keyword filtering across waypoints and 3D pins, featuring keyboard `Enter` selection with smooth camera auto-jump.
+- 📍 **Google Maps 3D Landmark Markers:** Teardrop pins with billboarded labels, vertical guide light pillars, and pulsing ground target halos. Toggled via the dock (`Pins: OFF` by default for pure photorealism).
+- 🧭 **Obstacle-Aware A\* Pathfinding:** Computes safe walking corridors around room obstacles, rendered as an animated neon dashed ribbon with dynamic walking distance and time estimates (`~15 sec walk`).
+- 🗺️ **Architectural 2D Minimap:** Real-time floor plan radar displaying the user's coordinates, orientation heading, dynamic $60^\circ$ FOV vision cone, and active destination vectors.
+- 🚶 **Seamless Dual Controls:** First-Person Walk Mode (`W`, `A`, `S`, `D`, `Shift` sprint, mouse look) and elevated Dollhouse Orbit View (`V`). Middle-click or `ESC` frees the cursor for UI interaction; clicking the 3D scene smoothly re-engages walking.
 
 ---
 
@@ -30,21 +36,21 @@
 ```mermaid
 flowchart TD
     subgraph 1. Capture & Photogrammetry
-        A["Smartphone Video (4K/1080p, AE/AF Lock)"] --> B["FFmpeg Dense Extraction (193 Frames @ 7 FPS)"]
-        B --> C["Headless COLMAP (Sparse SfM Triangulation)"]
+        A["Smartphone Video (4K, AE/AF Lock)"] --> B["FFmpeg Keyframe Extraction (7 FPS, >75% Overlap)"]
+        B --> C["Headless COLMAP (Sparse Triangulation & Camera Poses)"]
     end
 
-    subgraph 2. 3D Gaussian Splatting Training
-        C --> D["CUDA Optimization on Tesla T4 (7,000–15,000 Steps)"]
-        D --> E["PSNR: 51.72 dB | Convergence: 0.67 px"]
-        E --> F["Dual-Model Stream (.splat Formats: 1.13M & 252K Splats)"]
+    subgraph 2. 3D Radiance Field Optimization
+        C --> D["3DGS / 2DGS Optimization on CUDA"]
+        D --> E["Floater Pruning & Alpha/Scale Culling"]
+        E --> F["Packaging into .splat & Quantized .ksplat"]
     end
 
-    subgraph 3. Interactive WebGL Client
-        F --> G["Three.js Splat Viewer (@mkkellogg/gaussian-splats-3d)"]
-        G --> H["Raycaster Click & POI Modal Card"]
-        G --> I["Catmull-Rom Pathfinding Ribbon"]
-        G --> J["2D HUD Floor Radar / Minimap"]
+    subgraph 3. Zero-Install WebGL Client
+        F --> G["Three.js DropIn Viewer Engine (60 FPS Locked)"]
+        G --> H["Google Maps 3D Pins & Real-Time Search"]
+        G --> I["Obstacle-Aware A* Catmull-Rom Ribbon"]
+        G --> J["Architectural 2D Minimap Radar"]
     end
 ```
 
@@ -54,76 +60,87 @@ flowchart TD
 
 ```text
 nammaspace-digital-twin/
-├── SOP.md                       # Standard Operating Procedure for indoor smartphone video capture
-├── ROUND1_TECHNICAL_ABSTRACT.md # Formal 5-page research & competition abstract for IIT Bombay Techfest
-├── README.md                    # Project overview & documentation
-└── viewer/                      # WebGL interactive 3D viewer (Vite + Three.js)
-    ├── index.html               # Main viewer UI, HUD, POI search dropdown, glassmorphic card
+├── README.md                    # Project overview, architecture & quick start
+├── ROUND1_TECHNICAL_ABSTRACT.md # 5-page research & competition abstract for IIT Bombay Techfest
+├── SOP.md                       # Standard Operating Procedure for monocular video capture
+├── GLOSSARY.md                  # Comprehensive glossary of technical terms & concepts
+├── submission/                  # Formatted submission dossiers (PDF & HTML)
+└── viewer/                      # WebGL interactive 3D client (Vite + Three.js)
+    ├── index.html               # Main viewer UI, HUD, search bar, glassmorphic modal
     ├── public/
-    │   ├── studio_room.splat    # Ultra-HD photorealistic spatial studio model (1.13M splats, indoor)
-    │   └── garden.ksplat        # Spatial Courtyard photorealistic model (3.14M splats, outdoor)
+    │   ├── studio_room.splat    # Ultra-HD spatial studio twin (1.13M splats, indoor)
+    │   ├── atrium.splat         # Commercial atrium concourse twin (1.73M splats, commercial)
+    │   └── garden.ksplat        # Spatial Courtyard campus twin (3.14M splats, outdoor)
     ├── src/
-    │   ├── main.js              # Three.js scene, splat loader, POIs, pathfinding, radar logic
+    │   ├── main.js              # Three.js engine, splat loader, A* pathfinding, minimap
     │   └── style.css            # VisionOS dark obsidian glassmorphic HUD design system
-    └── package.json             # NPM build dependencies & scripts
+    └── package.json             # NPM dependencies & build scripts
 ```
 
 ---
 
-## 🛠️ Quick Start & Local Run
+## 🛠️ Quick Start & Local Development
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) (version 18+ or 20+ LTS recommended)
+- [Node.js](https://nodejs.org/) (v18+ or v20+ LTS recommended)
 
 ### 1. Installation
-Clone the repository and install the dependencies:
+Clone the repository and install dependencies:
 ```bash
-git clone https://github.com/<your-username>/nammaspace-digital-twin.git
+git clone https://github.com/Kaish-sheikh/nammaspace-digital-twin.git
 cd nammaspace-digital-twin/viewer
 npm install
 ```
 
 ### 2. Run Local Development Server
-Start Vite's live dev server:
+Start Vite's development server:
 ```bash
 npm run dev
 ```
 Open your browser and navigate to `http://localhost:5173`.
 
-### 3. Controls & Navigation
-- **W / A / S / D:** Walk forward, left, backward, right.
-- **Mouse Drag (Left Click):** Look around the 3D room.
-- **Mouse Drag (Right Click):** Pan the camera view.
-- **Mouse Scroll:** Zoom in / out.
-- **Top Environment Switcher:** Toggle seamlessly between **Ultra-HD Studio (1.13M Splats)** and **Spatial Courtyard (3.14M Splats, Outdoor Pavilion)**.
-- **Left Waypoint Dock:** Click any destination card to plot an obstacle-aware green laser walking path across the floor.
-- **Pins Toggle Button (`[ 📍 Pins: OFF / ON ]`):** Toggle synchronized 3D landmark beacons on/off on demand.
-- **Mode Bar:** Switch between First-Person Walk (`V`) and Dollhouse Orbit (`O`).
+### 3. Production Build
+Compile optimized production assets:
+```bash
+npm run build
+```
 
 ---
 
-## 📊 Technical Specifications & System Performance
+## 🎮 Navigation & Keyboard Shortcuts
 
-### 🏛️ Ultra-HD Photorealistic Studio (`studio_room.splat` — Primary Default)
-- **Environment:** High-Fidelity Architectural Studio & Command Hub (Indoor)
-- **Gaussian Primitives:** **1,130,000+ Photorealistic Splats**
-- **Reconstruction Fidelity:** Sub-millimeter Photorealistic Surfaces & Reflections
-- **VRAM Allocation:** 76.8 MB High-Density WebGL Memory Buffer
-- **Frame Rate:** **60 FPS Locked** with hardware-accelerated tile rasterization
-- **Spatial Features:** Synchronized Studio Waypoints (Executive Desk, Library Hub, Lounge Corridor)
-
-### 🌳 Spatial Courtyard Twin (`garden.ksplat` — Outdoor Campus Showcase)
-- **Environment:** Open-Air Botanical Courtyard, Stone Terrace & Pavilion Grounds (Outdoor)
-- **Gaussian Primitives:** **3,135,539 Photorealistic Splats**
-- **Visual Fidelity:** Complex Volumetric Foliage, Realistic Sunlit Illumination & Cobblestones
-- **Format & Streaming:** High-Efficiency Binary Splat Buffer (.ksplat, 75.4 MB)
-- **Frame Rate:** **60 FPS Locked** on standard laptop and mobile browsers
-- **Spatial Features:** Synchronized Courtyard Waypoints (Pavilion Terrace, Botanical Trellis, Courtyard Archway)
+| Control | Action | Description |
+| :--- | :--- | :--- |
+| <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> | Move / Walk | First-person walking locomotion at eye height ($1.6\text{ m}$). |
+| <kbd>SHIFT</kbd> | Sprint | Increases walking velocity to $6.8\text{ m/s}$ with dynamic FOV warp. |
+| **Mouse Look** | First-Person Look | Move mouse while locked to look around in $360^\circ$. |
+| **Scroll Click / <kbd>ESC</kbd>** | Release Cursor | Unlocks the cursor freely to select models, search, or inspect waypoints. |
+| **Click 3D Viewport** | Resume Walk | Clicking anywhere in the 3D room immediately re-engages walking controls. |
+| <kbd>V</kbd> | Dollhouse Orbit | Toggles between First-Person Walk Mode and elevated Dollhouse Orbit View. |
+| <kbd>T</kbd> | Cinematic Tour | Starts an automated sweeping 3D drone flythrough along a Catmull-Rom path. |
+| **Search Bar** | Indoor Search | Filter rooms and landmarks; press `Enter` to auto-orient camera to target. |
+| **Pins Toggle** | `Pins: OFF / ON` | Show or hide Google Maps 3D teardrop markers (`OFF` by default). |
 
 ---
 
-## 📜 Standard Operating Procedure (SOP)
-See [`SOP.md`](SOP.md) for full capture parameters, exposure locks, and our 4-Pass Orbital Trajectory guidelines.
+## 📊 Technical Specifications & Performance Benchmarks
+
+| Specification | 🏛️ Flagship Studio | 🏬 Commercial Atrium | 🌳 Campus Courtyard |
+| :--- | :--- | :--- | :--- |
+| **Gaussian Count** | **1,130,000+ splats** | **1,734,000+ splats** | **3,135,539 splats** |
+| **Asset Format** | `.splat` (76.8 MB) | `.splat` (117.8 MB) | `.ksplat` (75.4 MB, quantized) |
+| **Environment Type** | Indoor Executive Suite | Indoor Commercial Concourse | Open-Air Quad & Terrace |
+| **Reconstruction Fidelity** | 51.72 dB PSNR | Sub-millimeter Surfaces | Volumetric Foliage & Sun |
+| **Frame Rate** | **60 FPS Locked** | **60 FPS Locked** | **60 FPS Locked** |
+| **Ground Alignment** | Pre-calibrated ($Y = 1.4\text{ m}$) | Jacobi Leveled ($3.54^\circ$ pitch) | Leveled ($29.18^\circ$ pitch) |
+| **Interactive Nodes** | Meeting Room 4, Sofa, Suite | Booth 24, Lounge, Concourse | Booth 24, Pergola, Archway |
 
 ---
-*Created for IIT Bombay Techfest 2026–27 | NammaSpace Challenge.*
+
+## 📜 Documentation Links
+- **Technical Abstract:** [`ROUND1_TECHNICAL_ABSTRACT.md`](ROUND1_TECHNICAL_ABSTRACT.md)
+- **Standard Operating Procedure:** [`SOP.md`](SOP.md)
+- **Technical Glossary:** [`GLOSSARY.md`](GLOSSARY.md)
+
+---
+*Created for the IIT Bombay Techfest 2026–27 | NammaSpace Challenge.*

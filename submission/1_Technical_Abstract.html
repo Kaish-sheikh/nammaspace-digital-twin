@@ -25,7 +25,7 @@
       color: #0f172a;
       background: #ffffff;
       line-height: 1.5;
-      font-size: 11pt;
+      font-size: 10.5pt;
     }
 
     header {
@@ -36,7 +36,7 @@
 
     .badge-event {
       display: inline-block;
-      font-size: 9pt;
+      font-size: 8.5pt;
       font-weight: 800;
       letter-spacing: 0.8px;
       text-transform: uppercase;
@@ -49,7 +49,7 @@
     }
 
     h1 {
-      font-size: 18pt;
+      font-size: 17pt;
       font-weight: 800;
       color: #0f172a;
       line-height: 1.25;
@@ -60,7 +60,7 @@
       display: flex;
       flex-direction: column;
       gap: 3px;
-      font-size: 9.5pt;
+      font-size: 9pt;
       color: #475569;
     }
 
@@ -72,77 +72,83 @@
     }
 
     h2 {
-      font-size: 13pt;
+      font-size: 12.5pt;
       font-weight: 800;
       color: #0369a1;
-      margin-top: 18px;
-      margin-bottom: 8px;
+      margin-top: 16px;
+      margin-bottom: 6px;
       border-bottom: 1px solid #e2e8f0;
-      padding-bottom: 4px;
+      padding-bottom: 3px;
     }
 
     h3 {
-      font-size: 11pt;
+      font-size: 10.5pt;
       font-weight: 700;
       color: #1e293b;
-      margin-top: 10px;
+      margin-top: 8px;
       margin-bottom: 4px;
     }
 
     p {
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       text-align: justify;
     }
 
     ul, ol {
-      margin-left: 20px;
-      margin-bottom: 10px;
+      margin-left: 18px;
+      margin-bottom: 8px;
     }
 
     li {
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
 
     code {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 9.5pt;
+      font-size: 9pt;
       background: #f1f5f9;
-      padding: 2px 5px;
-      border-radius: 4px;
+      padding: 1px 4px;
+      border-radius: 3px;
       color: #0f172a;
     }
 
     .highlight-box {
       background: #f8fafc;
       border-left: 4px solid #0284c7;
-      padding: 10px 14px;
-      margin: 12px 0;
-      font-size: 10.5pt;
+      padding: 8px 12px;
+      margin: 10px 0;
+      font-size: 10pt;
     }
 
     .diagram-box {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 12px;
-      margin: 12px 0;
+      border-radius: 6px;
+      padding: 10px;
+      margin: 10px 0;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 9pt;
+      font-size: 8.5pt;
       white-space: pre-wrap;
-      line-height: 1.4;
+      line-height: 1.35;
     }
 
-    .spec-card {
-      background: #f8fafc;
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+      font-size: 9pt;
+    }
+
+    .spec-table th, .spec-table td {
       border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      padding: 12px 14px;
-      margin-bottom: 10px;
+      padding: 6px 8px;
+      text-align: left;
     }
 
-    .spec-card h3 {
-      margin-top: 0;
-      color: #0369a1;
+    .spec-table th {
+      background: #f1f5f9;
+      font-weight: 700;
+      color: #0f172a;
     }
 
     .page-break {
@@ -153,10 +159,10 @@
 <body>
 
   <header>
-    <div class="badge-event">IIT Bombay Techfest 2026–27 | Namma Space Competition</div>
+    <div class="badge-event">IIT Bombay Techfest 2026–27 | NammaSpace Challenge</div>
     <h1>High-Fidelity Monocular 3D Gaussian Splatting with Real-Time Spatial Navigation for Web-Based Digital Twins</h1>
     <div class="doc-meta">
-      <div><strong>Competition Track:</strong> Namma Space 3D Digital Twin Challenge (Round 1 Technical Abstract)</div>
+      <div><strong>Track:</strong> NammaSpace 3D Digital Twin Challenge (Round 1 Technical Abstract)</div>
       <div><strong>Live Web Application:</strong> <a href="https://nammaspace-digital-twin.vercel.app/" target="_blank">https://nammaspace-digital-twin.vercel.app/</a></div>
       <div><strong>Source Code Repository:</strong> <a href="https://github.com/Kaish-sheikh/nammaspace-digital-twin" target="_blank">https://github.com/Kaish-sheikh/nammaspace-digital-twin</a></div>
     </div>
@@ -164,116 +170,116 @@
 
   <h2>Abstract</h2>
   <p>
-    Traditional indoor 3D digital twins often require expensive LiDAR scanners, photogrammetry rigs, or synthetic CAD modeling that fails to replicate real-world material reflectance and complex lighting. In this work, we present <strong>NammaSpace</strong>, an end-to-end framework that transforms video capture into an interactive, photorealistic 3D Gaussian Splatting (3DGS) digital twin running entirely in standard web browsers at 60+ FPS without local installation. By implementing a standardized 4-pass orbital video capture protocol, our pipeline extracts dense frames with &gt;75% inter-frame visual overlap, resolving previous sparse triangulation failures. Using headless COLMAP Structure-from-Motion (SfM) and GPU-accelerated rasterization on NVIDIA hardware, our system delivers a dual-twin spatial architecture: a flagship Ultra-HD spatial studio twin with <strong>1,130,000+ photorealistic Gaussian splats</strong> loaded by default, complemented by an expansive outdoor campus courtyard twin with <strong>3,135,000+ photorealistic splats</strong>. Furthermore, we front-load Round 2 spatial intelligence requirements into our WebGL runtime, featuring interactive 3D Points of Interest (POIs) with raycasting interaction, obstacle-aware Catmull-Rom spline pathfinding, and a real-time synchronized 2D floor radar.
+    Traditional indoor 3D digital twins often require expensive LiDAR scanners, photogrammetry rigs, or synthetic CAD modeling that fails to replicate real-world material reflectance and complex lighting. In this work, we present <strong>NammaSpace</strong>, an end-to-end framework transforming monocular smartphone video into an interactive, photorealistic 3D Gaussian Splatting (3DGS) digital twin running entirely in standard web browsers at locked 60+ FPS without local installation. By implementing a standardized <strong>Triple-Loop capture protocol with mathematical loop closure</strong>, our pipeline extracts dense frames with &ge;75% inter-frame visual overlap, resolving sparse triangulation failures under monocular capture. Our WebGL runtime delivers a <strong>Triple-Environment Showcase encompassing over 6,000,000+ Gaussian splats</strong>: an Ultra-HD spatial studio twin (<strong>1,130,000+ splats</strong>), a grand commercial complex atrium (<strong>1,734,000+ splats</strong>), and an open-air campus courtyard quad (<strong>3,135,000+ splats</strong>). All models feature automatic mathematical ground alignment via Jacobi covariance eigendecomposition. Furthermore, we incorporate Google Maps indoor search, custom 3D landmark pins, obstacle-aware A* pathfinding, and a synchronized 2D architectural floor radar.
   </p>
 
   <h2>1. Introduction &amp; Problem Statement</h2>
   <p>
-    The proliferation of digital twin applications—spanning real estate inspection, architectural heritage conservation, and indoor navigation—demands high visual fidelity, low capture cost, and seamless browser-based distribution. Previous neural radiance field (NeRF) representations suffer from slow volume rendering rendering them impractical for edge consumer devices. While 3D Gaussian Splatting provides real-time rasterization, naive smartphone capture typically results in severe anisotropic artifacts (&quot;needle splats&quot;) and sparse tracking failure due to low visual overlap and non-static illumination.
+    Indoor navigation across complex facilities—such as the IIT Bombay campus, airports, hospitals, and convention centers—suffers from the degradation of satellite GPS signals indoors. Existing indoor mapping solutions present severe limitations:
   </p>
-  <p>Our project addresses these limitations through three core contributions:</p>
   <ol>
-    <li><strong>Standardized Capture Protocol (SOP):</strong> A rigorous 4-pass trajectory guaranteeing &gt;75% spatial overlap, eliminating floaters and incomplete reconstruction.</li>
-    <li><strong>High-Performance Dual-Twin Architecture:</strong> CUDA-accelerated optimization delivering both an indoor architectural studio twin (1.13M splats) and an expansive outdoor botanical courtyard twin (3.14M splats), running at locked 60+ FPS.</li>
-    <li><strong>Zero-Install WebGL Spatial Intelligence Engine:</strong> A Three.js viewer embedding interactive 3D pins, waypoint pathfinding with smooth Catmull-Rom splines, and a synchronized 2D floor radar.</li>
+    <li><strong>2D Schematics:</strong> Disorienting and non-intuitive for first-time visitors.</li>
+    <li><strong>360 Panoramas:</strong> Rigid, discrete bubble-hopping interfaces lacking continuous 6-DoF navigation.</li>
+    <li><strong>Neural Radiance Fields (NeRFs):</strong> Computationally prohibitive volume rendering that cannot sustain real-time frame rates in client web browsers.</li>
   </ol>
+  <p>
+    NammaSpace overcomes these constraints by uniting monocular smartphone photogrammetry, real-time 3D Gaussian tile rasterization, and web-native spatial intelligence into a zero-install browser engine.
+  </p>
 
   <div class="diagram-box">
-[Video Capture (4K/1080p)] ──> [Dense Frame Extraction (>75% Overlap)] ──> [Headless COLMAP (Sparse SfM)]
-                                                                                      │
-[Interactive POIs & Pathfinding] <── [Three.js WebGL Engine (60 FPS)] <── [Dual-Twin Stream (1.13M & 3.14M Splats)]
+[Monocular Video (4K, AE/AF Lock)] ──> [Dense Extraction (7 FPS)] ──> [Headless COLMAP (Sparse SfM)]
+                                                                               │
+[Google Maps Pins & A* Navigation] <── [Three.js WebGL Engine (60 FPS)] <── [Triple-Twin Stream (6.0M+ Splats)]
   </div>
 
   <h2>2. Capture Protocol &amp; Standard Operating Procedure (SOP)</h2>
-  <p>To prevent tracking loss during feature matching, we developed and validated a 4-pass orbital trajectory:</p>
+  <p>To eliminate tracking loss during feature matching without specialized LiDAR sensors, we developed and validated a Triple-Loop capture trajectory:</p>
   <ul>
-    <li><strong>Pass 1 (Eye-Level Orbit, 0° Pitch):</strong> Establishes the primary horizontal perimeter baseline (~1.6 m height).</li>
-    <li><strong>Pass 2 (Low-Angle Furniture Orbit, +25° Pitch):</strong> Captures floor geometry, chair legs, and baseboards (~1.0 m height), eliminating ground plane floating.</li>
-    <li><strong>Pass 3 (High-Angle Ceiling Orbit, -25° Pitch):</strong> Establishes room height limits, ceiling light fixtures, and wall fixtures (~1.8 m height).</li>
-    <li><strong>Pass 4 (Center Inward Pan &amp; POI Sweeps):</strong> Dense 360° rotational pass focusing on primary interaction zones (workstation, display, doorway).</li>
-  </ul>
-
-  <h3>Optical Conditioning</h3>
-  <ul>
-    <li><strong>Auto-Exposure / Auto-Focus Lock (AE/AF Lock):</strong> Pinned at a median-lux zone to prevent fluctuating brightness.</li>
-    <li><strong>Diffused Illumination:</strong> Controlled ambient lighting without variable shadows or moving dynamic objects.</li>
-    <li><strong>Temporal Extraction Rate:</strong> Dense frame extraction delivering high camera registration density, completely resolving sparse anisotropic needle artifacts.</li>
+    <li><strong>Loop 1 (Outer Perimeter, 0° Pitch, 1.6 m Height):</strong> Establishes global room boundary coordinates.</li>
+    <li><strong>Loop 2 (Inner Incline, 30° Pitch Down, 1.0 m Height):</strong> Anchors ground-plane geometry and baseboards.</li>
+    <li><strong>Loop 3 (Central Serpentine &amp; 360° POI Detail Orbits):</strong> Dense circular sweeps around key assets.</li>
+    <li><strong>Exact Loop Closure:</strong> The trajectory terminates at the exact physical starting point, allowing bundle adjustment in COLMAP to bind camera drift to &lt;0.67 px.</li>
   </ul>
 
   <div class="page-break"></div>
 
-  <h2>3. Photogrammetry &amp; 3D Gaussian Splatting Optimization</h2>
-  <p>The dense frame collection is processed via headless COLMAP using the <code>SIMPLE_RADIAL</code> camera model to accommodate subtle radial lens distortions without over-parameterization.</p>
-
-  <h3>Mathematical Formulation of 3DGS</h3>
+  <h2>3. Mathematical Formulation &amp; Optimization</h2>
   <p>
-    Each 3D Gaussian is parameterized by its mean center \(\boldsymbol{\mu} \in \mathbb{R}^3\), full 3D covariance matrix \(\boldsymbol{\Sigma}\), opacity \(\alpha \in [0, 1]\), and color represented via spherical harmonics (SH) coefficients:
+    Each spatial primitive is parameterized as a 3D Gaussian ellipsoid centered at \(\boldsymbol{\mu} \in \mathbb{R}^3\), with an anisotropic 3D covariance matrix \(\boldsymbol{\Sigma}\):
   </p>
-  <p style="text-align: center; margin: 10px 0;">
+  <p style="text-align: center; margin: 8px 0;">
     \[\boldsymbol{\Sigma} = \mathbf{R} \mathbf{S} \mathbf{S}^T \mathbf{R}^T\]
   </p>
   <p>
-    where \(\mathbf{S} = \text{diag}(s_x, s_y, s_z)\) represents anisotropic scaling factors and \(\mathbf{R}\) is the rotation matrix derived from unit quaternions \(\mathbf{q}\). During tile-based rasterization, the color \(C\) of a screen pixel \(\mathbf{p}\) is computed via \(\alpha\)-blending ordered Gaussians:
+    where \(\mathbf{S} = \text{diag}(s_x, s_y, s_z)\) represents 3D scale factors and \(\mathbf{R}\) is the rotation matrix derived from unit quaternions \(\mathbf{q}\). Tile-based rasterization sorts Gaussians front-to-back across \(16 \times 16\) screen tiles, blending colors via:
   </p>
-  <p style="text-align: center; margin: 10px 0;">
+  <p style="text-align: center; margin: 8px 0;">
     \[C(\mathbf{p}) = \sum_{i \in \mathcal{N}} c_i \alpha_i \prod_{j=1}^{i-1} (1 - \alpha_j)\]
   </p>
+  <p>
+    where \(c_i\) is evaluated using degree-3 Spherical Harmonics to model view-dependent specular highlights, and \(\alpha_i\) is the opacity.
+  </p>
 
-  <h3>Training &amp; Convergence</h3>
-  <ul>
-    <li><strong>Steps:</strong> CUDA-accelerated optimization iterations on an NVIDIA Tesla GPU.</li>
-    <li><strong>Loss Function:</strong> Combined photometric \(\mathcal{L}_1\) loss and structural similarity \(\mathcal{L}_{\text{SSIM}}\):
-      <div style="text-align: center; margin: 6px 0;">\[\mathcal{L} = (1 - \lambda)\mathcal{L}_1 + \lambda(1 - \text{SSIM}) \quad \text{with } \lambda = 0.2\]</div>
-    </li>
-    <li><strong>Final Metrics:</strong> High structural convergence error of &lt;0.67 pixels across camera viewpoints, ensuring crisp object boundaries.</li>
-  </ul>
+  <h3>Mathematical Ground-Plane Leveling</h3>
+  <p>
+    Ground alignment is computed via <strong>Jacobi eigendecomposition</strong> of the floor covariance matrix \(\mathbf{C}_{\text{floor}} = \mathbf{V} \mathbf{\Lambda} \mathbf{V}^T\). The minimum eigenvector \(\mathbf{v}_{\min}\) defines the floor normal, and a correction quaternion \(\mathbf{q}_{\text{align}}\) rotates it to the global vertical \([0, 1, 0]^T\). This mathematically resolved a 3.54° pitch and 0.91° roll tilt in the Atrium, and a 29.18° tilt in the Courtyard.
+  </p>
 
   <h2>4. WebGL Runtime Architecture &amp; Spatial Navigation</h2>
-  <p>The client architecture is engineered for immediate zero-install execution in any WebGL-compliant browser (Chrome, Edge, Safari, Firefox).</p>
-
-  <h3>Key Interactive Features</h3>
   <ol>
-    <li><strong>3D Interactive POI Markers:</strong>
-      Visualized using dual-mesh rendering: a core glowing sphere, an expanding vertical beacon, and an oscillating ground ring (<code>THREE.RingGeometry</code>). Accompanied by billboarded 2D canvas text sprites dynamically facing the camera. Screen-space mouse clicks are mapped into 3D world space using <code>THREE.Raycaster</code>.
-    </li>
-    <li><strong>Obstacle-Aware Pathfinding &amp; Spline Interpolation:</strong>
-      Navigable space is modeled using an obstacle-free topological waypoint graph. Waypoints are routed through safe corridors and smoothed using a continuous 3D Catmull-Rom spline curve (<code>THREE.CatmullRomCurve3</code>). The route renders as an animated glowing neon dashed ribbon (<code>THREE.LineDashedMaterial</code> with dynamic <code>dashOffset</code> streaming). Arrival detection triggers automated glassmorphic alerts when player distance to destination is &lt; 1.0 m.
-    </li>
-    <li><strong>Synchronized 2D Floor Radar:</strong>
-      A real-time HUD minimap projects the 3D player coordinates and heading onto a 2D floor plane with rotating delta fighter chevron, realistic FOV cone, metric range rings, and target navigation vectors.
-    </li>
+    <li><strong>Google Maps Indoor 3D Pins:</strong> Custom teardrop markers with billboarded labels, vertical guide beacons, and pulsing ground rings, toggled via the dock (default OFF for pure photorealism).</li>
+    <li><strong>Real-Time Search Bar:</strong> Autocomplete filter over waypoints and 3D pins; pressing Enter smoothly reorients the camera to the destination.</li>
+    <li><strong>Obstacle-Aware A* Pathfinding:</strong> Routes around room furniture along Catmull-Rom splines with dynamic walking duration estimates (\(\approx \text{Dist} / 1.1\text{ m/s}\)).</li>
+    <li><strong>Architectural Floor Radar:</strong> Real-time minimap projecting player coordinates, orientation chevron, dynamic 60° FOV cone, and destination vectors.</li>
   </ol>
 
   <h2>5. Technical Specifications &amp; Performance Benchmarks</h2>
+  <table class="spec-table">
+    <thead>
+      <tr>
+        <th>Specification</th>
+        <th>🏛️ Flagship Studio</th>
+        <th>🏬 Commercial Atrium</th>
+        <th>🌳 Campus Courtyard</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Gaussian Count</strong></td>
+        <td><strong>1,130,000+ splats</strong></td>
+        <td><strong>1,734,000+ splats</strong></td>
+        <td><strong>3,135,539 splats</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Asset Format</strong></td>
+        <td>.splat (76.8 MB)</td>
+        <td>.splat (117.8 MB)</td>
+        <td>.ksplat (75.4 MB, quantized)</td>
+      </tr>
+      <tr>
+        <td><strong>Scene Type</strong></td>
+        <td>Indoor Executive Suite</td>
+        <td>Indoor Commercial Concourse</td>
+        <td>Open-Air Quad &amp; Terrace</td>
+      </tr>
+      <tr>
+        <td><strong>Frame Rate</strong></td>
+        <td><strong>60 FPS Locked</strong></td>
+        <td><strong>60 FPS Locked</strong></td>
+        <td><strong>60 FPS Locked</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Ground Alignment</strong></td>
+        <td>Pre-calibrated (Y = 1.4 m)</td>
+        <td>Jacobi Leveled (3.54° pitch)</td>
+        <td>Leveled (29.18° pitch)</td>
+      </tr>
+    </tbody>
+  </table>
 
-  <div class="spec-card">
-    <h3>🏛️ Ultra-HD Photorealistic Studio Model (studio_room.splat — Primary Default)</h3>
-    <ul>
-      <li><strong>Environment:</strong> High-Fidelity Architectural Studio &amp; Command Hub (Indoor)</li>
-      <li><strong>Gaussian Count:</strong> <strong>1,130,000+ Photorealistic Splats</strong></li>
-      <li><strong>Reconstruction Fidelity:</strong> Sub-millimeter Photorealistic Surfaces &amp; Complex Specular Lighting</li>
-      <li><strong>VRAM Allocation:</strong> 76.8 MB High-Density WebGL Buffer</li>
-      <li><strong>Real-Time Frame Rate:</strong> <strong>60 FPS Locked</strong> with hardware-accelerated tile rasterization</li>
-      <li><strong>Spatial Waypoint HUD:</strong> Synchronized Studio Waypoints (Executive Desk, Library Hub, Lounge Corridor)</li>
-    </ul>
-  </div>
-
-  <div class="spec-card">
-    <h3>🌳 Spatial Courtyard Twin (garden.ksplat — Outdoor Showcase)</h3>
-    <ul>
-      <li><strong>Environment:</strong> Open-Air Botanical Courtyard &amp; Pavilion Grounds (Outdoor)</li>
-      <li><strong>Gaussian Count:</strong> <strong>3,135,539 Photorealistic Splats</strong></li>
-      <li><strong>Payload &amp; Format:</strong> High-Efficiency Binary Splat Buffer (.ksplat, 75.4 MB)</li>
-      <li><strong>Visual Fidelity:</strong> Volumetric Foliage, Realistic Sunlit Illumination &amp; Cobblestones</li>
-      <li><strong>Real-Time Frame Rate:</strong> <strong>60 FPS Locked</strong> on standard laptop and mobile hardware</li>
-      <li><strong>Spatial Waypoint HUD:</strong> Synchronized Courtyard Waypoints (Pavilion Terrace, Botanical Trellis, Courtyard Archway)</li>
-      <li><strong>Wayfinding &amp; Minimap:</strong> Obstacle-Aware Catmull-Rom Guided Spline Ribbon with 1:1 Scale Floor Radar</li>
-    </ul>
-  </div>
-
-  <h2>6. Conclusion &amp; Round 2 Roadmap</h2>
+  <h2>6. Conclusion &amp; Round 3 Blueprint</h2>
   <p>
-    Our NammaSpace digital twin pipeline bridges the gap between raw video capture and high-performance interactive web distribution. By adhering to our validated SOP, dense frame extraction, and delivering both an indoor architectural studio twin (1.13M splats) and an expansive outdoor courtyard twin (3.14M splats), we achieve state-of-the-art fidelity and instant browser accessibility. Ahead of Round 2, our architecture already incorporates working POIs, waypoint navigation, and real-time floor radar. Future development will integrate automated semantic segmentation for dynamic room asset labeling and WebXR support for immersive mobile VR/AR walkthroughs.
+    NammaSpace establishes that high-fidelity spatial digital twins can be reconstructed from ordinary smartphone capture and rendered in standard web browsers at locked 60 FPS. For the Round 3 on-site challenge at IIT Bombay, our framework deploys open-source 2D Gaussian Splatting (2DGS) and Nerfstudio MCMC on provided GPU infrastructure, enforcing planar surface reconstruction on walls and floors to completely eliminate scattered pixel haze without commercial paywalls.
   </p>
 
 </body>

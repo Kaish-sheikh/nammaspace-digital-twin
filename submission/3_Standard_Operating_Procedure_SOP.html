@@ -19,46 +19,57 @@
     li { margin-bottom: 3px; }
     code { font-family: 'JetBrains Mono', monospace; font-size: 9pt; background: #f1f5f9; padding: 1px 4px; border-radius: 3px; }
     .card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; margin-bottom: 8px; }
+    .table-spec { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 9pt; }
+    .table-spec th, .table-spec td { border: 1px solid #cbd5e1; padding: 5px 8px; text-align: left; }
+    .table-spec th { background: #f1f5f9; font-weight: 700; }
   </style>
 </head>
 <body>
   <header>
-    <div class="badge">IIT Bombay Techfest 2026–27 | Namma Space Competition</div>
-    <h1>Standard Operating Procedure (SOP): Indoor Spatial Capture</h1>
-    <div class="sub">Standardized Protocol for High-Fidelity Monocular Smartphone 3D Gaussian Splatting</div>
+    <div class="badge">IIT Bombay Techfest 2026–27 | NammaSpace Challenge</div>
+    <h1>Standard Operating Procedure (SOP): Monocular Spatial Capture</h1>
+    <div class="sub">Standardized Protocol for High-Fidelity Smartphone 3D Gaussian Splatting (20% Scoring Weightage)</div>
   </header>
 
   <h2>1. Pre-Capture Environment Preparation</h2>
   <div class="card">
-    <p><strong>1. Illumination Consistency:</strong> Turn on all overhead artificial lights to provide even, diffuse lighting across the space. Close blinds if direct sunlight casts moving shadows or intense glare. Never switch lights on or off during capture.</p>
-    <p><strong>2. Static Space Enforcement:</strong> The room must be static. Remove pets, turn off ceiling fans, and ensure no moving individuals enter the frame to prevent "ghost" floaters.</p>
-    <p><strong>3. Featureless Surface Mitigation:</strong> On featureless blank white walls, temporarily attach sticky notes, posters, or textured markers to provide anchor points for COLMAP feature matching.</p>
-    <p><strong>4. Specular Surfaces:</strong> Cover full-length mirrors and reflective glass panes to avoid virtual inverted reflections that corrupt depth estimation.</p>
+    <p><strong>1. Static Space Enforcement:</strong> Moving individuals, pets, and rotating fans must be minimized during recording. In dynamic environments, median photometric loss during optimization down-weights transient pedestrians.</p>
+    <p><strong>2. Illumination Consistency:</strong> Turn on all overhead artificial lights to provide even, diffuse lighting across the entire venue. Close blinds to eliminate moving sun glare. Never switch lights on or off during capture.</p>
+    <p><strong>3. Featureless Surface Mitigation:</strong> On featureless blank white walls, attach temporary non-destructive markers (sticky notes or room numbers) to provide visual anchor points for COLMAP feature matching.</p>
+    <p><strong>4. Specular Surfaces:</strong> Cover full-length mirrors and reflective glass panes or record at oblique angles to avoid virtual inverted reflections that corrupt depth estimation.</p>
   </div>
 
   <h2>2. Hardware &amp; Camera Configuration</h2>
-  <ul>
-    <li><strong>Device:</strong> Standard Smartphone (iOS or Android)</li>
-    <li><strong>Resolution &amp; Frame Rate:</strong> 4K UHD (3840&times;2160) preferred; minimum 1080p FHD at 30/60 FPS.</li>
-    <li><strong>Lens Selection:</strong> Primary Wide lens (1x). Avoid ultra-wide/fisheye (0.5x) to eliminate optical barrel distortion.</li>
-    <li><strong>Exposure / Focus Lock (Mandatory):</strong> Point the camera at a medium-lit spot and long-press to activate <strong>AE/AF Lock</strong>, preventing exposure breathing during pans.</li>
-  </ul>
+  <table class="table-spec">
+    <thead>
+      <tr><th>Parameter</th><th>Specification</th><th>Engineering Rationale</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Device</strong></td><td>Standard Smartphone (iOS / Android)</td><td>Monocular setup without LiDAR (receives higher scoring priority).</td></tr>
+      <tr><td><strong>Resolution</strong></td><td>4K UHD (3840&times;2160) preferred; min 1080p</td><td>Higher resolution provides denser pixel gradient feedback during optimization.</td></tr>
+      <tr><td><strong>Frame Rate</strong></td><td>60 FPS (or 30 FPS)</td><td>High frame rate reduces motion blur between adjacent temporal samples.</td></tr>
+      <tr><td><strong>Lens</strong></td><td>Primary 1x Wide Lens (24&ndash;28mm equivalent)</td><td>Avoids 0.5x ultra-wide optical barrel distortion.</td></tr>
+      <tr><td><strong>Exposure/Focus</strong></td><td><strong>LOCKED (AE/AF Lock)</strong></td><td>Prevents dynamic brightness shifts that corrupt photogrammetric color consistency.</td></tr>
+      <tr><td><strong>Shutter Speed</strong></td><td>&ge; 1/120 s</td><td>Eliminates motion blur; motion blur turns directly into scattered needle splats.</td></tr>
+    </tbody>
+  </table>
 
-  <h2>3. The 4-Pass Orbital Trajectory</h2>
-  <p>To guarantee the mandatory &gt;75% frame overlap, capture follows a continuous four-pass path:</p>
+  <h2>3. The Triple-Loop Trajectory (Capture Pattern)</h2>
+  <p>To guarantee the mandatory &ge;75% frame overlap, capture follows a continuous 3-loop nested trajectory:</p>
   <ol>
-    <li><strong>Pass 1 &mdash; Eye-Level Perimeter Orbit (0° Pitch):</strong> Walk slowly around the outer room perimeter at eye height (~1.6 m) facing slightly inward to establish horizontal perimeter anchors. Maintain steady heel-to-toe walking.</li>
-    <li><strong>Pass 2 &mdash; Low-Angle Floor &amp; Furniture Orbit (+25° Pitch):</strong> Walk at chest level (~1.0 m) angled down toward the floor, desk surfaces, and chair legs to anchor ground plane geometry.</li>
-    <li><strong>Pass 3 &mdash; High-Angle Ceiling Orbit (&minus;25° Pitch):</strong> Walk with phone raised (~1.8 m) angled toward ceiling light fixtures, wall decor, and upper corners to capture vertical bounds.</li>
-    <li><strong>Pass 4 &mdash; Center Inward Sweep:</strong> Step to the room center, perform a slow 360° pan, and sweep key Points of Interest (workstation, display, doorway) for micro-detail feature density.</li>
+    <li><strong>Loop 1 &mdash; Outer Perimeter (Facing Walls, 0° Pitch):</strong> Walk slowly around the outer perimeter at eye height (~1.6 m) facing walls, doors, and signage. Maintain steady heel-to-toe walking.</li>
+    <li><strong>Loop 2 &mdash; Inner Incline (Facing Center, 30° Pitch Down):</strong> Walk the perimeter at chest level (~1.0 m) angled downward toward the floor, desks, and baseboards to anchor ground plane geometry.</li>
+    <li><strong>Loop 3 &mdash; Central Serpentine &amp; 360° POI Orbits:</strong> Step into the center, walk primary corridors, and execute continuous 360° circular orbits around key landmarks (meeting tables, lounge furniture, entrance doors).</li>
+    <li><strong>Mandatory Loop Closure:</strong> The recording must finish at the exact physical coordinate where it started, allowing bundle adjustment in COLMAP to bind camera drift to &lt;0.67 px and eliminate ground tilt.</li>
   </ol>
 
-  <h2>4. Extraction &amp; Reconstruction Pipeline</h2>
+  <h2>4. Reconstruction &amp; Floater Pruning Pipeline</h2>
   <ul>
-    <li><strong>Frame Extraction:</strong> Extract frames at <strong>7 to 10 FPS</strong> via FFmpeg (<code>ffmpeg -i input.mp4 -vf &quot;fps=7,scale=1920:-1&quot; frames/%05d.png</code>), yielding 180&ndash;220 dense frames per 30-second capture.</li>
-    <li><strong>Reconstruction Parameters:</strong> Headless COLMAP using the <code>SIMPLE_RADIAL</code> camera model.</li>
-    <li><strong>Training Iterations:</strong> 7,000 steps minimum on NVIDIA GPU, achieving &gt;50 dB PSNR.</li>
-    <li><strong>Deployment Packaging:</strong> Export as optimized <code>.splat</code> binary for instant zero-install WebGL streaming at 60+ FPS (supporting both flagship 1.13M splat studio twins and compact edge mobile scans).</li>
+    <li><strong>Frame Extraction:</strong> Extract frames at <strong>7 to 10 FPS</strong> via FFmpeg with scene-filtering to eliminate motion-blurred frames (<code>ffmpeg -i input.mp4 -vf &quot;fps=7,mpdecimate&quot; frames/%05d.png</code>).</li>
+    <li><strong>Pose Estimation:</strong> Headless COLMAP using the <code>OPENCV</code> camera model with exhaustive feature matching.</li>
+    <li><strong>SOTA 3DGS Optimization:</strong> Train using <strong>2D Gaussian Splatting (2DGS)</strong> or <strong>Nerfstudio MCMC</strong> for 30,000 steps on GPU infrastructure, enforcing planar surface reconstruction on walls, floors, and ceilings.</li>
+    <li><strong>Floater Elimination:</strong> Prune primitives with opacity &alpha; &lt; 0.05, prune splats with radius &gt; 0.5 m, and apply a 3D bounding box spatial crop.</li>
+    <li><strong>WebGL Export:</strong> Export as compressed <code>.splat</code> or quantized 16-bit <code>.ksplat</code> for instant 60 FPS streaming in the NammaSpace viewer.</li>
   </ul>
 </body>
 </html>
