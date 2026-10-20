@@ -97,7 +97,7 @@ Start Vite's development server:
 ```bash
 npm run dev
 ```
-Open your browser and navigate to `http://localhost:5173`.
+Open your browser and navigate to `http://localhost:XXXX`.
 
 ### 3. Production Build
 Compile optimized production assets:
@@ -140,7 +140,5 @@ npm run build
 ## 📜 Documentation Links
 - **Technical Abstract:** [`ROUND1_TECHNICAL_ABSTRACT.md`](ROUND1_TECHNICAL_ABSTRACT.md)
 - **Standard Operating Procedure:** [`SOP.md`](SOP.md)
-- **Technical Glossary:** [`GLOSSARY.md`](GLOSSARY.md)
-
 ---
 *Created for the IIT Bombay Techfest 2026–27 | NammaSpace Challenge.*
